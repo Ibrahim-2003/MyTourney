@@ -87,6 +87,7 @@ MVP App Features
         * Bio
         * Follow
         * Like 
+    -> Badges / Trophies / Achievements
 
 ## 2. Tourneys
 

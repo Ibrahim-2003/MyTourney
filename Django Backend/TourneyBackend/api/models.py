@@ -6,7 +6,7 @@ from django.db.models.fields.related import ForeignKey
 # Create your models here.
 
 #Link Users to Teams
-class Teams(models.Model):
+class Team(models.Model):
     team_name = CharField(max_length=50)
     team_logo = models.ImageField(default='team_default.png', upload_to='team_logos')
 
@@ -23,13 +23,13 @@ class User(models.Model):
     age = PositiveSmallIntegerField()
     bio = TextField(max_length=300)
     photo = models.ImageField(default='default_profile.png', upload_to='profile_pics/')
-    team = models.ManyToManyField(Teams, blank=True, null=True)
+    team = models.ManyToManyField(Team, blank=True, null=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} Profile'
 
 class Host(models.Model):
-    host = ForeignKey(User, blank=True, null=True, on_delete=CASCADE)
+    user = ForeignKey(User, blank=True, null=True, on_delete=CASCADE)
     address = CharField(max_length=200)
 
 class Tourney(models.Model):

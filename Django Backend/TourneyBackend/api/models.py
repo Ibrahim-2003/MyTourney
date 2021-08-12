@@ -11,6 +11,8 @@ class Teams(models.Model):
     team_logo = models.ImageField(default='team_default.png', upload_to='team_logos')
 
 #Basic Profile
+#Shell Script
+#u = User(first_name="Ahmad", last_name="Shady", email="ahmad.shady@gmail.com", username="user", password="1234", gender=True, age=27, bio="Great player from Masr", photo="profile_pics/default_profile.png")
 class User(models.Model):
     first_name = CharField(max_length=30)
     last_name = CharField(max_length=30)
@@ -21,7 +23,7 @@ class User(models.Model):
     age = PositiveSmallIntegerField()
     bio = TextField(max_length=300)
     photo = models.ImageField(default='default_profile.png', upload_to='profile_pics/')
-    team = models.ManyToManyField(Teams, blank=True, null=True, on_delete=CASCADE)
+    team = models.ManyToManyField(Teams, blank=True, null=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} Profile'

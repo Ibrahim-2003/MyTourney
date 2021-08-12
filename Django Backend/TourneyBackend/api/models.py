@@ -14,12 +14,17 @@ class Team(models.Model):
 #Shell Script
 #u = User(first_name="Ahmad", last_name="Shady", email="ahmad.shady@gmail.com", username="user", password="1234", gender=True, age=27, bio="Great player from Masr", photo="profile_pics/default_profile.png")
 class User(models.Model):
+    GENDER = (
+        ("Mens", "Mens"),
+        ("Womens", "Womens")
+        )
+
     first_name = CharField(max_length=30)
     last_name = CharField(max_length=30)
     email = EmailField()
     username = CharField(max_length=50)
     password = CharField(max_length=50)
-    gender = BooleanField() #True for men, False for women
+    gender = CharField(max_length=20, choices=GENDER, default='Mens')
     age = PositiveSmallIntegerField()
     bio = TextField(max_length=300)
     photo = models.ImageField(default='default_profile.png', upload_to='profile_pics/')

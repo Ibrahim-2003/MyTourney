@@ -32,16 +32,7 @@ class UserView(APIView):
             print('error', users_serializer.errors)
             return Response(users_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserDetails(APIView):
-
-    def get_object(self, id):
-        try:
-            user = User.objects.get(id)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-
-'''@api_view(['GET','PUT','DELETE',])
+@api_view(['GET','PUT','DELETE',])
 def userDetails(request, pk):
     try:
         user = User.objects.get(pk=pk)
@@ -62,4 +53,4 @@ def userDetails(request, pk):
 
     elif request.method=='DELETE':
         user.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)'''
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)

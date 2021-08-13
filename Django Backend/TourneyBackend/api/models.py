@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
-from django.db.models.fields import CharField, DateTimeField, IntegerField, PositiveIntegerField, EmailField, DecimalField, PositiveSmallIntegerField, TextField
+from django.db.models.fields import CharField, DateTimeField, FloatField, IntegerField, PositiveIntegerField, EmailField, DecimalField, PositiveSmallIntegerField, TextField
 from django.db.models.fields.related import ForeignKey, ManyToManyField
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -111,6 +111,9 @@ class Tourney(models.Model):
     
 
     name = CharField(max_length=50, blank=True, null=True)
+    city = CharField(max_length=200, blank=True, null=True)
+    lat_coord = FloatField(null=True, blank=True)
+    lon_coord = FloatField(null=True, blank=True)
     host = ForeignKey(Host, blank=True, null=True, on_delete=CASCADE) #Link Tourney to Host
     team_size = CharField(max_length=10, null=True, blank=True, choices=TEAMSIZES)
     gender = CharField(max_length=20, choices=GENDER, default='Mens')
@@ -140,10 +143,12 @@ class Transaction(models.Model):
 class Game(models.Model):
     timestamp = DateTimeField(auto_now=True)
     teams = ManyToManyField(Team,blank=True, null=True)
-    home_points = PositiveIntegerField(default=0)
-    away_points = PositiveIntegerField(default=0)
-    home_scorers = CharField(max_length=50, blank=True, null=True)
-    away_scorers = CharField(max_length=50, blank=True, null=True)
+    winner = CharField(max_length=50, blank=True, null=True)
+    loser = CharField(max_length=50, blank=True, null=True)
+    winner_points = PositiveIntegerField(default=0)
+    loser_points = PositiveIntegerField(default=0)
+    winner_scorers = CharField(max_length=50, blank=True, null=True)
+    loser_scorers = CharField(max_length=50, blank=True, null=True)
     venue = ForeignKey(Tourney, blank=True, null=True, on_delete=PROTECT)
 
     def __str__(self):

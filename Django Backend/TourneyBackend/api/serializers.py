@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Team, Tourney, User, Host
+from .models import Game, Team, Tourney, Transaction, User, Host
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -15,4 +15,16 @@ class UserSerializer(serializers.ModelSerializer):
                 'age',
                 'bio',
                 'photo',
-                'team')
+                'team',
+                'points',
+                'tourneys_played',
+                'tourneys_won',
+                'tourneys_lost',
+                'games_played',
+                'games_won',
+                'games_lost',
+                'goals_for',
+                'goals_against',
+                'shots',
+                'saves',
+                'shutouts')

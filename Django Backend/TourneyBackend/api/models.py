@@ -1,7 +1,8 @@
 from django.db import models
-from django.db.models.deletion import CASCADE
-from django.db.models.fields import CharField, DateTimeField, PositiveIntegerField, EmailField, DecimalField, PositiveSmallIntegerField, TextField
-from django.db.models.fields.related import ForeignKey
+from django.db.models.deletion import CASCADE, PROTECT, SET_NULL
+from django.db.models.fields import CharField, DateTimeField, IntegerField, PositiveIntegerField, EmailField, DecimalField, PositiveSmallIntegerField, TextField
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
@@ -14,8 +15,10 @@ from django.db.models.fields.related import ForeignKey
 
 
 
+
 class Team(models.Model):
     team_name = CharField(max_length=50)
+    team_leader = CharField(max_length=50, null=True, blank=True)
     team_logo = models.ImageField(default='team_default.png', upload_to='team_logos')
     tourneys_played = PositiveIntegerField(default=0)
     tourneys_won = PositiveIntegerField(default=0)
@@ -25,8 +28,9 @@ class Team(models.Model):
     games_lost = PositiveIntegerField(default=0)
     goals_for = PositiveIntegerField(default=0)
     goals_against = PositiveIntegerField(default=0)
-    strikes = PositiveIntegerField(default=0)
-    saves = PositiveIntegerField(default=0)    
+    shots = PositiveIntegerField(default=0)
+    saves = PositiveIntegerField(default=0)
+    shutouts = PositiveIntegerField(default=0)
 
     def __str__(self):
         return f'Team: {self.team_name}'
@@ -34,9 +38,10 @@ class Team(models.Model):
 #Basic Profile
 class User(models.Model):
     GENDER = (
-        ("Mens", "Mens"),
-        ("Womens", "Womens")
+        ('mens', 'Mens'),
+        ('womens', 'Womens')
         )
+
 
     first_name = CharField(max_length=30)
     last_name = CharField(max_length=30)
@@ -47,10 +52,24 @@ class User(models.Model):
     age = PositiveSmallIntegerField()
     bio = TextField(max_length=300)
     photo = models.ImageField(default='default_profile.png', upload_to='profile_pics/')
-    team = models.ManyToManyField(Team, blank=True, null=True) #Link Users to Teams
+    team = ManyToManyField(Team, blank=True, null=True) #Link Users to Teams
+    points = PositiveIntegerField(default=0)
+    tourneys_played = PositiveIntegerField(default=0)
+    tourneys_won = PositiveIntegerField(default=0)
+    tourneys_lost = PositiveIntegerField(default=0)
+    games_played = PositiveIntegerField(default=0)
+    games_won = PositiveIntegerField(default=0)
+    games_lost = PositiveIntegerField(default=0)
+    goals_for = PositiveIntegerField(default=0)
+    goals_against = PositiveIntegerField(default=0)
+    shots = PositiveIntegerField(default=0)
+    saves = PositiveIntegerField(default=0)
+    shutouts = PositiveIntegerField(default=0)
+    
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} Profile'
+
 
 class Host(models.Model):
     MEMBERSHIP = (
@@ -81,10 +100,27 @@ class Tourney(models.Model):
         ("Mens", "Mens"),
         ("Womens", "Womens")
         )
+    AGEGROUPS = (
+        ('youth', 'Youth'),
+        ('preteen', 'Pre-teen'),
+        ('teen', 'Teen'),
+        ('youngadult', 'Young Adult'),
+        ('adult', 'Adult'),
+        ('mixed', 'Mixed')
+    )
+    
 
+    name = CharField(max_length=50, blank=True, null=True)
     host = ForeignKey(Host, blank=True, null=True, on_delete=CASCADE) #Link Tourney to Host
     team_size = CharField(max_length=10, null=True, blank=True, choices=TEAMSIZES)
     gender = CharField(max_length=20, choices=GENDER, default='Mens')
+    duration_points = IntegerField(default=3, validators=[MinValueValidator(3),MaxValueValidator(10)])
+    current_participants = ManyToManyField(Team, blank=True, null=True)
+    max_participants = PositiveIntegerField(default=32, validators=[MinValueValidator(6),MaxValueValidator(64)])
+    age_group = CharField(max_length=50, default='Mixed', choices=AGEGROUPS)
+
+    def __str__(self):
+        return f'{self.name} Tournament'
 
 class Transaction(models.Model):
     DIRECTION = (
@@ -92,8 +128,23 @@ class Transaction(models.Model):
         ('earn', 'Earn')
     )
 
-    price = DecimalField(max_digits=None, decimal_places=2, default=0.00)
+    price = DecimalField(max_digits=100, decimal_places=2, default=0)
     direction = CharField(max_length=50, choices=DIRECTION)
     timestamp = DateTimeField(auto_now=True)
-    venue = ForeignKey(Tourney, blank=True, null=True, on_delete=models.SET_NULL)
+    venue = ForeignKey(Tourney, blank=True, null=True, on_delete=models.PROTECT)
     account = ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f'{self.account.first_name} {self.account.last_name} Transaction {self.timestamp}'
+
+class Game(models.Model):
+    timestamp = DateTimeField(auto_now=True)
+    teams = ManyToManyField(Team,blank=True, null=True)
+    home_points = PositiveIntegerField(default=0)
+    away_points = PositiveIntegerField(default=0)
+    home_scorers = CharField(max_length=50, blank=True, null=True)
+    away_scorers = CharField(max_length=50, blank=True, null=True)
+    venue = ForeignKey(Tourney, blank=True, null=True, on_delete=PROTECT)
+
+    def __str__(self):
+        return f'Match at {self.timestamp} at {self.venue}'

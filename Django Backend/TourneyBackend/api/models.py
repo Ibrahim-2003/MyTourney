@@ -17,6 +17,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Team(models.Model):
+    baba = CharField(max_length=50)
     team_name = CharField(max_length=50)
     team_leader = CharField(max_length=50, null=True, blank=True)
     team_logo = models.ImageField(default='team_default.png', upload_to='team_logos')

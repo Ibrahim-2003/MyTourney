@@ -9,4 +9,6 @@ urlpatterns = [
     path('users/<int:pk>/', views.userDetails),
     path('teams/', views.TeamView.as_view(), name = 'teams_list'),
     path('teams/<int:pk>/', views.teamDetails),
+    path('hosts/', views.HostView.as_view(), name = 'hosts_list'),
+    path('hosts/<int:pk>', views.hostDetails),
 ]

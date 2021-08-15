@@ -99,3 +99,48 @@ def teamDetails(request, pk):
     elif request.method=='DELETE':
         team.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+## Host View
+
+class HostView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        hosts = Host.objects.all()
+        serializer = TeamSerializer(hosts, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print(request.data)
+        hosts_serializer = HostSerializer(data=request.data)
+        if hosts_serializer.is_valid():
+            hosts_serializer.save()
+            return Response(hosts_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print('error', hosts_serializer.errors)
+            return Response(hosts_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET','PUT','DELETE',])
+def hostDetails(request, pk):
+    try:
+        host = Host.objects.get(pk=pk)
+    except Host.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    if request.method=='GET':
+        serializer = HostSerializer(host)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method=='PUT':
+        data = JSONParser().parse(request)
+        serializer = HostSerializer(host, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method=='DELETE':
+        host.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+## Tourney View

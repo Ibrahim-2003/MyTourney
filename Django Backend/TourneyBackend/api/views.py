@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 # Create your views here.
 
+## User View
+
 class UserView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
@@ -54,3 +56,6 @@ def userDetails(request, pk):
     elif request.method=='DELETE':
         user.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+## Team View
+

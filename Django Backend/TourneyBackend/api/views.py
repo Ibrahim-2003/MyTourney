@@ -229,3 +229,45 @@ def gameDetails(request, pk):
         game.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
+## Transaction View
+
+class TransactionView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        transactions = Transaction.objects.all()
+        serializer = TransactionSerializer(transactions, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print(request.data)
+        transactions_serializer = TransactionSerializer(data=request.data)
+        if transactions_serializer.is_valid():
+            transactions_serializer.save()
+            return Response(transactions_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print('error', transactions_serializer.errors)
+            return Response(transactions_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET','PUT','DELETE',])
+def transactionDetails(request, pk):
+    try:
+        transaction = Transaction.objects.get(pk=pk)
+    except Transaction.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    if request.method=='GET':
+        serializer = TransactionSerializer(transaction)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method=='PUT':
+        data = JSONParser().parse(request)
+        serializer = TransactionSerializer(transaction, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method=='DELETE':
+        transaction.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)

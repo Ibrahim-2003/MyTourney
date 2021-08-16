@@ -3,7 +3,7 @@ from django.urls import path
 from .views import Index
 from . import views
 
-#Game, Transaction
+#Transaction
 
 urlpatterns = [
     path('', Index),
@@ -17,4 +17,6 @@ urlpatterns = [
     path('tourneys/<int:pk>/', views.tourneyDetails),
     path('games/', views.GameView.as_view(), name = 'games_list'),
     path('games/<int:pk>/', views.gameDetails),
+    path('transactions/', views.TransactionView.as_view(), name = 'transactions_list'),
+    path('transactions/<int:pk>/', views.transactionDetails),
 ]

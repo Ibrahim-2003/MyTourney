@@ -99,5 +99,5 @@ class GameSerializer(serializers.ModelSerializer):
                 'winner_points',
                 'loser_points',
                 'winner_scorers',
-                'loser_scoreres',
+                'loser_scorers',
                 'venue')

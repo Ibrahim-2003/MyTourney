@@ -107,7 +107,7 @@ class HostView(APIView):
 
     def get(self, request):
         hosts = Host.objects.all()
-        serializer = TeamSerializer(hosts, many=True)
+        serializer = HostSerializer(hosts, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -144,3 +144,88 @@ def hostDetails(request, pk):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 ## Tourney View
+
+class TourneyView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        tourneys = Tourney.objects.all()
+        serializer = TourneySerializer(tourneys, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print(request.data)
+        tourneys_serializer = TourneySerializer(data=request.data)
+        if tourneys_serializer.is_valid():
+            tourneys_serializer.save()
+            return Response(tourneys_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print('error', tourneys_serializer.errors)
+            return Response(tourneys_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET','PUT','DELETE',])
+def tourneyDetails(request, pk):
+    try:
+        tourney = Tourney.objects.get(pk=pk)
+    except Tourney.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    if request.method=='GET':
+        serializer = TourneySerializer(tourney)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method=='PUT':
+        data = JSONParser().parse(request)
+        serializer = TourneySerializer(tourney, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method=='DELETE':
+        tourney.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+## Game View
+
+class GameView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request):
+        games = Game.objects.all()
+        serializer = GameSerializer(games, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        print(request.data)
+        games_serializer = GameSerializer(data=request.data)
+        if games_serializer.is_valid():
+            games_serializer.save()
+            return Response(games_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print('error', games_serializer.errors)
+            return Response(games_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET','PUT','DELETE',])
+def gameDetails(request, pk):
+    try:
+        game = Game.objects.get(pk=pk)
+    except Game.DoesNotExist:
+        return HttpResponse(status=404)
+    
+    if request.method=='GET':
+        serializer = GameSerializer(game)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method=='PUT':
+        data = JSONParser().parse(request)
+        serializer = GameSerializer(game, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method=='DELETE':
+        game.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+

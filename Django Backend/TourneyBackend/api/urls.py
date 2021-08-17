@@ -3,8 +3,6 @@ from django.urls import path
 from .views import Index
 from . import views
 
-#Transaction
-
 urlpatterns = [
     path('', Index),
     path('users/', views.UserView.as_view(), name = 'users_list'),

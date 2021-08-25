@@ -61,6 +61,7 @@ header {
     display: flex;
     justify-content: space-around;
     width: 100%;
+    color: black;
 }
 
 .logo {
@@ -92,6 +93,7 @@ header {
     width: 25%;
     border-radius: 15px;
     text-align: center;
+    margin-top: 10px;
 }
 
 #logo_img {
@@ -108,7 +110,68 @@ header {
     width: 25%;
     border-radius: 15px;
     text-align: center;
+    margin-top: 10px;
 }
+
+#search {
+    float: left;
+    padding: 10px;
+    margin-left: 25px;
+}
+
+#filter {
+    float: right;
+    padding: 10px;
+}
+
+#sort {
+    float: right;
+    padding: 10px;
+}
+
+.tourney-listing {
+    margin: 70px 15px;
+    padding: 20px;
+    background-color: #91c2e7;
+    border-radius: 10px;
+    display: flex;
+}
+
+.flex-child {
+    flex: 1;
+}
+
+.flex-child:first-child {
+    margin-right: -50px;
+}
+
+#venue-img {
+    margin-top: 5px;
+    margin-left: 10px;
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+}
+
+#listview-info {
+    text-align: left;
+    font-family: NTF-Grand;
+    color: #303549;
+}
+
+/* Small Phone Design */
+
+@media only screen and (min-width: 0px) {
+
+    #search {
+        float: left;
+        margin-left: 25px;
+        padding: 10px 0;
+    }
+
+}
+
+
 
 
 /* Tablet Responsive Design  */

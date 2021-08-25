@@ -121,6 +121,8 @@ class Tourney(models.Model):
     current_participants = ManyToManyField(Team, blank=True, null=True)
     max_participants = PositiveIntegerField(default=32, validators=[MinValueValidator(6),MaxValueValidator(64)])
     age_group = CharField(max_length=50, default='Mixed', choices=AGEGROUPS)
+    entry_fee = PositiveIntegerField(default=10, validators=[MinValueValidator(5), MaxValueValidator(150)])
+    photo = models.ImageField(default='default_field.png', upload_to='venue_pics/')
 
     def __str__(self):
         return f'{self.name} Tournament'

@@ -74,7 +74,9 @@ class TourneySerializer(serializers.ModelSerializer):
                 'duration_points',
                 'current_participants',
                 'max_participants',
-                'age_group')
+                'age_group',
+                'entry_fee',
+                'photo')
 
 class TransactionSerializer(serializers.ModelSerializer):
 

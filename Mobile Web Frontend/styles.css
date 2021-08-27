@@ -129,8 +129,17 @@ header {
     padding: 10px;
 }
 
+.tourney-listing:first-of-type {
+    margin:0 15px;
+    margin-top: 70px;
+    padding: 20px;
+    background-color: #91c2e7;
+    border-radius: 10px;
+    display: flex;
+}
+
 .tourney-listing {
-    margin: 70px 15px;
+    margin: 25px 15px;
     padding: 20px;
     background-color: #91c2e7;
     border-radius: 10px;
@@ -146,10 +155,10 @@ header {
 }
 
 #venue-img {
-    margin-top: 5px;
-    margin-left: 10px;
-    width: 60px;
-    height: 60px;
+    margin-top: auto;
+    margin-left: 15px;
+    width: 65px;
+    height: 65px;
     border-radius: 10px;
 }
 
@@ -157,6 +166,23 @@ header {
     text-align: left;
     font-family: NTF-Grand;
     color: #303549;
+}
+
+#my-btn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed/sticky position */
+    bottom: 20px; /* Place the button at the bottom of the page */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #e4fde1; /* Set a background color */
+    color: black; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px; /* Some padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+    font-family: NTF-Grand; /* Font family */
 }
 
 /* Small Phone Design */

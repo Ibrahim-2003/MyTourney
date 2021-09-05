@@ -176,13 +176,15 @@ header {
     z-index: 99; /* Make sure it does not overlap */
     border: none; /* Remove borders */
     outline: none; /* Remove outline */
-    background-color: #e4fde1; /* Set a background color */
+    background-color: #c9d6e0;/* Set a background color */
     color: black; /* Text color */
     cursor: pointer; /* Add a mouse pointer on hover */
-    padding: 15px; /* Some padding */
-    border-radius: 10px; /* Rounded corners */
+    padding: 0px; /* Some padding */
+    border-radius: 15%; /* Rounded corners */
     font-size: 18px; /* Increase font size */
     font-family: NTF-Grand; /* Font family */
+    height: 35px;
+    width: 35px;
 }
 
 /* Small Phone Design */

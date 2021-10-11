@@ -19,7 +19,7 @@ function topFunction() {
 }
 
 function tourneyFetch() {
-    const tourneylist_url = "http://168.5.184.134:50/tourneys/";
+    const tourneylist_url = "http://localhost:8000/tourneys/";
     fetch(tourneylist_url)
   .then(function (response) {
     console.log(response.json());

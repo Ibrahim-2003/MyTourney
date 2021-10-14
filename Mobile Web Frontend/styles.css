@@ -96,7 +96,7 @@ header {
     margin-top: 10px;
 }
 
-#logo_img {
+#logo_img_home {
     float: left;
     width: 50%;
 }
@@ -185,6 +185,18 @@ header {
     font-family: NTF-Grand; /* Font family */
     height: 35px;
     width: 35px;
+}
+
+#profile-img-container {
+    flex: 1;
+    align-content: center;
+}
+
+#profile-img {
+    border-radius: 50%;
+    display: flex;
+    width: 100px;
+    height: 100px;
 }
 
 /* Small Phone Design */

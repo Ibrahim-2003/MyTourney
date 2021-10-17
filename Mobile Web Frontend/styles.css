@@ -248,16 +248,43 @@ header {
     background-color: #91c2e7;
     border-radius: 10px;
     margin: 10px;
+    padding: 5px;
+}
+
+.team-member {
+    margin: 25px 15px;
+    padding: 20px;
+    background-color: #91c2e7;
+    border-radius: 10px;
+    display: flex;
+}
+
+#team-member-prof-pic {
+    height: 65px;
+    width: 65px;
+    border-radius: 10px;
+}
+
+#tornearme {
+    font-family: NTF-Grand;
+    color: #91c2e7;
+    padding: 10px;
+    font-size: 28px;
+    text-align: center;
 }
 
 /* Small Phone Design */
 
-@media only screen and (min-width: 0px) {
+@media only screen and (min-width: 338px) {
 
     #search {
         float: left;
         margin-left: 25px;
         padding: 10px 0;
+    }
+
+    #tornearme {
+        font-size: 21px;
     }
 
 }

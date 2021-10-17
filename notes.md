@@ -14,5 +14,5 @@
 ## Creating Forms
     -> Form for host to post tournament
     -> Form for users to create profile and login
-    -> Form for users to adjust team members
+    -> Form for users to create team and adjust team members
     -> Form for users to join tournament

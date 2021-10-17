@@ -6,6 +6,25 @@
     padding: 0;
 }
 
+@font-face {
+    font-family: 'NTF-Grand';
+    src: url('NTF-Grand-Regular.woff2') format('woff2'),
+        url('NTF-Grand-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Varsity';
+    src: url('VarsityRegular.woff2') format('woff2'),
+        url('VarsityRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
 /* Color Scheme:
     light blue = #91c2e7
     dark blue = #104b5f
@@ -284,7 +303,7 @@ header {
     }
 
     #tornearme {
-        font-size: 21px;
+        font-size: 24px;
     }
 
 }

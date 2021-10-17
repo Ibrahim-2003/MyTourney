@@ -4,6 +4,7 @@
 # To do next:
     -> Setup the Host page
     -> Setup the leaderboards page
+    -> Setup history page and balance page for players and hosts
     -> Put an add members button to team page
     -> Work on node.js backend and mysql database
     -> Start working on creating forms

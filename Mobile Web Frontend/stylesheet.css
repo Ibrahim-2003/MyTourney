@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'NTF-Grand';
+    src: url('NTF-Grand-Regular.woff2') format('woff2'),
+        url('NTF-Grand-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Varsity';
+    src: url('VarsityRegular.woff2') format('woff2'),
+        url('VarsityRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

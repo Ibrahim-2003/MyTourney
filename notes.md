@@ -8,6 +8,7 @@
     -> Put an add members button to team page
     -> Work on node.js backend and mysql database
     -> Start working on creating forms
+    -> Work on making bracket screen
 
 ## Creating Forms
     -> Form for host to post tournament

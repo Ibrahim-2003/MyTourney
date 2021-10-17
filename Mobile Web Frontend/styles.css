@@ -187,16 +187,67 @@ header {
     width: 35px;
 }
 
-#profile-img-container {
-    flex: 1;
-    align-content: center;
-}
 
 #profile-img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
     border-radius: 50%;
-    display: flex;
-    width: 100px;
-    height: 100px;
+    width: 50%;
+    height: 50%;
+}
+
+#stat-header {
+    font-family: NTF-Grand;
+    font-size: 32px;
+    margin-top: 15%;
+    margin-right: 15%;
+    margin-left: 15%;
+    text-align: center;
+    color: #104b5f;
+    border-radius: 10px;
+}
+
+#stat-container {
+    font-family: NTF-Grand;
+    font-size: 32px;
+    margin-top: 5%;
+    margin-right: 15%;
+    margin-left: 15%;
+    text-align: center;
+    color: #104b5f;
+    border-radius: 10px;
+}
+
+#stats {
+    font-family: NTF-Grand;
+    font-size: 18px;
+    text-align: left;
+    color: #104b5f;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.stat-vals {
+    text-align: center;
+    font-size: 32px;
+    font-family: Varsity;
+}
+
+#grid-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+}
+
+.grid-stats-item {
+    display: inline-grid;
+    font-size: 18px;
+    background-color: #91c2e7;
+    border-radius: 10px;
+    margin: 10px;
 }
 
 /* Small Phone Design */

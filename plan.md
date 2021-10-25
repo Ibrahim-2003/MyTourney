@@ -4,7 +4,14 @@ MVP App Features
 
 ## 1. Users
 
-    -> Register  
+    -> Register
+        * First name
+        * Last name
+        * Email
+        * Username
+        * Password
+        * Gender
+        * Date of Birth
     -> Log in  
     -> Log out  
     -> Create Profile

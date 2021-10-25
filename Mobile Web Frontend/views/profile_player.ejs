@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>MyTourney</title>
+</head>
+    <body>
+    <div class="navbar" id="nav_bar">
+        <nav>
+            <ul class="nav-links">
+                <li><a href="home">HOME</a></li>
+                <li><a href="balance">BALANCE</a></li>
+                <li><a href="friends">FRIENDS</a></li>
+                <li><a href="team_player">TEAM</a></li>
+            </ul>
+        </nav>
+    </div>
+    <br><br>
+    <div>
+        <h1 style="font-family: Varsity; color: #91c2e7; padding: 15px; font-size: 36px; text-align: center; font-weight: 300;">
+        MY PROFILE
+        </h1>
+    </div>
+    <div id="container">
+        <div>
+            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="profile-img">
+        </div>
+        <div id="txp" style="text-align: center; color: #91c2e7; margin-top: 5%">
+            1,000</br>
+            TXP
+        </div>
+    </div>
+    <div id="container">
+        <div style="background-color: #91c2e7;" id="stat-header">
+            Stats
+        </div>
+        <style>
+            td {
+                padding-left: 50px;
+            }
+        </style>
+        <div id="stat-container">
+            <div id="grid-stats">
+                <div class="grid-stats-item">
+                    <table style="text-align: center;">
+                        <tr>Tourneys Entered</tr>
+                        <tr class="stat-vals" id="tourney-count"></tr>
+                        <script>
+                            document.getElementById("tourney-count").innerHTML = "1";
+                        </script>
+                    </table>
+                </div>
+                <div class="grid-stats-item">
+                    <table style="text-align: center;">
+                        <tr>Tourneys Won</tr>
+                        <tr class="stat-vals" id="tourney-wins"></tr>
+                        <script>
+                            document.getElementById("tourney-wins").innerHTML = "1";
+                        </script>
+                    </table>
+                </div>
+                <div class="grid-stats-item">
+                    <table style="text-align: center;">
+                        <tr>Tourneys Lost</tr>
+                        <tr class="stat-vals" id="tourney-loss"></tr>
+                        <script>
+                            document.getElementById("tourney-loss").innerHTML = "1";
+                        </script>
+                    </table>
+                </div>
+                <div class="grid-stats-item">
+                    <table style="text-align: center;">
+                        <tr>Games Played</tr>
+                        <tr class="stat-vals" id="game-count"></tr>
+                        <script>
+                            document.getElementById("game-count").innerHTML = "1";
+                        </script>
+                    </table>
+                </div>
+                <div class="grid-stats-item">
+                    <table style="text-align: center;">
+                        <tr>Games Won</tr>
+                        <tr class="stat-vals" id="game-wins"></tr>
+                        <script>
+                            document.getElementById("game-wins").innerHTML = "1";
+                        </script>
+                    </table>
+                </div>
+                <div class="grid-stats-item">
+                    <table style="text-align: center;">
+                        <tr>Games Lost</tr>
+                        <tr class="stat-vals" id="game-loss"></tr>
+                        <script>
+                            document.getElementById("game-loss").innerHTML = "1";
+                        </script>
+                    </table>
+                </div>
+            </div>
+            <!-- <table id="stats">
+                <tr>
+                    <td>Tourneys Entered</td>
+                    <td class="stat-vals" id="tourney-count">{{TOURNEY_COUNT}}</td>
+                </tr>
+                <tr>
+                    <td>Tourneys Won</td>
+                    <td class="stat-vals" id="tourney-wins">{{TOURNEYWINS}}</td>
+                </tr>
+                <tr>
+                    <td>Tourneys Lost</td>
+                    <td class="stat-vals" id="tourney-losses">{{TOURNEYLOSSES}}</td>
+                </tr>
+                <tr>
+                    <td>Winnings</td>
+                    <td class="stat-vals" id="winnings">{{WINNINGS}}</td>
+                </tr>
+                <tr>
+                    <td>Losses</td>
+                    <td class="stat-vals" id="losses">{{LOSSES}}</td>
+                </tr>
+                <script>
+                    document.getElementById("tourney-count").innerHTML = "1";
+                    document.getElementById("tourney-wins").innerHTML = "1";
+                    document.getElementById("tourney-losses").innerHTML = "0";
+                    document.getElementById("winnings").innerHTML = "$80";
+                    document.getElementById("losses").innerHTML = "$0";
+                </script>
+            </table> -->
+        </div>
+    </div>
+    <script src="app.js"></script>
+    </body>
+</html>

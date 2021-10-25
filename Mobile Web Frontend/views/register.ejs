@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>MyTourney</title>
+</head>
+    <body>
+        <div style="color: #91c2e7; font-size: 36px; text-align: center; margin: auto; font-weight: 500; padding-bottom: 15px; padding-top: 50px;">
+            MYTOURNEY
+        </div>
+        <div id="container">
+            <div>
+                <img src="images/MyTourney Logo.png" id="login-img">
+            </div>
+        </div>
+        <div id="login-form-container" style="margin-bottom: 50px;">
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <input name="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="EMAIL">
+            </div>
+            <div class="form-group">
+                <input name="username" type="text" class="form-control" id="exampleInputUsername1" placeholder="USERNAME">
+            </div>
+            <div class="form-group">
+                <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="PASSWORD">
+            </div>
+            <div class="form-group">
+                <input name="first" type="text" class="form-control" id="exampleInputFirst1" placeholder="FIRST NAME">
+            </div>
+            <div class="form-group">
+                <input name="last" type="text" class="form-control" id="exampleInputLast1" placeholder="LAST NAME">
+            </div>
+            <div class="form-group">
+                <input name="birth-date" type="date" class="form-control" id="exampleInputBirth1" placeholder="BIRTH DATE">
+            </div>
+            <div class="form-group-radio">
+                <label for="gender">GENDER</label>
+                <select id="gender">
+                    <option value="M">MALE</option>
+                    <option value="F">FEMALE</option>
+                  </select>
+            </div>
+            <div class="form-group">
+                <input style="margin-top: 10px;" type="submit" id="submit-btn-reg" value="REGISTER">
+            </div>
+        </form>
+        </div>
+        <div id="login-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
+            Already have an account?&emsp;
+            <a href="/login" style="font-family: Varsity; color: #91c2e7;font-weight: 500;">LOGIN</a>
+        </div>
+    </body>
+</html>

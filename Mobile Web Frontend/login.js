@@ -1,10 +1,14 @@
 const mysql = require("mysql");
 
 const express = require("express");
+const e = require("express");
+const bodyParser = require("body-parser");
+const encoder = bodyParser.urlencoded();
 
 const app = express();
-app.set('view-engine', 'ejs')
+app.set('view-engine', 'ejs');
 app.use(express.static(__dirname));
+app.use(express.urlencoded({extended: false}));
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -45,9 +49,28 @@ app.get("/", function(req, res){
     res.render('home.ejs');
 })
 
-app.post("/register", function(req,res){
-
+app.post("/login",encoder, function(req,res){
+    var email = req.body.email;
+    var password = req.body.password;
+    connection.query("select * from loginuser where user_name = ? and user_pass = ?",[email, password], function(error, results, fields){
+        if (results.length > 0){
+            res.redirect("/home");
+        }else {
+            res.redirect("/login");
+        }
+        res.end();
+    })
 })
-//8:30
+
+//When login is success
+app.get("/home", function(req, res){
+    res.render('home.ejs');
+})
+
+app.post("/register", function(req,res){
+    
+})
+//16:31
 //'168.5.180.127' || 'localhost'
+// Start mysql server: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
 app.listen(4500);

@@ -51,6 +51,7 @@ app.get("/", function(req, res){
 })
 
 //net start MYSQL80
+//mysqld --init-file="E:\mysql-init.txt"
 //Database (USER TABLE): user_name, user_pass, user_email, user_first, user_gender, age, bio, photo, points, tourneys_played, tourneys_won, tourneys_lost, games_played, games_lost, goals_for, goals_against, shots, saves, shutouts
 //Need to add team many-to-many relationship, games_won, and user_last
 app.post("/login",encoder, function(req,res){

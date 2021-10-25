@@ -1,5 +1,6 @@
 # Jobs completed:
     -> Setup the profile page, team page, and friends (work in progress) page
+    -> Login completed, database setup and API setup done
 
 # To do next:
     -> Setup the Host page
@@ -10,6 +11,7 @@
     -> Work on node.js backend and mysql database
     -> Start working on creating forms
     -> Work on making bracket screen
+    -> Setup registration
 
 ## Creating Forms
     -> Form for host to post tournament

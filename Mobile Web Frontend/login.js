@@ -12,6 +12,7 @@ app.use(express.urlencoded({extended: false}));
 
 const connection = mysql.createConnection({
     host: "localhost",
+    port: 3306,
     user: "root",
     password: "password",
     database: "mytourney"
@@ -49,10 +50,13 @@ app.get("/", function(req, res){
     res.render('home.ejs');
 })
 
+//net start MYSQL80
+//Database (USER TABLE): user_name, user_pass, user_email, user_first, user_gender, age, bio, photo, points, tourneys_played, tourneys_won, tourneys_lost, games_played, games_lost, goals_for, goals_against, shots, saves, shutouts
+//Need to add team many-to-many relationship, games_won, and user_last
 app.post("/login",encoder, function(req,res){
     var email = req.body.email;
     var password = req.body.password;
-    connection.query("select * from loginuser where user_name = ? and user_pass = ?",[email, password], function(error, results, fields){
+    connection.query("select * from users where user_email = ? and user_pass = ?",[email, password], function(error, results, fields){
         if (results.length > 0){
             res.redirect("/home");
         }else {

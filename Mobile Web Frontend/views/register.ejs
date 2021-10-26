@@ -18,7 +18,7 @@
             </div>
         </div>
         <div id="login-form-container" style="margin-bottom: 50px;">
-        <form method="POST" action="/login">
+        <form method="POST" action="/register">
             <div class="form-group">
                 <input name="email" type="email" class="form-control" id="exampleInputEmail1" placeholder="EMAIL">
             </div>
@@ -34,12 +34,13 @@
             <div class="form-group">
                 <input name="last" type="text" class="form-control" id="exampleInputLast1" placeholder="LAST NAME">
             </div>
+            <label style="color: #303549;font-weight: 500;" for="exampleInputBirth1">BIRTH DATE</label>
             <div class="form-group">
-                <input name="birth-date" type="date" class="form-control" id="exampleInputBirth1" placeholder="BIRTH DATE">
+                <input name="birthdate" type="date" class="form-control" id="exampleInputBirth1" placeholder="BIRTH DATE">
             </div>
             <div class="form-group-radio">
                 <label for="gender">GENDER</label>
-                <select id="gender">
+                <select id="gender" name="gender">
                     <option value="M">MALE</option>
                     <option value="F">FEMALE</option>
                   </select>

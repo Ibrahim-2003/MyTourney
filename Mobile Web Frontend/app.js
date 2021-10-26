@@ -19,20 +19,21 @@ function topFunction() {
   // document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
 
-function tourneyFetch() {
-    const tourneylist_url = "http://localhost:8000/tourneys/";
-    fetch(tourneylist_url)
-  .then(function (response) {
-    console.log(response.json());
-  })
-  .then(function (data) {
-    console.log(appendData(data));
-  })
-  .catch(function (err) {
-    console.log(err);
-  });
-  
-}
 
-setTimeout(tourneyFetch, 5000);
-tourneyFetch;
+//Fetch Django API
+// function tourneyFetch() {
+//     const tourneylist_url = "http://localhost:8000/tourneys/";
+//     fetch(tourneylist_url)
+//   .then(function (response) {
+//     console.log(response.json());
+//   })
+//   .then(function (data) {
+//     console.log(appendData(data));
+//   })
+//   .catch(function (err) {
+//     console.log(err);
+//   });
+  
+// }
+// setTimeout(tourneyFetch, 5000);
+// tourneyFetch;

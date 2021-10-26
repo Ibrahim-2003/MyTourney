@@ -362,6 +362,7 @@ header {
 
 input[type=email], select {
     width: 100%;
+    font-size: 18px;
     padding: 15px;
     margin: 8px 0;
     display: flex;
@@ -372,6 +373,7 @@ input[type=email], select {
 
 input[type=password], select {
     width: 100%;
+    font-size: 18px;
     padding: 15px;
     margin: 8px 0;
     display: inline-block;
@@ -381,8 +383,9 @@ input[type=password], select {
 }
 
 input[type=text], select {
-    font-family: Varsity;
+    font-family: NTF-Grand;
     width: 100%;
+    font-size: 18px;
     padding: 15px;
     margin: 8px 0;
     display: inline-block;
@@ -392,9 +395,10 @@ input[type=text], select {
 }
 
 input[type=date], select {
-    font-family: Varsity;
+    font-family: NTF-Grand;
     width: 100%;
     padding: 15px;
+    font-size: 18px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
@@ -445,17 +449,18 @@ input[type=text]:focus {
 select:focus {
     outline: none;
     border: 1px solid #f45b6a;
+    color: #303549;
 }
 select {
     outline: none;
 }
 
 #exampleInputEmail1 {
-    font-family: Varsity;
+    font-family: NTF-Grand;
 }
 
 #exampleInputPassword1 {
-    font-family: Varsity;
+    font-family: NTF-Grand;
 }
 
 #login-redirect {

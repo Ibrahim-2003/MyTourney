@@ -5,11 +5,21 @@ const e = require("express");
 const bodyParser = require("body-parser");
 const encoder = bodyParser.urlencoded();
 const bcrypt = require("bcrypt");
+const passport = require("passport");
+const flash = require("express-flash");
+const session = require("express-session");
+const initializePassport = reqiure("./passport-config");
+
+initializePassport(
+    passport,
+    email => users.find(user => user.email === email)
+)
 
 const app = express();
 app.set('view-engine', 'ejs');
 app.use(express.static(__dirname));
 app.use(express.urlencoded({extended: false}));
+app.use(flash());
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -97,13 +107,15 @@ app.post("/register", async function(req,res){
     console.log([username, email, first, last, gender, age, birth])
     try {
         var password = await bcrypt.hash(req.body.password, 10);
+
         var vals = {user_name: username,
             user_pass: password,
             user_email: email,
             user_first: first,
             user_last: last,
             user_gender: gender,
-            age: age}
+            age: age};
+
         //Columns: "user_name", "user_pass", "user_email", "user_first", "user_last", "user_gender", "age", "bio", "photo", "points", "tourneys_played", "tourneys_won", "tourneys_lost", "games_played", "games_lost", "goals_for", "goals_against", "shots", "saves", "shutouts"
         var query = connection.query('INSERT INTO users SET ?',vals, function (error, results, fields){
             console.log(query);

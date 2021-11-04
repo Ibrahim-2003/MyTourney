@@ -17,6 +17,9 @@
                 <img src="images/MyTourney Logo.png" id="login-img">
             </div>
         </div>
+
+        <!-- Find a way to use dynamic EJS to decide which error output to say (email already exists, short password, etc.) -->
+        <div style="margin: auto; text-align: center; color: #f45b6a;padding: 10px; font-family: NTF-Grand;"><%= reg_error %></div>
         <div id="login-form-container" style="margin-bottom: 50px;">
         <form method="POST" action="/register">
             <div class="form-group">

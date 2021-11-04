@@ -165,6 +165,13 @@ header {
     display: flex;
 }
 
+.tourney-listing-adding {
+    margin: 25px 15px;
+    padding: 20px;
+    background-color: #91c2e7;
+    border-radius: 10px;
+}
+
 .flex-child {
     flex: 1;
 }
@@ -179,6 +186,21 @@ header {
     width: 65px;
     height: 65px;
     border-radius: 10px;
+}
+
+#add-tourney-img-container {
+    margin: auto;
+}
+
+#add-tourney-img {
+    width: 65px;
+    height: 65px;
+    border-radius: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    cursor: pointer;
 }
 
 #listview-info {

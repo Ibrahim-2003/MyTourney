@@ -50,8 +50,14 @@ app.get("/friends", checkAuthenticated, function(req, res){
 app.get("/profile_player", checkAuthenticated, function(req, res){
     res.render('profile_player.ejs');
 })
+app.get("/host", checkAuthenticated, function(req, res){
+    res.render('host_home.ejs');
+})
 app.get("/balance", checkAuthenticated, function(req, res){
     res.render('balance.ejs');
+})
+app.get("/add_tourney", checkAuthenticated, function(req, res){
+    res.render('add_tourney.ejs');
 })
 app.get("/team_player", checkAuthenticated, function(req, res){
     res.render('team_player.ejs');

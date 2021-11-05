@@ -11,10 +11,11 @@ const bcrypt = require("bcrypt");
 const methodOverride = require("method-override");
 const Nominatim = require('nominatim-geocoder')
 const geocoder = new Nominatim({}, {format: 'json'})
+const request = require('request')
 
 
 
-
+var add_tourney_error = "";
 var authcode;
 var registration_error = "";  
 var my_user_id = "";
@@ -95,55 +96,13 @@ app.post("/register_host", encoder, function(req,res){
 app.post("/post_listing", encoder, function(req, res){
     var cookie_user_id = req.cookies.id;
     console.log("COOKIE USER ID: " + cookie_user_id);
-    connection.query("select * from tourney_hosts where users_user_id=?",cookie_user_id, function(error, results, fields){
+    connection.query("select * from tourney_hosts where users_user_id=?",req.cookies.id, function(error, results, fields){
         var cookie_user_id = req.cookies.id;
         console.log("COOKIE USER ID: " + cookie_user_id);
-        function lattitude(streets, zips, states){
-            api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + streets + "%2C+" + zips + "%2C+" + states + "&format=json"
-                    
-            let url = api_req.replace(/ /g, "+");
-            // console.log(url)
-        
-            var lat = geocoder.search( { street: streets, postalcode: zips, state: states} )
-                .then((response) => {
-                    console.log(response)
-                    console.log(JSON.stringify(response));
-                    var result = JSON.stringify(response)
-                    result = JSON.parse(result)
-                    console.log('RESULT: '+ result[0].lat)
-                    lat = result[0].lat
-                    return lat
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-            return lat
-        }
-        
-        function longitude(streets, zips, states){
-            api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + streets + "%2C+" + zips + "%2C+" + states + "&format=json"
-                    
-            let url = api_req.replace(/ /g, "+");
-            console.log(url)
-        
-            var lon = geocoder.search( { street: streets, postalcode: zips, state: states} )
-                .then((response) => {
-                    console.log(response)
-                    console.log(JSON.stringify(response));
-                    var result = JSON.stringify(response)
-                    result = JSON.parse(result)
-                    console.log('RESULT: '+ result[0].lon)
-                    lon = result[0].lon
-                    return lon
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-            return lon
-        }
+        console.log("QUERY RESULTS: " + results[0])
         if (results.length > 0){
-            console.log(results.hosts_id)
-            var host_id = results.hosts_id;
+            console.log("HOST ID: " + results[0].hosts_id)
+            var host_id = results[0].hosts_id;
             var team_sizes = req.body.team_size;
             var gender = req.body.gender;
             var age_group = req.body.age_group;
@@ -159,28 +118,52 @@ app.post("/post_listing", encoder, function(req, res){
 
             //Duration in ms
             var duration_time = 600000;
-            var vals = {
-                team_sizes: team_sizes,
-                gender: gender,
-                age_group: age_group,
-                name: name,
-                city: city,
-                lat_coord: lattitude(street, zip, state),
-                lon_coord: longitude(street, zip, state),
-                duration_time: duration_time,
-                max_participants: max_participants,
-                entry_fee: entry_fee,
-                photo: photo,
-                hosts_hosts_id: host_id,
-                hosts_users_user_id: cookie_user_id
-            }
-        
-            connection.query('INSERT INTO tourneys SET ?',vals, function (error, results, fields){
-                // console.log(query);
-                console.log(vals);
-                console.log("TOURNEY SUCCESSFULLY CREATED");
-                res.redirect("/home");
+
+            api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + street + "%2C+" + zip + "%2C+" + state + "&format=json"
+                    
+            let url = api_req.replace(/ /g, "+");
+            console.log(url)
+
+            request({
+                url: url,
+                headers: {'User-Agent': 'ibrahim'},
+                json: true
+            }, (err, response, body) => {
+                console.log(response);
+                
+                if(body[0].lat){
+                    console.log('REQUESTS: ' + body[0])
+                    add_tourney_error = ""
+                    var vals = {
+                        team_sizes: team_sizes,
+                        gender: gender,
+                        age_group: age_group,
+                        name: name,
+                        city: city,
+                        lat_coord: body[0].lat,
+                        lon_coord: body[0].lon,
+                        duration_time: duration_time,
+                        max_participants: max_participants,
+                        entry_fee: entry_fee,
+                        photo: photo,
+                        hosts_hosts_id: host_id,
+                        hosts_users_user_id: cookie_user_id
+                    }
+    
+                    connection.query('INSERT INTO tourneys SET ?',vals, function (error, results, fields){
+                        // console.log(query);
+                        console.log(vals);
+                        console.log("TOURNEY SUCCESSFULLY CREATED");
+                        res.redirect("/host");
+                    })
+                }else{
+                    console.log('ADDRESS INVALID')
+                    add_tourney_error = "The address you entered is invalid, please try again with a different address."
+                    res.redirect("/add_tourney")
+                }
+                
             })
+
         }else{
             console.log("No host with this user id!")
         }
@@ -190,7 +173,7 @@ app.post("/post_listing", encoder, function(req, res){
 
 
 app.get("/add_tourney", checkAuthenticated, function(req, res){
-    res.render('add_tourney.ejs');
+    res.render('add_tourney.ejs', {add_error: add_tourney_error});
 })
 app.get("/team_player", checkAuthenticated, function(req, res){
     res.render('team_player.ejs');

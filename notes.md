@@ -8,10 +8,12 @@
     -> Created form for users to register and login
     -> Created form for host to post tournament
     -> Setup the Host page
-    -> Fixed the coordinate JSON get request, but must find a way to solve the mysql not receiving the host_id. It may have to do with async/await promise stuff
+    -> Fixed the coordinate JSON get request and the host_id issue
 
 # To do next:
+    -> Make dynamic listings (ie. show the images updating, detailed views, etc.)
     -> Setup the leaderboards page
+    -> Setup the detailed view for the tourney from the player perspective
     -> Add search, filter, sort functions to tourney listings
         *Sort by:
             -Location - use geolocation API to extract the user's current location and sort nearest by using haversine formula (https://www.movable-type.co.uk/scripts/latlong.html)

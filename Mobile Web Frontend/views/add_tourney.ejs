@@ -1,1 +1,91 @@
-<h1>TEST</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>MyTourney</title>
+</head>
+    <body>
+        <div style="color: #91c2e7; font-size: 36px; text-align: center; margin: auto; font-weight: 500; padding-bottom: 15px; padding-top: 50px;">
+            MYTOURNEY
+        </div>
+        <div id="container">
+            <div>
+                <img src="images/MyTourney Trophy Logo.png" id="host-tourney-img">
+            </div>
+        </div>
+
+        <!-- Find a way to use dynamic EJS to decide which error output to say (email already exists, short password, etc.) -->
+        <div id="login-form-container" style="margin-bottom: 50px;">
+        <form method="POST" action="/post_listing">
+            <div class="form-group">
+                <input name="tourney_name" type="text" class="form-control" id="exampleInputTourneyName1" placeholder="TOURNEY NAME">
+            </div>
+            <div class="form-group">
+                <input name="max_participants" type="text" class="form-control" id="exampleInputMax1" placeholder="MAX # OF PARTICIPATING TEAMS">
+            </div>
+            <div class="form-group" style="font-family: NTF-Grand;">
+                $<input name="entry_fee" onchange="setTwoNumberDecimal(this)" type="number" min="0.01" step="0.01" max="10000.00" value="10.00" class="form-control" id="exampleInputEntry1" style="margin-left: 10px;" placeholder="ENTRY FEE PER PLAYER">
+            </div>
+
+
+             <!-- Need to update this to include country once MyTourney goes multinational -->
+
+
+            <label style="color: #303549;font-weight: 500;" for="exampleInputStreet1">TOURNEY ADDRESS</label>
+            <div class="form-group">
+                <input name="street" type="text" class="form-control" id="exampleInputStreet1" placeholder="STREET">
+            </div>
+            <div class="form-group">
+                <input name="zip" type="number" class="form-control" id="exampleInputZip1" placeholder="ZIPCODE">
+            </div>
+            <div class="form-group">
+                <input name="city" type="text" class="form-control" id="exampleInputCity1" placeholder="CITY">
+            </div>
+            <div class="form-group">
+                <input name="state" type="text" class="form-control" id="exampleInputState1" placeholder="STATE">
+            </div>
+            <div class="form-group-radio">
+                <label for="team_size">TEAM SIZES</label>
+                <select id="team_size" name="team_size">
+                    <option value=3>3 vs 3</option>
+                    <option value=5>5 vs 5</option>
+                    <option value=11>11 vs 11</option>
+                  </select>
+            </div>
+            <div class="form-group-radio">
+                <label for="age_group">AGE GROUP</label>
+                <select id="age_group" name="age_group">
+                    <option value="youth">YOUTH (3-13)</option>
+                    <option value="highschool">HIGH SCHOOL (14-18)</option>
+                    <option value="adult">ADULT (19+)</option>
+                    <option value="mix">MIX</option>
+                  </select>
+            </div>
+            <div class="form-group-radio">
+                <label for="gender">GENDER</label>
+                <select id="gender" name="gender">
+                    <option value="M">MALE</option>
+                    <option value="F">FEMALE</option>
+                  </select>
+            </div>
+            <div class="form-group">
+                <input style="margin-top: 10px;" type="submit" id="submit-btn-reg" value="REGISTER">
+            </div>
+        </form>
+        </div>
+
+        <script>
+            function setTwoNumberDecimal(el) {
+                if(el != NaN){
+                el.value = parseFloat(el.value).toFixed(2);
+                }else{
+                    el.value = 0.00
+                }
+            };
+        </script>
+    </body>
+</html>

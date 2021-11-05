@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>MyTourney</title>
+</head>
+    <body>
+    <div class="navbar" id="nav_bar">
+        <nav>
+            <ul class="nav-links">
+                <li><a href="profile_player">PROFILE</a></li>
+                <li><a href="balance">BALANCE</a></li>
+                <li><a href="home">HOME</a></li>
+                <li><a href="team_player">TEAM</a></li>
+            </ul>
+        </nav>
+    </div>
+    <br><br>
+    <div style="color: #91c2e7; font-weight: 500; text-align: center; margin-top: 75%; font-family: NTF-Grand; font-size: 28px;
+                margin-left: 20px; margin-right: 20px;">
+        You do not have a host account, please create one to access host mode
+    </div>
+    <form method="POST" action="/register_host">
+        <div class="form-group">
+            <input style="margin-top: 25px;" type="submit" id="submit-btn-host" value="CREATE HOST ACCOUNT">
+        </div>
+    </form>
+
+
+    <button onclick="topFunction()" id="my-btn" title="Go to top">
+    <img src="images/Up Arrow.jpeg" style="height: 25px; padding-top: 5px;">
+    </button>
+    <script src="app.js"></script>
+    </body>
+</html>

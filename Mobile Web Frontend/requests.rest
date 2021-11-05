@@ -1,0 +1,2 @@
+
+GET https://nominatim.openstreetmap.org/?addressdetails=1&q=8162+Marseille+Dr.%2C+78414%2C+Texas&format=json

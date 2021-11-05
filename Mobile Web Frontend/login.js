@@ -4,10 +4,16 @@
 
 const mysql = require("mysql");
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const encoder = bodyParser.urlencoded();
 const bcrypt = require("bcrypt");
 const methodOverride = require("method-override");
+const Nominatim = require('nominatim-geocoder')
+const geocoder = new Nominatim({}, {format: 'json'})
+
+
+
 
 var authcode;
 var registration_error = "";  
@@ -17,6 +23,7 @@ const app = express();
 app.set('view-engine', 'ejs');
 app.use(express.static(__dirname));
 app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
 app.use(methodOverride('_method'))
 
 const connection = mysql.createConnection({
@@ -51,11 +58,137 @@ app.get("/profile_player", checkAuthenticated, function(req, res){
     res.render('profile_player.ejs');
 })
 app.get("/host", checkAuthenticated, function(req, res){
-    res.render('host_home.ejs');
+    console.log(req.cookies.id)
+    var search = connection.query("select * from tourney_hosts where users_user_id = ?", parseInt(req.cookies.id), function(error, results, fields){
+        console.log(search)
+        if (results.length > 0){
+            res.render('host_home.ejs');
+        }
+        else{
+            res.redirect('/host_signup');
+        }
+    });
+    
 })
 app.get("/balance", checkAuthenticated, function(req, res){
     res.render('balance.ejs');
 })
+app.get("/host_signup", checkAuthenticated, function(req, res){
+    res.render('host_signup.ejs');
+})
+
+app.post("/register_host", encoder, function(req,res){
+    var cookie_user_id = req.cookies.id;
+    var vals = {
+        users_user_id: cookie_user_id
+    }
+
+    var query = connection.query('INSERT INTO tourney_hosts SET ?',vals, function (error, results, fields){
+        console.log(query);
+        console.log('HOST ACCOUNT CREATED AND LINKED TO USER ID: ' + cookie_user_id)
+        res.redirect("/host")
+    })
+})
+
+
+
+app.post("/post_listing", encoder, function(req, res){
+    var cookie_user_id = req.cookies.id;
+    console.log("COOKIE USER ID: " + cookie_user_id);
+    connection.query("select * from tourney_hosts where users_user_id=?",cookie_user_id, function(error, results, fields){
+        var cookie_user_id = req.cookies.id;
+        console.log("COOKIE USER ID: " + cookie_user_id);
+        function lattitude(streets, zips, states){
+            api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + streets + "%2C+" + zips + "%2C+" + states + "&format=json"
+                    
+            let url = api_req.replace(/ /g, "+");
+            // console.log(url)
+        
+            var lat = geocoder.search( { street: streets, postalcode: zips, state: states} )
+                .then((response) => {
+                    console.log(response)
+                    console.log(JSON.stringify(response));
+                    var result = JSON.stringify(response)
+                    result = JSON.parse(result)
+                    console.log('RESULT: '+ result[0].lat)
+                    lat = result[0].lat
+                    return lat
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+            return lat
+        }
+        
+        function longitude(streets, zips, states){
+            api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + streets + "%2C+" + zips + "%2C+" + states + "&format=json"
+                    
+            let url = api_req.replace(/ /g, "+");
+            console.log(url)
+        
+            var lon = geocoder.search( { street: streets, postalcode: zips, state: states} )
+                .then((response) => {
+                    console.log(response)
+                    console.log(JSON.stringify(response));
+                    var result = JSON.stringify(response)
+                    result = JSON.parse(result)
+                    console.log('RESULT: '+ result[0].lon)
+                    lon = result[0].lon
+                    return lon
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+            return lon
+        }
+        if (results.length > 0){
+            console.log(results.hosts_id)
+            var host_id = results.hosts_id;
+            var team_sizes = req.body.team_size;
+            var gender = req.body.gender;
+            var age_group = req.body.age_group;
+            var name = req.body.tourney_name;
+            var zip = req.body.zip;
+            var city = req.body.city;
+            var street = req.body.street;
+            var state = req.body.state;
+            var max_participants = req.body.max_participants;
+            var entry_fee = req.body.entry_fee;
+            var photo = "http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg";
+            // var duration_time = req.body.duration_time;
+
+            //Duration in ms
+            var duration_time = 600000;
+            var vals = {
+                team_sizes: team_sizes,
+                gender: gender,
+                age_group: age_group,
+                name: name,
+                city: city,
+                lat_coord: lattitude(street, zip, state),
+                lon_coord: longitude(street, zip, state),
+                duration_time: duration_time,
+                max_participants: max_participants,
+                entry_fee: entry_fee,
+                photo: photo,
+                hosts_hosts_id: host_id,
+                hosts_users_user_id: cookie_user_id
+            }
+        
+            connection.query('INSERT INTO tourneys SET ?',vals, function (error, results, fields){
+                // console.log(query);
+                console.log(vals);
+                console.log("TOURNEY SUCCESSFULLY CREATED");
+                res.redirect("/home");
+            })
+        }else{
+            console.log("No host with this user id!")
+        }
+            })
+
+})
+
+
 app.get("/add_tourney", checkAuthenticated, function(req, res){
     res.render('add_tourney.ejs');
 })
@@ -82,7 +215,9 @@ app.post("/login",encoder, function(req,res){
         if (bcrypt.compare(password, results[0].user_pass)){
             authcode = true;
             my_user_id = results[0].user_id;
-            console.log(my_user_id);
+            res.clearCookie('id')
+            res.cookie('id', my_user_id);
+            console.log(req.cookies.id)
             res.redirect("/home");
         }else {
             res.redirect("/login");
@@ -103,21 +238,9 @@ app.post("/register", async function(req,res){
     var first = req.body.first;
     var last = req.body.last;
     var birth = req.body.birthdate;
-    function getAge(dateString) {
-        var today = new Date();
-        var birthDate = new Date(dateString);
-        var age = today.getFullYear() - birthDate.getFullYear();
-        var m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age;
-    }
-    var age = getAge(birth);
     // var element = document.getElementById("gender");
     // var gender = element.value;
     var gender = req.body.gender;
-    console.log([username, email, first, last, gender, age, birth])
     try {
         var password = await bcrypt.hash(req.body.password, 10);
 
@@ -141,6 +264,8 @@ app.post("/register", async function(req,res){
                 console.log("USER REGISTERED");
                 authcode = true;
                 my_user_id = results[0].user_id;
+                //Expires after 1800000 ms (30 minutes) from the time it is set.
+                res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
                 registration_error = ""
             }else {
                 registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
@@ -157,24 +282,27 @@ app.post("/register", async function(req,res){
 
 app.get('/logout', (req, res)=>{
     authcode = false;
+    res.clearCookie('id');
+    res.cookie('id', -1);
+    console.log(req.cookies.id);
     res.redirect('/login');
 })
 
 function checkAuthenticated(req, res, next){
-    if (authcode){
+    if (authcode || req.cookies.id > 0){
         return next()
     }
     res.redirect('/login')
 }
 
 function checkNotAuthenticated(req, res, next){
-    if (authcode){
+    if (authcode || req.cookies.id > 0){
         return res.redirect('/home')
     }
     next()
 }
 function checkNotAuthenticatedReg(req, res, next){
-    if (authcode){
+    if (authcode || req.cookies.id > 0){
         return res.redirect('/home')
     }
     next()

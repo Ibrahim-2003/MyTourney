@@ -5,9 +5,12 @@
     -> Authentication completed
     -> Finished connecting node.js backend and mysql database
     -> Finished working on creating registration forms
+    -> Created form for users to register and login
+    -> Created form for host to post tournament
+    -> Setup the Host page
+    -> Fixed the coordinate JSON get request, but must find a way to solve the mysql not receiving the host_id. It may have to do with async/await promise stuff
 
 # To do next:
-    -> Setup the Host page
     -> Setup the leaderboards page
     -> Add search, filter, sort functions to tourney listings
         *Sort by:
@@ -19,16 +22,21 @@
             -Gender
             -Team size
             -Distance (only show tourneys x miles from location)
-            -Age Group (youth (4-12), high school (13-17), college (18-22), adult (+22))
+            -Age Group (youth (3-14), high school (14-18),  adult (19+))
     -> Setup history page and balance page for players and hosts
     -> Put an add members button to team page
-    -> Work on node.js backend and mysql database
-    -> Start working on creating forms
+        //IDEAS
+            -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
+    -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
+        //NOTES
+            -Important to consider the order in which the users get paid. (ie. I get paid everything, then I pay the host, and I also pay the winning team)
+
+    //Not essential for MVP
     -> Work on making bracket screen
 
 ## Creating Forms
-    -> Form for host to post tournament
-    -> Form for users to register and login
     -> Form for users to edit profile
     -> Form for users to create team and adjust team members
     -> Form for users to join tournament
+        //IDEAS
+            -The tourneys on the home screen will link to a URL page with the tourney ID as a query parameter. When the GET request for that URL is made, the page updates with that tourney's detailed info. A button will show up that allows a team member to start the enter process. Other members will receive a notification if they want to join. The notification will link to the payment screen.

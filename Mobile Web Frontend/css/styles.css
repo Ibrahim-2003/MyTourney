@@ -115,6 +115,18 @@ header {
     margin-top: 10px;
 }
 
+#schedule {
+    float: left;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 25%;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 10px;
+}
+
 #logo_img_home {
     float: left;
     width: 50%;
@@ -360,6 +372,15 @@ header {
     margin-right: auto;
 }
 
+#host-tourney-img {
+    padding-top: 15px;
+    padding-bottom: 50px;
+    width: 25%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 
 #login-form-container {
     max-width: 90vw;
@@ -416,6 +437,30 @@ input[type=text], select {
     box-sizing: border-box;
 }
 
+#exampleInputZip1 {
+    font-family: NTF-Grand;
+    width: 100%;
+    font-size: 18px;
+    padding: 15px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=number], select {
+    font-family: NTF-Grand;
+    width: 50%;
+    font-size: 18px;
+    padding: 15px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 input[type=date], select {
     font-family: NTF-Grand;
     width: 100%;
@@ -441,6 +486,13 @@ input[type=submit] {
 
 #submit-btn-reg {
     width: 35%;
+    font-size: 16px;
+    text-align: center;
+    font-size: 4vw;
+}
+
+#submit-btn-host {
+    width: 55%;
     font-size: 16px;
     text-align: center;
     font-size: 4vw;

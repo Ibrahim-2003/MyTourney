@@ -13,7 +13,7 @@ const Nominatim = require('nominatim-geocoder')
 const geocoder = new Nominatim({}, {format: 'json'})
 const request = require('request')
 
-
+//Location API: https://nominatim.org/release-docs/latest/api/Search/
 
 var add_tourney_error = "";
 var authcode;
@@ -35,6 +35,30 @@ const connection = mysql.createConnection({
     database: "mytourney_db",
     timezone: 'utc'
 });
+
+//27.648909,-97.390611
+//29.715646, -95.398331
+
+tourney_coords = [29.715646, -95.398331]
+home_coords = [27.648909,-97.390611]
+
+function distance(lat1, lon1, lat2, lon2){
+    const R = 6371e3; // metres
+    const φ1 = lat1 * Math.PI/180; // φ, λ in radians
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    const d = R * c; // in metres
+    return d
+}
+
+console.log(`Distance: ${distance(home_coords[0], home_coords[1], tourney_coords[0], tourney_coords[1]).toFixed(2)}` + " m")
 
 //Connect to database
 connection.connect(function(error){
@@ -59,8 +83,10 @@ app.get("/profile_player", checkAuthenticated, function(req, res){
     res.render('profile_player.ejs');
 })
 app.get("/host", checkAuthenticated, function(req, res){
-    console.log(req.cookies.id)
-    var search = connection.query("select * from tourney_hosts where users_user_id = ?", parseInt(req.cookies.id), function(error, results, fields){
+    
+    if(req.cookies.id){
+        console.log(req.cookies.id)
+       var search = connection.query("select * from tourney_hosts where users_user_id = ?", parseInt(req.cookies.id), function(error, results, fields){
         console.log(search)
         if (results.length > 0){
             res.render('host_home.ejs');
@@ -68,7 +94,9 @@ app.get("/host", checkAuthenticated, function(req, res){
         else{
             res.redirect('/host_signup');
         }
-    });
+    }); 
+    }
+    
     
 })
 app.get("/balance", checkAuthenticated, function(req, res){

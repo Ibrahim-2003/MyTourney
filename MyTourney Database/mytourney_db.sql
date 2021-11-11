@@ -35,7 +35,7 @@ CREATE TABLE `games` (
   PRIMARY KEY (`games_id`,`tourneys_tourneys_id`,`tourneys_hosts_hosts_id`,`tourneys_hosts_users_user_id`),
   UNIQUE KEY `games_id_UNIQUE` (`games_id`),
   KEY `fk_games_tourneys1_idx` (`tourneys_tourneys_id`,`tourneys_hosts_hosts_id`,`tourneys_hosts_users_user_id`),
-  CONSTRAINT `fk_games_tourneys1` FOREIGN KEY (`tourneys_tourneys_id`, `tourneys_hosts_hosts_id`, `tourneys_hosts_users_user_id`) REFERENCES `tourneys` (`tourneys_id`, `hosts_hosts_id`, `hosts_users_user_id`)
+  CONSTRAINT `fk_games_tourneys1` FOREIGN KEY (`tourneys_tourneys_id`) REFERENCES `tourneys` (`tourneys_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -46,33 +46,6 @@ CREATE TABLE `games` (
 LOCK TABLES `games` WRITE;
 /*!40000 ALTER TABLE `games` DISABLE KEYS */;
 /*!40000 ALTER TABLE `games` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `hosts`
---
-
-DROP TABLE IF EXISTS `hosts`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `hosts` (
-  `hosts_id` int NOT NULL AUTO_INCREMENT,
-  `address` varchar(255) NOT NULL,
-  `membership` varchar(10) NOT NULL,
-  `users_user_id` int NOT NULL,
-  PRIMARY KEY (`hosts_id`,`users_user_id`),
-  KEY `fk_hosts_users_idx` (`users_user_id`),
-  CONSTRAINT `fk_hosts_users` FOREIGN KEY (`users_user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `hosts`
---
-
-LOCK TABLES `hosts` WRITE;
-/*!40000 ALTER TABLE `hosts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `hosts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -159,7 +132,7 @@ CREATE TABLE `teams_entered_in_tourney` (
   PRIMARY KEY (`teams_teams_id`,`teams_users_user_id`,`tourneys_tourneys_id`,`tourneys_hosts_hosts_id`,`tourneys_hosts_users_user_id`),
   KEY `fk_teams_entered_in_tourney_tourneys1_idx` (`tourneys_tourneys_id`,`tourneys_hosts_hosts_id`,`tourneys_hosts_users_user_id`),
   CONSTRAINT `fk_teams_entered_in_tourney_teams1` FOREIGN KEY (`teams_teams_id`, `teams_users_user_id`) REFERENCES `teams` (`teams_id`, `users_user_id`),
-  CONSTRAINT `fk_teams_entered_in_tourney_tourneys1` FOREIGN KEY (`tourneys_tourneys_id`, `tourneys_hosts_hosts_id`, `tourneys_hosts_users_user_id`) REFERENCES `tourneys` (`tourneys_id`, `hosts_hosts_id`, `hosts_users_user_id`)
+  CONSTRAINT `fk_teams_entered_in_tourney_tourneys1` FOREIGN KEY (`tourneys_tourneys_id`) REFERENCES `tourneys` (`tourneys_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -170,6 +143,34 @@ CREATE TABLE `teams_entered_in_tourney` (
 LOCK TABLES `teams_entered_in_tourney` WRITE;
 /*!40000 ALTER TABLE `teams_entered_in_tourney` DISABLE KEYS */;
 /*!40000 ALTER TABLE `teams_entered_in_tourney` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tourney_hosts`
+--
+
+DROP TABLE IF EXISTS `tourney_hosts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tourney_hosts` (
+  `hosts_id` int NOT NULL AUTO_INCREMENT,
+  `address` varchar(255) DEFAULT NULL,
+  `membership` varchar(10) DEFAULT NULL,
+  `users_user_id` int NOT NULL,
+  PRIMARY KEY (`hosts_id`,`users_user_id`),
+  KEY `fk_hosts_users_idx` (`users_user_id`),
+  CONSTRAINT `fk_hosts_users` FOREIGN KEY (`users_user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tourney_hosts`
+--
+
+LOCK TABLES `tourney_hosts` WRITE;
+/*!40000 ALTER TABLE `tourney_hosts` DISABLE KEYS */;
+INSERT INTO `tourney_hosts` VALUES (2,NULL,NULL,1);
+/*!40000 ALTER TABLE `tourney_hosts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -197,8 +198,8 @@ CREATE TABLE `tourneys` (
   `hosts_users_user_id` int NOT NULL,
   PRIMARY KEY (`tourneys_id`,`hosts_hosts_id`,`hosts_users_user_id`),
   KEY `fk_tourneys_hosts1_idx` (`hosts_hosts_id`,`hosts_users_user_id`),
-  CONSTRAINT `fk_tourneys_hosts1` FOREIGN KEY (`hosts_hosts_id`, `hosts_users_user_id`) REFERENCES `hosts` (`hosts_id`, `users_user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+  CONSTRAINT `fk_tourneys_hosts1` FOREIGN KEY (`hosts_hosts_id`, `hosts_users_user_id`) REFERENCES `tourney_hosts` (`hosts_id`, `users_user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,6 +208,7 @@ CREATE TABLE `tourneys` (
 
 LOCK TABLES `tourneys` WRITE;
 /*!40000 ALTER TABLE `tourneys` DISABLE KEYS */;
+INSERT INTO `tourneys` VALUES (2,3,'M','youth','TEST','Corpus Christi',NULL,NULL,NULL,600000,6,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(3,3,'M','youth','TEST','Corpus Christi',NULL,NULL,NULL,600000,6,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(4,3,'M','youth','OWL CUP','Houston',29.7157,-95.3977,NULL,600000,8,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(5,3,'M','youth','OWLSTARS','HOUSTON',29.7168,-95.4048,NULL,600000,12,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(6,11,'M','highschool','EAGLE CUP','Corpus Christi ',27.666,-97.3736,NULL,600000,16,30,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1);
 /*!40000 ALTER TABLE `tourneys` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -229,7 +231,7 @@ CREATE TABLE `transactions` (
   PRIMARY KEY (`transactions_id`,`tourneys_tourneys_id`,`tourneys_hosts_hosts_id`,`tourneys_hosts_users_user_id`,`users_user_id`),
   KEY `fk_transactions_tourneys1_idx` (`tourneys_tourneys_id`,`tourneys_hosts_hosts_id`,`tourneys_hosts_users_user_id`),
   KEY `fk_transactions_users1_idx` (`users_user_id`),
-  CONSTRAINT `fk_transactions_tourneys1` FOREIGN KEY (`tourneys_tourneys_id`, `tourneys_hosts_hosts_id`, `tourneys_hosts_users_user_id`) REFERENCES `tourneys` (`tourneys_id`, `hosts_hosts_id`, `hosts_users_user_id`),
+  CONSTRAINT `fk_transactions_tourneys1` FOREIGN KEY (`tourneys_tourneys_id`) REFERENCES `tourneys` (`tourneys_id`),
   CONSTRAINT `fk_transactions_users1` FOREIGN KEY (`users_user_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -275,7 +277,7 @@ CREATE TABLE `users` (
   `shutouts` int DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_email_UNIQUE` (`user_email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -284,7 +286,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'username','$2b$10$yTeSl50UzMOTYWgzB6T76OgcpfT0eud94eeJzmafguv97VMUwGw6i','isa1@rice.edu','first','last','M','2003-02-27',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `users` VALUES (1,'user','$2b$10$cx4sdvkui2FN5Ue3oPlnM.FQXNhi683wjKk4KF4roqYQiUSYDD4R.','isa1@rice.edu','Ibrahim','Al-Akash','M','2003-02-27',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -297,4 +299,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-04 10:20:02
+-- Dump completed on 2021-11-07 19:55:16

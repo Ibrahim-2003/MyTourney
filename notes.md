@@ -35,6 +35,8 @@
 
     //Not essential for MVP
     -> Work on making bracket screen
+    -> Work on making terms and conditions agreement
+    -> Work on making waiver removing liability for injuries incurred at tourneys
 
 ## Creating Forms
     -> Form for users to edit profile
@@ -42,3 +44,42 @@
     -> Form for users to join tournament
         //IDEAS
             -The tourneys on the home screen will link to a URL page with the tourney ID as a query parameter. When the GET request for that URL is made, the page updates with that tourney's detailed info. A button will show up that allows a team member to start the enter process. Other members will receive a notification if they want to join. The notification will link to the payment screen.
+
+## Production Cost
+    <<<MVP: $28/month>>>
+    -> Domain Name
+        <$12/year>
+        -www.winmytourney.com
+        -Google Domain
+        -https://devcenter.heroku.com/articles/custom-domains
+        -Professional Google Workspace email address $6/month
+            *Includes 30GB of Google Drive space
+            *Up to 100 participants in a Google Video call
+    -> Website and database will be hosted on Heroku
+        <$16/month Basic Plan>
+        -Database must migrate from MySQL to Postgres
+        -SSL certificates provided
+        -Maximum of 20 connections to database with 10 million row limit
+    -> CDN will be hosted with Amazon S3
+        <$5/month Basic Plan>
+        -Bucketeer addon on Heroku will connect the S3 CDN to the web app
+        -Use a compression algorithm to reduce filesize of images
+        -Cheapest Bucketeer option includes 5GB storage
+    -> Email sending
+        -Start with free SMTP email linked to professional Google Workspace email (https://www.courier.com/blog/how-to-send-emails-with-node-js)
+            *Can upgrade to other standalone email service later as I have more money
+
+## Future Costs
+    -> Stripe Payments -> Collect fees and transfer the hosts payment
+        2.9% + $0.30 per transaction
+    -> Paypal Payouts -> Pay winners
+        -https://developer.paypal.com/docs/api/payments.payouts-batch/v1/
+        -https://github.com/paypal/Payouts-NodeJS-SDK/blob/master/samples/createPayout.js
+        2%
+    -> Marketing
+        Google Ads deal = $150 credit for spending of $150
+        $500 free advertising credit Google Ads
+        Would like to learn more about best avenues -> Where are the people playing sports
+            -Expect $9,000 to $10,000 per month
+    -> Expanding Heroku pricing plan
+    -> Expanding email plan

@@ -2,42 +2,51 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.png?">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
-    <title>HOST</title>
+    <title>Host Home - MyTourney</title>
 </head>
-    <body>
-    <div class="navbar" id="nav_bar">
+    <body style="background-color: #560000;">
+    <div class="navbar-host" id="nav_bar_host">
         <nav>
-            <ul class="nav-links">
+            <ul class="nav-links-host">
                 <!-- Make this so that the "PROFILE" changes to "LOGIN" -->
                 <!-- Make it so that if the user does not have a team, he can join a team or create one -->
-                <li><a href="profile_player">PROFILE</a></li>
-                <li><a href="balance">BALANCE</a></li>
-                <li><a href="friends">FRIENDS</a></li>
-                <li><a href="team_player">RECORD</a></li>
+                <li><a style="color: #560000" href="profile_player">PROFILE</a></li>
+                <li><a style="color: #560000" href="balance">BALANCE</a></li>
+                <li><a style="color: #560000" href="friends">FRIENDS</a></li>
+                <li><a style="color: #560000" href="team_player">RECORD</a></li>
             </ul>
         </nav>
     </div>
     <br><br>
-    <section class="logo">
+    <!-- Color Scheme:
+    light blue = #91c2e7
+    dark blue = #104b5f
+    dark purple navy text = #303549
+    light red = #f45b6a
+    maroon / deep red = #560000
+    blue grey = #c9d6e0
+    cream white = #e4fde1 -->
+    <section class="logo-host">
         <div class="container">
-            <div style="background-color: #91c2e7;" id="schedule">
-                <li style="list-style: none;"><a href="leaderboard" style="font-size: 14px;">LEADER<br>BOARD</a></li>
+            <div style="background-color: #f45b6a;" id="schedule">
+                <li style="list-style: none;"><a href="leaderboard" style="font-size: 14px;color: #560000;">LEADER<br>BOARD</a></li>
             </div>
             <div id="logo_img_home">
-                <img src="images/MyTourney Logo.png" style="height: 85px;">
+                <img src="images/MyTourney Logo Soccer Inverted.png" style="height: 85px;">
             </div>
-            <div style="background-color: #91c2e7;" id="host">
-                <li style="list-style: none;"><a href="home" style="font-size: 14px;">PLAYER<br>MODE</a></li>
+            <div style="background-color: #f45b6a;" id="host">
+                <li style="list-style: none;"><a href="home" style="font-size: 14px;color: #560000;">PLAYER<br>MODE</a></li>
             </div>
         </div>
     </section>
     <br><br>
     <section class="searchbar">
-        <div style="color: #91c2e7; font-weight: 500; text-align: center;margin: auto; font-size: 28px; margin-bottom: -20px;">MYTOURNEY LISTINGS</div>
+        <div style="color: #ffd2d2; font-weight: 500; text-align: center;margin: auto; font-size: 28px; margin-bottom: -20px;">MYTOURNEY LISTINGS</div>
     </section>
     <section id="listings">
         <!-- {% for x in object_list %}
@@ -53,44 +62,44 @@
         </div>
             
         {% endfor %} -->
-        <div class="tourney-listing">
+        <div class="tourney-listing-host">
                     <div id="venue-img-container" class="flex-child img">
                         <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
                     </div>
-                    <div id="listview-info" class="flex-child info">
+                    <div id="listview-info-host" class="flex-child info">
                         Game: 3v3   Age Group: U16<br/>
                         Entry: $10/team Duration: 5 Goals<br/>
                         # of Teams Participating: 5
                     </div>
         </div>
         
-        <div class="tourney-listing">
+        <div class="tourney-listing-host">
             <div id="venue-img-container" class="flex-child img">
                 <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
             </div>
-            <div id="listview-info" class="flex-child info">
+            <div id="listview-info-host" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
                 Entry: $10/team Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>
 
-        <div class="tourney-listing">
+        <div class="tourney-listing-host">
             <div id="venue-img-container" class="flex-child img">
                 <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
             </div>
-            <div id="listview-info" class="flex-child info">
+            <div id="listview-info-host" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
                 Entry: $10/team Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>
 
-        <div class="tourney-listing">
+        <div class="tourney-listing-host">
             <div id="venue-img-container" class="flex-child img">
                 <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
             </div>
-            <div id="listview-info" class="flex-child info">
+            <div id="listview-info-host" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
                 Entry: $10/team Duration: 5 Goals<br/>
                 # of Teams Participating: 5
@@ -106,8 +115,8 @@
             </div>
         </div>
 
-        <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
-            <a href="/logout" style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="logout">LOGOUT</a>
+        <div id="register-redirect" style="font-family: NTF-Grand; color: #ffd2d2">
+            <a href="/logout" style="font-family: Varsity; color: #ffd2d2;font-weight: 500; border: 0;" id="logout">LOGOUT</a>
         </div>
 
     </section>

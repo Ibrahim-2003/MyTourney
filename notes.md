@@ -75,11 +75,20 @@
     -> Paypal Payouts -> Pay winners
         -https://developer.paypal.com/docs/api/payments.payouts-batch/v1/
         -https://github.com/paypal/Payouts-NodeJS-SDK/blob/master/samples/createPayout.js
-        2%
+        2% per mass payout
     -> Marketing
         Google Ads deal = $150 credit for spending of $150
         $500 free advertising credit Google Ads
-        Would like to learn more about best avenues -> Where are the people playing sports
-            -Expect $9,000 to $10,000 per month
+        Would like to learn more about best avenues -> Where are the people playing sports (Facebook, Insta, YouTube, etc.)
     -> Expanding Heroku pricing plan
     -> Expanding email plan
+
+Beer Bike Tournament
+Ask people around who are interested in app -> T-shirt with logo
+Divinc -> Apply to accelerator
+Main Lane -> Esports How they got funding
+Look for interns to help with marketing
+Launchpad January 19 -> 6 weeks -> Innovators and entrepreneurs into shuttles based on industry
+Turkey Run -> Target market
+I have a startup I am planning to launch in spring 2022 and looking for intern unpaid to help with marketing
+Rice Ventures Christa Westheimer - I am interested in Rice Ventures https://riceventures.org/ -> Startup summit sunday

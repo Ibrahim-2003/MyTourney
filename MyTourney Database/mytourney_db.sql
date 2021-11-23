@@ -189,7 +189,6 @@ CREATE TABLE `tourneys` (
   `city` varchar(255) DEFAULT NULL,
   `lat_coord` float DEFAULT NULL,
   `lon_coord` float DEFAULT NULL,
-  `duration_points` int DEFAULT NULL,
   `duration_time` int DEFAULT NULL,
   `max_participants` int DEFAULT NULL,
   `entry_fee` float DEFAULT NULL,
@@ -208,7 +207,7 @@ CREATE TABLE `tourneys` (
 
 LOCK TABLES `tourneys` WRITE;
 /*!40000 ALTER TABLE `tourneys` DISABLE KEYS */;
-INSERT INTO `tourneys` VALUES (2,3,'M','youth','TEST','Corpus Christi',NULL,NULL,NULL,600000,6,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(3,3,'M','youth','TEST','Corpus Christi',NULL,NULL,NULL,600000,6,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(4,3,'M','youth','OWL CUP','Houston',29.7157,-95.3977,NULL,600000,8,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(5,3,'M','youth','OWLSTARS','HOUSTON',29.7168,-95.4048,NULL,600000,12,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(6,11,'M','highschool','EAGLE CUP','Corpus Christi ',27.666,-97.3736,NULL,600000,16,30,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1);
+INSERT INTO `tourneys` VALUES (4,3,'M','youth','OWL CUP','Houston',29.7157,-95.3977,600000,8,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(5,3,'M','youth','OWLSTARS','HOUSTON',29.7168,-95.4048,600000,12,10,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1),(6,11,'M','highschool','EAGLE CUP','Corpus Christi ',27.666,-97.3736,600000,16,30,'http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg',2,1);
 /*!40000 ALTER TABLE `tourneys` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -277,7 +276,7 @@ CREATE TABLE `users` (
   `shutouts` int DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_email_UNIQUE` (`user_email`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -299,4 +298,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-07 19:55:16
+-- Dump completed on 2021-11-23  9:22:56

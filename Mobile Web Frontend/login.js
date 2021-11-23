@@ -58,7 +58,20 @@ function distance(lat1, lon1, lat2, lon2){
     return d
 }
 
-console.log(`Distance: ${distance(home_coords[0], home_coords[1], tourney_coords[0], tourney_coords[1]).toFixed(2)}` + " m")
+// console.log(`Distance: ${distance(home_coords[0], home_coords[1], tourney_coords[0], tourney_coords[1]).toFixed(2)}` + " m")
+
+function getLocation(){
+    if (navigator.geolocation) {
+        return navigator.geolocation.watchPosition(showPosition);
+    }
+}
+
+function showPosition(position) {
+    current_position = [position.coords.latitude, position.coords.longitude]
+    return current_position
+}
+
+var current_position = getLocation();
 
 //Connect to database
 connection.connect(function(error){
@@ -216,6 +229,30 @@ app.get("/", checkAuthenticated, function(req, res){
 //Database (USER TABLE): user_name, user_pass, user_email, user_first, user_gender, age, bio, photo, points, tourneys_played, tourneys_won, tourneys_lost, games_played, games_lost, goals_for, goals_against, shots, saves, shutouts
 //Need to add team many-to-many relationship, games_won, and user_last
 // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; if nodejs is showing "consider upgrading mysql client"
+
+
+connection.query("select * from tourneys", function(error, results, fields){
+    if (results.length > 0){
+        var i;
+        var coords = [];
+            for (var i = 0; i < results.length; i++){
+            coords.push({Lat: results[i]['lat_coord'], 
+                    Lon: results[i]['lon_coord'],
+                    Distance: distance(home_coords[0], home_coords[1], results[i]['lat_coord'], results[i]['lon_coord']),
+                    Id: results[i]['tourneys_id']})
+            // console.log(coords)
+        }
+        console.log(coords)
+        coords.sort((a,b) => {
+            return a.Distance - b.Distance
+        })
+        console.log(coords)
+        // console.log(coords)
+    }else {
+        console.log("NO TOURNEYS")
+    }
+})
+
 
 app.post("/login",encoder, function(req,res){
     var email = req.body.email;

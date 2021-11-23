@@ -83,7 +83,6 @@
     -> Expanding Heroku pricing plan
     -> Expanding email plan
 
-Beer Bike Tournament
 Ask people around who are interested in app -> T-shirt with logo
 Divinc -> Apply to accelerator
 Main Lane -> Esports How they got funding
@@ -92,3 +91,4 @@ Launchpad January 19 -> 6 weeks -> Innovators and entrepreneurs into shuttles ba
 Turkey Run -> Target market
 I have a startup I am planning to launch in spring 2022 and looking for intern unpaid to help with marketing
 Rice Ventures Christa Westheimer - I am interested in Rice Ventures https://riceventures.org/ -> Startup summit sunday
+https://workamericacapital.com/ -> Investor

@@ -369,5 +369,6 @@ function checkNotAuthenticatedReg(req, res, next){
 
 //16:31
 //'168.5.180.127' || 'localhost'
-// Start mysql server: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
+// Start mysql server windows: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
+// Start mysql server mac: sudo /usr/local/mysql/support-files/mysql.server start
 app.listen(4500);

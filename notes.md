@@ -9,6 +9,7 @@
     -> Created form for host to post tournament
     -> Setup the Host page
     -> Fixed the coordinate JSON get request and the host_id issue
+    -> Sort by distance function created (still need to work on sort UI)
 
 # To do next:
     -> Make dynamic listings (ie. show the images updating, detailed views, etc.)

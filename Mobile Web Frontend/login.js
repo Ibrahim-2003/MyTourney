@@ -60,18 +60,18 @@ function distance(lat1, lon1, lat2, lon2){
 
 // console.log(`Distance: ${distance(home_coords[0], home_coords[1], tourney_coords[0], tourney_coords[1]).toFixed(2)}` + " m")
 
-function getLocation(){
-    if (navigator.geolocation) {
-        return navigator.geolocation.watchPosition(showPosition);
-    }
-}
+// function getLocation(){
+//     if (navigator.geolocation) {
+//         return navigator.geolocation.watchPosition(showPosition);
+//     }
+// }
 
-function showPosition(position) {
-    current_position = [position.coords.latitude, position.coords.longitude]
-    return current_position
-}
+// function showPosition(position) {
+//     current_position = [position.coords.latitude, position.coords.longitude]
+//     return current_position
+// }
 
-var current_position = getLocation();
+// var current_position = getLocation();
 
 //Connect to database
 connection.connect(function(error){
@@ -101,7 +101,13 @@ app.get("/host", checkAuthenticated, function(req, res){
         console.log(req.cookies.id)
        var search = connection.query("select * from tourney_hosts where users_user_id = ?", parseInt(req.cookies.id), function(error, results, fields){
         console.log(search)
-        if (results.length > 0){
+        var res_len;
+        if (results != undefined){
+            res_len = results.length;
+        }else{
+            res_len = 0
+        }
+        if (res_len > 0){
             res.render('host_home.ejs');
         }
         else{
@@ -260,13 +266,15 @@ app.post("/login",encoder, function(req,res){
     console.log(password);
     connection.query("select * from users where user_email = ?",[email, password], function(error, results, fields){
         console.log(results);
-        if (bcrypt.compare(password, results[0].user_pass)){
-            authcode = true;
-            my_user_id = results[0].user_id;
-            res.clearCookie('id')
-            res.cookie('id', my_user_id);
-            console.log(req.cookies.id)
-            res.redirect("/home");
+        if (results.length > 0){
+            if (bcrypt.compare(password, results[0].user_pass)){
+                authcode = true;
+                my_user_id = results[0].user_id;
+                res.clearCookie('id')
+                res.cookie('id', my_user_id);
+                console.log(req.cookies.id)
+                res.redirect("/home");
+            }
         }else {
             res.redirect("/login");
         }

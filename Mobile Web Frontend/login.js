@@ -9,9 +9,24 @@ const bodyParser = require("body-parser");
 const encoder = bodyParser.urlencoded();
 const bcrypt = require("bcrypt");
 const methodOverride = require("method-override");
-const Nominatim = require('nominatim-geocoder')
-const geocoder = new Nominatim({}, {format: 'json'})
-const request = require('request')
+const multer = require('multer');
+const request = require('request');
+
+const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg'];
+const upload_venue = multer({
+    dest: "uploads/venues",
+    fileFilter: (req, file, callback) => {
+        callback(null, )
+    }
+})
+
+const upload_profile = multer({
+    dest: "uploads/profiles"
+})
+
+const upload_team = multer({
+    dest: "uploads/teams"
+})
 
 //Location API: https://nominatim.org/release-docs/latest/api/Search/
 
@@ -124,6 +139,9 @@ app.get("/balance", checkAuthenticated, function(req, res){
 app.get("/host_signup", checkAuthenticated, function(req, res){
     res.render('host_signup.ejs');
 })
+app.get("/leaderboard", checkAuthenticated, function(req, res){
+    res.render('leaderboard.ejs')
+})
 
 app.post("/register_host", encoder, function(req,res){
     var cookie_user_id = req.cookies.id;
@@ -140,7 +158,7 @@ app.post("/register_host", encoder, function(req,res){
 
 
 
-app.post("/post_listing", encoder, function(req, res){
+app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, res){
     var cookie_user_id = req.cookies.id;
     console.log("COOKIE USER ID: " + cookie_user_id);
     connection.query("select * from tourney_hosts where users_user_id=?",req.cookies.id, function(error, results, fields){
@@ -248,7 +266,7 @@ connection.query("select * from tourneys", function(error, results, fields){
                     Id: results[i]['tourneys_id']})
             // console.log(coords)
         }
-        console.log(coords)
+        // console.log(coords)
         coords.sort((a,b) => {
             return a.Distance - b.Distance
         })

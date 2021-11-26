@@ -22,7 +22,7 @@
         <div style="margin: auto; text-align: center; color: #f45b6a;padding: 10px; font-family: NTF-Grand;"><%= add_error %></div>
         <!-- Find a way to use dynamic EJS to decide which error output to say (email already exists, short password, etc.) -->
         <div id="login-form-container" style="margin-bottom: 50px;">
-        <form method="POST" action="/post_listing">
+        <form method="POST" action="/post_listing" enctype="multipart/form-data">
             <div class="form-group">
                 <input name="tourney_name" type="text" class="form-control" id="exampleInputTourneyName1" placeholder="TOURNEY NAME">
             </div>
@@ -73,6 +73,12 @@
                     <option value="M">MALE</option>
                     <option value="F">FEMALE</option>
                   </select>
+            </div>
+            <label for="venue" style="color: #303549; font-weight: 500;">
+                VENUE PICTURE
+            </label>
+            <div class="form-group">
+                <input id="venue" type="file" name="venue">
             </div>
             <div class="form-group">
                 <input style="margin-top: 10px;" type="submit" id="submit-btn-reg" value="REGISTER">

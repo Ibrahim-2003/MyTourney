@@ -14,6 +14,7 @@
 # To do next:
     -> Make dynamic listings (ie. show the images updating, detailed views, etc.)
     -> Setup the leaderboards page
+    -> Paginate search results
     -> Setup the detailed view for the tourney from the player perspective
     -> Add search, filter, sort functions to tourney listings
         *Sort by:
@@ -36,6 +37,7 @@
 
     //Not essential for MVP
     -> Work on making bracket screen
+    -> Work on making the site responsive on desktop and tablets
     -> Work on making terms and conditions agreement
     -> Work on making waiver removing liability for injuries incurred at tourneys
 

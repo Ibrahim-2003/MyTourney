@@ -254,7 +254,7 @@ app.get("/", checkAuthenticated, function(req, res){
 //Need to add team many-to-many relationship, games_won, and user_last
 // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; if nodejs is showing "consider upgrading mysql client"
 
-
+// Sort by distance function
 connection.query("select * from tourneys", function(error, results, fields){
     if (results.length > 0){
         var i;
@@ -334,13 +334,13 @@ app.post("/register", async function(req,res){
         })
         connection.query("select * from users where user_email = ? and user_pass = ?",[email, password], function(error, results, fields){
             if (results.length > 0){
-                res.redirect("/home");
                 console.log("USER REGISTERED");
                 authcode = true;
                 my_user_id = results[0].user_id;
                 //Expires after 1800000 ms (30 minutes) from the time it is set.
                 res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
                 registration_error = ""
+                res.redirect("/home");
             }else {
                 registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
                 res.redirect("/register");
@@ -387,5 +387,6 @@ function checkNotAuthenticatedReg(req, res, next){
 
 //16:31
 //'168.5.180.127' || 'localhost'
-// Start mysql server: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
+// Start mysql server windows: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
+// Start mysql server mac: sudo /usr/local/mysql/support-files/mysql.server start
 app.listen(4500);

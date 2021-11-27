@@ -10,6 +10,7 @@
     -> Setup the Host page
     -> Fixed the coordinate JSON get request and the host_id issue
     -> Sort by distance function created (still need to work on sort UI)
+        -> Flushed out and working now, so that I have the SQL query results sorted with all details
     -> Fixed file upload
         -STILL NEED TO CONNECT TO AWS S3 SERVER TO PERSIST FILES (OTHERWISE, HEROKU WILL LOSE IMAGES UPON UPDATING SERVER)
 

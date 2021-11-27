@@ -130,38 +130,16 @@ app.get("/home", checkAuthenticated, function(req, res){
         )}
     )}
 
-    getTourneysById = function(id){
-        return new Promise(function(resolve, reject){
-          connection.query(
-              "SELECT * FROM tourneys WHERE tourneys_id = ?",
-              id,
-              function(err, rows){                                                
-                  if(rows === undefined){
-                      reject(new Error("Error rows is undefined"));
-                }else{
-                      resolve(rows);
-                }
-            }
-        )}
-    )}
-
     getTourneys()
     .then(function(results){
         sorted_tourneys = SortTourneysByDistance(results)
-        // console.log(sorted_tourneys)
-        let tourneys_sorted = [];
+        console.log(sorted_tourneys)
+        let tourney_json = [];
         for(i=0; i<sorted_tourneys.length; i++){
-            getTourneysById(sorted_tourneys[i]['Id'])
-            .then(function(results){
-                // console.log(results)
-                tourneys_sorted.push(results)
-                //Cannot access tourneys_sorted new pushed values outside of for loop
-                console.log(tourneys_sorted)
-            })
-            .catch(function(err){
-                console.log("Promise rejection error: "+err);
-            })
+            tourney_json.push(results.filter(element => element.tourneys_id == sorted_tourneys[i]['Id']))
         }
+        console.log('FINALLY: ')
+        console.log(tourney_json)
         
     })
     .catch(function(err){

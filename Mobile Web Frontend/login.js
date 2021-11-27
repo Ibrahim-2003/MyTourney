@@ -11,21 +11,34 @@ const bcrypt = require("bcrypt");
 const methodOverride = require("method-override");
 const multer = require('multer');
 const request = require('request');
+const fs = require('fs');
+const path = require('path');
 
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg'];
+
+venue_path = "uploads/venues";
+profile_path = "uploads/profiles";
+team_path = "uploads/teams";
+
 const upload_venue = multer({
-    dest: "uploads/venues",
+    dest: venue_path,
     fileFilter: (req, file, callback) => {
-        callback(null, )
+        callback(null, imageMimeTypes.includes(file.mimetype))
     }
 })
 
 const upload_profile = multer({
-    dest: "uploads/profiles"
+    dest: profile_path,
+    fileFilter: (req, file, callback) => {
+        callback(null, imageMimeTypes.includes(file.mimetype))
+    }
 })
 
 const upload_team = multer({
-    dest: "uploads/teams"
+    dest: team_path,
+    fileFilter: (req, file, callback) => {
+        callback(null, imageMimeTypes.includes(file.mimetype))
+    }
 })
 
 //Location API: https://nominatim.org/release-docs/latest/api/Search/
@@ -97,8 +110,65 @@ connection.connect(function(error){
 app.get("/register", checkNotAuthenticatedReg, function(req, res){
     res.render('register.ejs', {reg_error: registration_error});
 })
+
+
 app.get("/home", checkAuthenticated, function(req, res){
-    res.render('home.ejs');
+    let tourneys;
+    var coords = [];
+    //This allows me to extract mysql query results to use as variable
+    getTourneys = function(){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys", 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTourneysById = function(id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys WHERE tourneys_id = ?",
+              id,
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTourneys()
+    .then(function(results){
+        sorted_tourneys = SortTourneysByDistance(results)
+        // console.log(sorted_tourneys)
+        let tourneys_sorted = [];
+        for(i=0; i<sorted_tourneys.length; i++){
+            getTourneysById(sorted_tourneys[i]['Id'])
+            .then(function(results){
+                // console.log(results)
+                tourneys_sorted.push(results)
+                //Cannot access tourneys_sorted new pushed values outside of for loop
+                console.log(tourneys_sorted)
+            })
+            .catch(function(err){
+                console.log("Promise rejection error: "+err);
+            })
+        }
+        
+    })
+    .catch(function(err){
+        console.log("Promise rejection error: "+err);
+    })
+
+    res.render('home.ejs')
 })
 app.get("/login", checkNotAuthenticated, function(req, res){
     res.render('login.ejs');
@@ -159,6 +229,7 @@ app.post("/register_host", encoder, function(req,res){
 
 
 app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, res){
+    const file_name = req.file != null ? req.file.filename : null;
     var cookie_user_id = req.cookies.id;
     console.log("COOKIE USER ID: " + cookie_user_id);
     connection.query("select * from tourney_hosts where users_user_id=?",req.cookies.id, function(error, results, fields){
@@ -178,7 +249,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             var state = req.body.state;
             var max_participants = req.body.max_participants;
             var entry_fee = req.body.entry_fee;
-            var photo = "http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg";
+            var photo = file_name;
             // var duration_time = req.body.duration_time;
 
             //Duration in ms
@@ -224,6 +295,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                 }else{
                     console.log('ADDRESS INVALID')
                     add_tourney_error = "The address you entered is invalid, please try again with a different address."
+                    RemoveVenue(file_name);
                     res.redirect("/add_tourney")
                 }
                 
@@ -235,6 +307,12 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             })
 
 })
+
+function RemoveVenue(venue){
+    fs.unlink(path.join(venue_path, venue), err => {
+        if (err) console.error(err)
+    })
+}
 
 
 app.get("/add_tourney", checkAuthenticated, function(req, res){
@@ -255,10 +333,11 @@ app.get("/", checkAuthenticated, function(req, res){
 // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password'; if nodejs is showing "consider upgrading mysql client"
 
 // Sort by distance function
-connection.query("select * from tourneys", function(error, results, fields){
+
+function SortTourneysByDistance(results){
+    var coords = [];
     if (results.length > 0){
         var i;
-        var coords = [];
             for (var i = 0; i < results.length; i++){
             coords.push({Lat: results[i]['lat_coord'], 
                     Lon: results[i]['lon_coord'],
@@ -270,12 +349,38 @@ connection.query("select * from tourneys", function(error, results, fields){
         coords.sort((a,b) => {
             return a.Distance - b.Distance
         })
-        console.log(coords)
+        // console.log(coords)
+        return coords
         // console.log(coords)
     }else {
         console.log("NO TOURNEYS")
     }
-})
+}
+
+
+
+    // var coords = [];
+    // connection.query("select * from tourneys", function(error, results, fields){
+    //     if (results.length > 0){
+    //         var i;
+    //             for (var i = 0; i < results.length; i++){
+    //             coords.push({Lat: results[i]['lat_coord'], 
+    //                     Lon: results[i]['lon_coord'],
+    //                     Distance: distance(home_coords[0], home_coords[1], results[i]['lat_coord'], results[i]['lon_coord']),
+    //                     Id: results[i]['tourneys_id']})
+    //             // console.log(coords)
+    //         }
+    //         // console.log(coords)
+    //         coords.sort((a,b) => {
+    //             return a.Distance - b.Distance
+    //         })
+    //         console.log(coords)
+    //         return coords
+    //         // console.log(coords)
+    //     }else {
+    //         console.log("NO TOURNEYS")
+    //     }
+    // })
 
 
 app.post("/login",encoder, function(req,res){

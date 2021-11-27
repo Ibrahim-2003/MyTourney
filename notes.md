@@ -10,6 +10,8 @@
     -> Setup the Host page
     -> Fixed the coordinate JSON get request and the host_id issue
     -> Sort by distance function created (still need to work on sort UI)
+    -> Fixed file upload
+        -STILL NEED TO CONNECT TO AWS S3 SERVER TO PERSIST FILES (OTHERWISE, HEROKU WILL LOSE IMAGES UPON UPDATING SERVER)
 
 # To do next:
     -> Make dynamic listings (ie. show the images updating, detailed views, etc.)
@@ -34,12 +36,15 @@
     -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
         //NOTES
             -Important to consider the order in which the users get paid. (ie. I get paid everything, then I pay the host, and I also pay the winning team)
+    -> Add game-management and score update page
+        -Include match-making function
 
     //Not essential for MVP
     -> Work on making bracket screen
     -> Work on making the site responsive on desktop and tablets
     -> Work on making terms and conditions agreement
     -> Work on making waiver removing liability for injuries incurred at tourneys
+    -> Refactor CSS to be organized
 
 ## Creating Forms
     -> Form for users to edit profile

@@ -13,9 +13,13 @@
         -> Flushed out and working now, so that I have the SQL query results sorted with all details
     -> Fixed file upload
         -STILL NEED TO CONNECT TO AWS S3 SERVER TO PERSIST FILES (OTHERWISE, HEROKU WILL LOSE IMAGES UPON UPDATING SERVER)
+    -> Made dynamic listings (ie. show the images updating)
 
 # To do next:
-    -> Make dynamic listings (ie. show the images updating, detailed views, etc.)
+    -> Work on participating teams feature
+        -Add teams_participating to tourneys table
+        -Add teams_max to tourneys table
+        -Add teams_max to tourney creation form in add_tourneys.ejs
     -> Setup the leaderboards page
     -> Paginate search results
     -> Setup the detailed view for the tourney from the player perspective
@@ -29,7 +33,7 @@
             -Gender
             -Team size
             -Distance (only show tourneys x miles from location)
-            -Age Group (youth (3-14), high school (14-18),  adult (19+))
+            -Age Group (child (3-7), youth (7-12), high school (13-18),  adult (19+))
     -> Setup history page and balance page for players and hosts
     -> Put an add members button to team page
         //IDEAS

@@ -228,10 +228,13 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             var max_participants = req.body.max_participants;
             var entry_fee = req.body.entry_fee;
             var photo = file_name;
-            // var duration_time = req.body.duration_time;
+
+            // Convert duration from minutes to milliseconds
+            var ms = req.body.duration * 60000
+            var duration_time = ms;
 
             //Duration in ms
-            var duration_time = 600000;
+            // var duration_time = 600000;
 
             api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + street + "%2C+" + zip + "%2C+" + state + "&format=json"
                     
@@ -301,7 +304,39 @@ app.get("/team_player", checkAuthenticated, function(req, res){
 })
 
 app.get("/", checkAuthenticated, function(req, res){
-    res.render('home.ejs');
+    let tourneys;
+    var coords = [];
+    //This allows me to extract mysql query results to use as variable
+    getTourneys = function(){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys", 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTourneys()
+    .then(function(results){
+        sorted_tourneys = SortTourneysByDistance(results)
+        console.log(sorted_tourneys)
+        let tourney_json = [];
+        for(i=0; i<sorted_tourneys.length; i++){
+            tourney_json.push(results.filter(element => element.tourneys_id == sorted_tourneys[i]['Id']))
+        }
+        console.log('FINALLY: ')
+        console.log(tourney_json)
+        res.render('home.ejs', {tourneys: tourney_json,
+                                tourney_path: venue_path+'/'})
+    })
+    .catch(function(err){
+        console.log("Promise rejection error: "+err);
+    })
 })
 
 //net start MYSQL80

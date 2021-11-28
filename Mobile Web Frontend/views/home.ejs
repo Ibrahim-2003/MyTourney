@@ -61,31 +61,18 @@
         </div>
     </section>
     <section id="listings">
-        <!-- {% for x in object_list %}
+        <% for(var tourney of tourneys) {%>
             <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="{{ x.photo }}" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: {{ x.team_size }}    Age Group: {{ x.age_group }}<br>
-                Entry: ${{ x.entry_fee }}/{{ x.entry_type }} Duration: {{ x.duration_points }} Goals<br>
-                # of Current Participants: {{ x.current_participants }}
-            </div>
-        </div>
-            
-        {% endfor %} -->
-
-        <!-- <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div> -->
-
+                <div id="venue-img-container" class="flex-child img">
+                    <img src=<%= tourney_path %><%= tourney[0].photo %> id="venue-img">
+                </div>
+                <div id="listview-info" class="flex-child info">
+                    Game: 3v3   Age Group: U16<br/>
+                    Entry: $10 Duration: 5 Goals<br/>
+                    # of Teams Participating: 5
+                </div>
+            </div> 
+        <% } %> 
 
         <div class="tourney-listing">
                     <div id="venue-img-container" class="flex-child img">
@@ -93,18 +80,18 @@
                     </div>
                     <div id="listview-info" class="flex-child info">
                         Game: 3v3   Age Group: U16<br/>
-                        Entry: $10/team Duration: 5 Goals<br/>
+                        Entry: $10 Duration: 5 Goals<br/>
                         # of Teams Participating: 5
                     </div>
         </div>
         
-        <div class="tourney-listing">
+        <!-- <div class="tourney-listing">
             <div id="venue-img-container" class="flex-child img">
                 <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>
@@ -115,7 +102,7 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>
@@ -126,7 +113,7 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>        
@@ -137,7 +124,7 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>
@@ -148,7 +135,7 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>       
@@ -159,7 +146,7 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>       
@@ -170,7 +157,7 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
         </div>       
@@ -181,10 +168,10 @@
             </div>
             <div id="listview-info" class="flex-child info">
                 Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
+                Entry: $10 Duration: 5 Goals<br/>
                 # of Teams Participating: 5
             </div>
-        </div>
+        </div> -->
         <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
             <a href="/logout" style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="logout">LOGOUT</a>
         </div>

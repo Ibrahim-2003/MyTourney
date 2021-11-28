@@ -208,7 +208,13 @@ header {
     margin-left: 15px;
     width: 65px;
     height: 65px;
+    object-fit: fill;
     border-radius: 10px;
+    image-rendering: -moz-crisp-edges;         /* Firefox */
+    image-rendering:   -o-crisp-edges;         /* Opera */
+    image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor; 
 }
 
 #add-tourney-img-container {

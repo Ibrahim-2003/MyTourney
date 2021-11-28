@@ -140,13 +140,13 @@ app.get("/home", checkAuthenticated, function(req, res){
         }
         console.log('FINALLY: ')
         console.log(tourney_json)
-        
+        res.render('home.ejs', {tourneys: tourney_json,
+                                tourney_path: venue_path+'/'})
     })
     .catch(function(err){
         console.log("Promise rejection error: "+err);
     })
 
-    res.render('home.ejs')
 })
 app.get("/login", checkNotAuthenticated, function(req, res){
     res.render('login.ejs');

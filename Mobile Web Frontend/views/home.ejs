@@ -74,105 +74,28 @@
                 <% duration = duration.getMinutes() %>  
                 <div id="listview-info" class="flex-child info">
                     <div style="text-align: center;">
-                        <strong>TEST</strong>
+                        <strong><%= tourney[0].name %></strong>
                     </div>
-                    <div>
-                        Game: <%= tourney[0].team_sizes %>v<%= tourney[0].team_sizes %>   Age Group: <%= ages %> <br/>
-                        Entry: $<%= tourney[0].entry_fee.toFixed(2) %> Duration: <%= duration %> min <br/>
-                        # of Teams Participating: 5
-                    </div>
-                    
+                    <table style="width: 100%; margin: 0 auto;" class="venue-table">
+                        <tr>
+                            <td>
+                                Game: <%= tourney[0].team_sizes %>v<%= tourney[0].team_sizes %>   Age Group: <%= ages %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Entry: $<%= tourney[0].entry_fee.toFixed(2) %> Duration: <%= duration %> min
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                # of Teams Participating: 5
+                            </td>
+                        </tr>
+                    </table>                    
                 </div>
             </div> 
         <% } %> 
-        
-        <!-- <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>        
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>       
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>       
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>       
-
-        <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10 Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div> -->
         <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
             <a href="/logout" style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="logout">LOGOUT</a>
         </div>

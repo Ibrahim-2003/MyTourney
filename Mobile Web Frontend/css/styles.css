@@ -171,14 +171,14 @@ header {
     padding: 10px;
 }
 
-.tourney-listing:first-of-type {
+/* .tourney-listing:first-of-type {
     margin:0 15px;
     margin-top: 70px;
     padding: 20px;
     background-color: #91c2e7;
     border-radius: 10px;
     display: flex;
-}
+} */
 
 .tourney-listing {
     margin: 25px 15px;
@@ -186,6 +186,10 @@ header {
     background-color: #91c2e7;
     border-radius: 10px;
     display: flex;
+}
+
+.searchbar {
+    padding-bottom: 35px;
 }
 
 .tourney-listing-adding {
@@ -197,6 +201,8 @@ header {
 
 .flex-child {
     flex: 1;
+    justify-content: center;
+    align-items: center;
 }
 
 .flex-child:first-child {
@@ -204,10 +210,9 @@ header {
 }
 
 #venue-img {
-    margin-top: auto;
-    margin-left: 15px;
-    width: 65px;
-    height: 65px;
+    margin: 5px 0 0 15px;
+    width: 80px;
+    height: 80px;
     object-fit: fill;
     border-radius: 10px;
     image-rendering: -moz-crisp-edges;         /* Firefox */
@@ -217,6 +222,9 @@ header {
     -ms-interpolation-mode: nearest-neighbor; 
 }
 
+.venue-table td{
+    text-align: center;
+}
 
 #add-tourney-img-container {
     margin: auto;
@@ -340,7 +348,7 @@ header {
     font-family: NTF-Grand;
     color: #91c2e7;
     padding: 10px;
-    font-size: 28px;
+    font-size: 4vw;
     text-align: center;
 }
 

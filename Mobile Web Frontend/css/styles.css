@@ -116,8 +116,6 @@ header {
 
 #leaderboard {
     float: left;
-    padding-right: 20px;
-    padding-left: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
     width: 25%;
@@ -145,8 +143,6 @@ header {
 
 #host {
     float: right;
-    padding-right: 20px;
-    padding-left: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
     width: 25%;
@@ -210,7 +206,7 @@ header {
 }
 
 #venue-img {
-    margin: 5px 0 0 15px;
+    margin: 9px 0 0 15px;
     width: 80px;
     height: 80px;
     object-fit: fill;

@@ -26,13 +26,13 @@
     <section class="logo">
         <div class="container">
             <div style="background-color: #91c2e7;" id="leaderboard">
-                <li style="list-style: none;"><a href="leaderboard" style="font-size: 14px;">LEADER<br>BOARD</a></li>
+                <a href="leaderboard" style="font-size: 14px;">LEADER<br>BOARD</a>
             </div>
             <div id="logo_img_home">
                 <img src="images/MyTourney Logo.png" style="height: 85px;">
             </div>
             <div style="background-color: #91c2e7;" id="host">
-                <li style="list-style: none;"><a href="host">HOST<br>MODE</a></li>
+                <a href="host">HOST<br>MODE</a>
             </div>
         </div>
     </section>
@@ -62,7 +62,7 @@
     </section>
     <section id="listings">
         <% for(var tourney of tourneys) {%>
-            <div class="tourney-listing">
+            <div class="tourney-listing" onclick="window.location='/listing?<%= tourney[0].tourneys_id %>'">
                 <div id="venue-img-container" class="flex-child img">
                     <img src=<%= tourney_path %><%= tourney[0].photo %> id="venue-img">
                 </div>
@@ -89,7 +89,7 @@
                         </tr>
                         <tr>
                             <td>
-                                # of Teams Participating: 5
+                                # of Teams Participating: <%= tourney[0].current_participants %> / <%= tourney[0].max_participants %> 
                             </td>
                         </tr>
                     </table>                    

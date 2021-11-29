@@ -264,7 +264,8 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         entry_fee: entry_fee,
                         photo: photo,
                         hosts_hosts_id: host_id,
-                        hosts_users_user_id: cookie_user_id
+                        hosts_users_user_id: cookie_user_id,
+                        current_participants: 0
                     }
     
                     connection.query('INSERT INTO tourneys SET ?',vals, function (error, results, fields){

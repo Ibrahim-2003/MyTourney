@@ -13,13 +13,11 @@
         -> Flushed out and working now, so that I have the SQL query results sorted with all details
     -> Fixed file upload
         -STILL NEED TO CONNECT TO AWS S3 SERVER TO PERSIST FILES (OTHERWISE, HEROKU WILL LOSE IMAGES UPON UPDATING SERVER)
-    -> Made dynamic listings (ie. show the images updating)
+    -> Made dynamic listings (ie. show the images and details updating)
+    -> Finished working on participating teams feature
+        -Added number_of_teams_participating to tourneys table
 
 # To do next:
-    -> Work on participating teams feature
-        -Add teams_participating to tourneys table
-        -Add teams_max to tourneys table
-        -Add teams_max to tourney creation form in add_tourneys.ejs
     -> Setup the leaderboards page
     -> Paginate search results
     -> Setup the detailed view for the tourney from the player perspective
@@ -46,6 +44,8 @@
 
     //Not essential for MVP
     -> Work on making bracket screen
+    -> Add password length and character requirements
+    -> Add errors to the forms to catch any impossible birthdates, too many max participants, too low or too high entry fee, etc.
     -> Work on making the site responsive on desktop and tablets
     -> Work on making terms and conditions agreement
     -> Work on making waiver removing liability for injuries incurred at tourneys

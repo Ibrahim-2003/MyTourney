@@ -16,13 +16,12 @@
     -> Made dynamic listings (ie. show the images and details updating)
     -> Finished working on participating teams feature
         -Added number_of_teams_participating to tourneys table
+    -> Completed detailed view for the tourney from the player perspective
 
 # To do next:
     ** UPDATE MYSQL DATABASE ON MAC
     -> Setup the leaderboards page
     -> Paginate search results
-    -> Setup the detailed view for the tourney from the player perspective
-        -Update tourneys set current_participants = current_participants + 1 where tourneys_id=tourneys_id
     -> Add search, filter, sort functions to tourney listings
         *Sort by:
             -Location - use geolocation API to extract the user's current location and sort nearest by using haversine formula (https://www.movable-type.co.uk/scripts/latlong.html)

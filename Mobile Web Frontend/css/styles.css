@@ -176,12 +176,47 @@ header {
     display: flex;
 } */
 
+#modal-join-tourney{
+    display: none;
+    width: 100%;
+    height: 120%;
+    padding: 15px;
+    position: absolute;
+    background-color: #f45b6a;
+    color: #104b5f;
+    justify-items: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#back-btn-join-error{
+    background-color: #104b5f;
+    color: #f45b6a;
+    margin-top: 15px;
+    padding: 5px;
+}
+
+#join-error{
+    font-weight: 500;
+    text-align: center;
+    flex: auto;
+}
+
 .tourney-listing {
     margin: 25px 15px;
     padding: 20px;
     background-color: #91c2e7;
     border-radius: 10px;
     display: flex;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 .searchbar {

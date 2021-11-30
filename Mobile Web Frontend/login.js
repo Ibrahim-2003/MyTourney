@@ -296,6 +296,68 @@ function RemoveVenue(venue){
     })
 }
 
+app.get("/listing", function(req, res){
+    // console.log(req.query)
+    id = req.query.tourney_id
+    getTourneyById = function(){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys WHERE tourneys_id=?",
+              id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+    
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    async function sequentialQueries () {
+ 
+        try{
+        const tourney_result = await getTourneyById();
+        const host_result = await getUserById(tourney_result[0].hosts_users_user_id);
+
+        // console.log(tourney_result)
+        // console.log(host_result)
+         
+        // here you can do something with the three results
+        results = {tourney_result: tourney_result,
+                host_result: host_result}
+
+        res.render('tourney_details.ejs',
+            {id: id,
+            tourney: results.tourney_result,
+            host: results.host_result,
+            venue_path: venue_path+'/',
+            profile_path: profile_path+'/'})
+         
+        } catch(error){
+        console.log(error)
+        }
+        }
+    
+    sequentialQueries();
+    
+
+})
 
 app.get("/add_tourney", checkAuthenticated, function(req, res){
     res.render('add_tourney.ejs', {add_error: add_tourney_error});
@@ -443,7 +505,8 @@ app.post("/register", async function(req,res){
             user_first: first,
             user_last: last,
             user_gender: gender,
-            age: birth};
+            age: birth,
+            balance: 0.00};
 
         //Columns: "user_name", "user_pass", "user_email", "user_first", "user_last", "user_gender", "age", "bio", "photo", "points", "tourneys_played", "tourneys_won", "tourneys_lost", "games_played", "games_won", "games_lost", "goals_for", "goals_against", "shots", "saves", "shutouts"
         var query = connection.query('INSERT INTO users SET ?',vals, function (error, results, fields){

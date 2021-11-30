@@ -62,7 +62,7 @@
     </section>
     <section id="listings">
         <% for(var tourney of tourneys) {%>
-            <div class="tourney-listing" onclick="window.location='/listing?<%= tourney[0].tourneys_id %>'">
+            <div class="tourney-listing" onclick="window.location='/listing?tourney_id=<%= tourney[0].tourneys_id %>'">
                 <div id="venue-img-container" class="flex-child img">
                     <img src=<%= tourney_path %><%= tourney[0].photo %> id="venue-img">
                 </div>

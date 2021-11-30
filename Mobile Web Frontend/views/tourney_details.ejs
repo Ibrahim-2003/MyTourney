@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.png?">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>MyTourney</title>
+</head>
+    <body>
+    <div class="navbar" id="nav_bar">
+        <nav>
+            <ul class="nav-links">
+                <!-- Make this so that the "PROFILE" changes to "LOGIN" -->
+                <!-- Make it so that if the user does not have a team, he can join a team or create one -->
+                <li><a href="profile_player">PROFILE</a></li>
+                <li><a href="balance">BALANCE</a></li>
+                <li><a href="friends">FRIENDS</a></li>
+                <li><a href="team_player">TEAM</a></li>
+            </ul>
+        </nav>
+    </div>
+    <br><br>
+    <section class="logo">
+        <div class="container">
+            <div style="background-color: #91c2e7;" id="leaderboard">
+                <a href="leaderboard" style="font-size: 14px;">LEADER<br>BOARD</a>
+            </div>
+            <div id="logo_img_home">
+                <img src="images/MyTourney Logo.png" style="height: 85px;">
+            </div>
+            <div style="background-color: #91c2e7;" id="host">
+                <a href="host">HOST<br>MODE</a>
+            </div>
+        </div>
+    </section>
+    <br><br>
+    <section style="padding: 10px;">
+        <div class="balance-tourney-join-container" style="background-color: #f45b6a; border-radius: 10px;">
+            <div class="balance-tourney-join" id="balance-tourney-join-outer">
+                <div style="font-size: 8vw; font-weight: 500;" class="balance-tourney-join-inner">
+                    MY
+                </div>
+                <div style="font-size: 4vw; font-weight: 500;" class="balance-tourney-join-inner">
+                    BALANCE
+                </div>
+            </div>
+            <div class="balance-tourney-join" style="font-weight: 500; font-size: 10vw">
+                $14.78
+            </div>
+            <div  class="balance-tourney-join">
+                <div style="font-family: NTF-Grand; font-size: 6vw; background-color: #6c2737; padding: 5px; border-radius: 8px; color: #91c2e7;">
+                    Add Funds
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="listings" style="background-color: #91c2e7; margin: 0 10px; border-radius: 5px; margin-bottom: 10px;">
+        <div id="venue-img-container-detailed" class="flex-child-detailed img">
+            <img src=<%= venue_path %><%= tourney[0].photo %>  id="venue-img-detailed">
+        </div>
+        <div id="view-map" style="font-family: NTF-Grand; color: #91c2e7;">
+            <a href="/join?3 " style="font-family: Varsity; color: #104b5f;font-weight: 500; border: 0;" id="logout">VIEW MAP</a>
+        </div>
+        <div id="detailed-view">
+            <% if(tourney[0].age_group == 'child') {var ages = '3-7'}%> 
+            <% if(tourney[0].age_group == 'youth') {var ages = '8-12'}%> 
+            <% if(tourney[0].age_group == 'highschool') {var ages = '13-18'}%> 
+            <% if(tourney[0].age_group == 'adult') {var ages = '19+'}%>
+            <% if(tourney[0].gender == 'M') {var gender = 'Male'} %> 
+            <% if(tourney[0].gender == 'F') {var gender = 'Female'} %> 
+            <% duration = new Date(tourney[0].duration_time) %>
+            <% duration = duration.getMinutes() %>
+            <% time = new Date(tourney[0].start_time) %>
+            <% time = time.toLocaleString() %>
+            <div id="details-text">
+                Game: <%= tourney[0].team_sizes %>v<%= tourney[0].team_sizes %><br>
+                Age: <%= ages %>Yr.<br>
+                Gender: <%= gender %><br>
+                Entry Fee: $<%= tourney[0].entry_fee.toFixed(2) %>/player<br>
+                Start Time: <%= time %>
+            </div>
+            <div id="host-detail">
+                <div>
+                    HOST
+                </div>
+                <% if(host[0].photo == null){var photo = "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg"} %>
+                <% if(host[0].photo != null) {var photo = profile_path+host[0].photo} %>  
+                <div>
+                    <img src=<%= photo %> id="host-detail-pic">
+                </div>
+                <div>
+                    <%= host[0].user_name %> 
+                </div>
+            </div>
+        </div>
+        <div id="details-btns">
+            <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                <img src="images/back.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="window.location='/home'">
+            </div>
+            <div id="join-btn" style="font-family: NTF-Grand; color: #91c2e7;">
+                <form method="POST" action="/join?id=<%= id %> ">
+                    <div>
+                        <input type="submit" id="join-btn-submit" value="JOIN">
+                    </div>
+                </form>
+                <!-- <a href="/join?id=" style="font-family: Varsity; color: #104b5f;font-weight: 500;border: 0;" id="logout">JOIN</a> -->
+            </div>
+            <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                <img src="images/share.png" style="width: 10vw; height: 10vw; margin: auto;">
+            </div>
+        </div>
+        
+
+    </section>
+    </body>
+    <script>
+        myimg = document.getElementById("venue-img-detailed");
+        function zoom(){
+            if(myimg.style.width != "100vw"){
+                myimg.style.width = "100vw";
+                myimg.style.height = "auto";
+            }else{
+                myimg.style.width = "95%";
+                myimg.style.height = "100px";
+            }
+            
+        }
+    </script>
+</html>

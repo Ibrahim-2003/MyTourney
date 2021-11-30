@@ -237,10 +237,8 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             var entry_fee = req.body.entry_fee;
             var photo = file_name;
             var date = new Date(req.body.start_time);
-            var now = new Date();
-            console.log(`NOW OFFSET: ${now.getTimezoneOffset()}`)
-            var start_time = date; // Add your offset
-            console.log(start_time) // your aligned date.
+            var start_time = date;
+            console.log(start_time)
 
             // Convert duration from minutes to milliseconds
             var ms = req.body.duration * 60000

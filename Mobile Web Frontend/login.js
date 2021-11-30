@@ -13,6 +13,14 @@ const multer = require('multer');
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
+const email_js = require('./email.js');
+const { join } = require("path");
+const { start } = require("repl");
+
+const port = 4500;
+const url = '168.5.173.166:'+port;
+
+const mail = email_js.email;
 
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/svg'];
 
@@ -133,13 +141,13 @@ app.get("/home", checkAuthenticated, function(req, res){
     getTourneys()
     .then(function(results){
         sorted_tourneys = SortTourneysByDistance(results)
-        console.log(sorted_tourneys)
+        // console.log(sorted_tourneys)
         let tourney_json = [];
         for(i=0; i<sorted_tourneys.length; i++){
             tourney_json.push(results.filter(element => element.tourneys_id == sorted_tourneys[i]['Id']))
         }
-        console.log('FINALLY: ')
-        console.log(tourney_json)
+        // console.log('FINALLY: ')
+        // console.log(tourney_json)
         res.render('home.ejs', {tourneys: tourney_json,
                                 tourney_path: venue_path+'/'})
     })
@@ -213,7 +221,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
     connection.query("select * from tourney_hosts where users_user_id=?",req.cookies.id, function(error, results, fields){
         var cookie_user_id = req.cookies.id;
         console.log("COOKIE USER ID: " + cookie_user_id);
-        console.log("QUERY RESULTS: " + results[0])
+        // console.log("QUERY RESULTS: " + results[0])
         if (results.length > 0){
             console.log("HOST ID: " + results[0].hosts_id)
             var host_id = results[0].hosts_id;
@@ -228,6 +236,11 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             var max_participants = req.body.max_participants;
             var entry_fee = req.body.entry_fee;
             var photo = file_name;
+            var date = new Date(req.body.start_time);
+            var now = new Date();
+            console.log(`NOW OFFSET: ${now.getTimezoneOffset()}`)
+            var start_time = date; // Add your offset
+            console.log(start_time) // your aligned date.
 
             // Convert duration from minutes to milliseconds
             var ms = req.body.duration * 60000
@@ -239,17 +252,17 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + street + "%2C+" + zip + "%2C+" + state + "&format=json"
                     
             let url = api_req.replace(/ /g, "+");
-            console.log(url)
+            // console.log(url)
 
             request({
                 url: url,
                 headers: {'User-Agent': 'ibrahim'},
                 json: true
             }, (err, response, body) => {
-                console.log(response);
+                // console.log(response);
                 
                 if(body[0].lat){
-                    console.log('REQUESTS: ' + body[0])
+                    // console.log('REQUESTS: ' + body[0])
                     add_tourney_error = ""
                     var vals = {
                         team_sizes: team_sizes,
@@ -265,7 +278,8 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         photo: photo,
                         hosts_hosts_id: host_id,
                         hosts_users_user_id: cookie_user_id,
-                        current_participants: 0
+                        current_participants: 0,
+                        start_time: start_time
                     }
     
                     connection.query('INSERT INTO tourneys SET ?',vals, function (error, results, fields){
@@ -390,13 +404,13 @@ app.get("/", checkAuthenticated, function(req, res){
     getTourneys()
     .then(function(results){
         sorted_tourneys = SortTourneysByDistance(results)
-        console.log(sorted_tourneys)
+        // console.log(sorted_tourneys)
         let tourney_json = [];
         for(i=0; i<sorted_tourneys.length; i++){
             tourney_json.push(results.filter(element => element.tourneys_id == sorted_tourneys[i]['Id']))
         }
-        console.log('FINALLY: ')
-        console.log(tourney_json)
+        // console.log('FINALLY: ')
+        // console.log(tourney_json)
         res.render('home.ejs', {tourneys: tourney_json,
                                 tourney_path: venue_path+'/'})
     })
@@ -483,6 +497,28 @@ app.post("/login",encoder, function(req,res){
         res.end();
     })
 })
+app.post("/verified_login",encoder, function(req,res){
+    var email = req.body.email;
+    var password = req.body.password;
+    var code = req.body.code;
+    console.log(password);
+    connection.query("select * from users where user_email = ?",[email, password], function(error, results, fields){
+        console.log(results);
+        if (results.length > 0){
+            if (bcrypt.compare(password, results[0].user_pass)){
+                authcode = true;
+                my_user_id = results[0].user_id;
+                res.clearCookie('id')
+                res.cookie('id', my_user_id);
+                console.log(req.cookies.id)
+                res.redirect("/home");
+            }
+        }else {
+            res.redirect(`/verified_login?code=${code}`);
+        }
+        res.end();
+    })
+})
 
 app.post("/join",encoder,checkAuthenticated, function(req, res){
     var tourney_id = req.query.id;
@@ -494,6 +530,21 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
           connection.query(
               "SELECT * FROM users WHERE user_id=?",
               user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTeamById = function(team_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM teams WHERE team_id=?",
+              team_id, 
               function(err, rows){                                                
                   if(rows === undefined){
                       reject(new Error("Error rows is undefined"));
@@ -522,7 +573,31 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
     getTeamOfUser = function(user_id){
         return new Promise(function(resolve, reject){
             connection.query(
-                "SELECT * FROM users WHERE team_id != NULL",
+                "SELECT * FROM users WHERE team_id IS NOT NULL and user_id = ?",
+                user_id,
+                function(err, rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    joinTourney = function(tourney_id, team_id, host_id, host_user_id, team_leader_user_id){
+        return new Promise(function(resolve, reject){
+            var vals = {
+                teams_teams_id: team_id,
+                teams_users_user_id: team_leader_user_id,
+                tourneys_tourneys_id: tourney_id,
+                tourneys_hosts_hosts_id: host_id,
+                tourneys_hosts_users_user_id: host_user_id
+            }
+            connection.query(
+                'INSERT INTO teams_entered_in_tourney SET ?',
+                vals,
                 function(err, rows){
                     if(rows === undefined){
                         reject(new Error("Error rows is undefined"));
@@ -566,6 +641,13 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
                 profile_path: profile_path+'/',
                 join_error: 'TEAM QUOTA REACHED! PLEASE TRY JOINING A DIFFERENT TOURNEY!'})
             }else{
+                const team = await getTeamById(team_results[0].team_id);
+                var team_id = team_results[0].team_id;
+                var team_leader_user_id = team[0].users_user_id;
+                var host_user_id = tourney_results[0].hosts_users_user_id;
+                var host_id = tourney_results[0].hosts_hosts_id;
+                await joinTourney(tourney_id, team_id, host_id, host_user_id, team_leader_user_id);
+                console.log('JOINED TOURNEY')
                 res.redirect('/home')
             }
         } catch (error) {
@@ -583,6 +665,68 @@ app.get("/home", checkAuthenticated, function(req, res){
     res.render('home.ejs');
 })
 
+app.get('/verify', checkAuthenticated, function(req,res){
+    var code = req.query.code;
+    var user_id = req.cookies.id;
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    verifyUser = function(user_id){
+        return new Promise(function(resolve, reject){
+          var q = connection.query(
+              "UPDATE users SET verified = 1 WHERE user_id = ?",
+              user_id)          
+                if(q === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(q);
+                }
+            }
+        )}
+
+
+    async function runQuery(code, user_id){
+        try {
+            const results = await getUserById(user_id);
+            if (bcrypt.compare(code, results[0].verification_code)){
+                await verifyUser(user_id);
+                console.log('Your account has been verified');
+                res.redirect('/')
+            }
+        } catch (error) {
+            console.error(error);
+            res.redirect(`/verify_login?code=${code}`)
+        }
+    }
+
+    runQuery(code, user_id);
+
+})
+
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * 
+ charactersLength));
+   }
+   return result;
+}
+
 
 app.post("/register", async function(req,res){
     var email = req.body.email;
@@ -595,6 +739,8 @@ app.post("/register", async function(req,res){
     var gender = req.body.gender;
     try {
         var password = await bcrypt.hash(req.body.password, 10);
+        var verify_code = makeid(10)
+        var verification_code = await bcrypt.hash(verify_code, 10);
 
         var vals = {user_name: username,
             user_pass: password,
@@ -604,29 +750,113 @@ app.post("/register", async function(req,res){
             user_gender: gender,
             age: birth,
             balance: 0.00,
-            points: 0};
+            points: 0,
+            earnings: 0.00,
+            withdrawals: 0.00,
+            losses: 0.00,
+            tourneys_played: 0,
+            tourneys_lost: 0,
+            tourneys_won: 0,
+            games_played: 0,
+            games_won: 0,
+            games_lost: 0,
+            goals_for: 0,
+            goals_against: 0,
+            shots: 0,
+            saves: 0,
+            shutouts: 0,
+            verification_code: verification_code,
+            verified: 0};
 
         //Columns: "user_name", "user_pass", "user_email", "user_first", "user_last", "user_gender", "age", "bio", "photo", "points", "tourneys_played", "tourneys_won", "tourneys_lost", "games_played", "games_won", "games_lost", "goals_for", "goals_against", "shots", "saves", "shutouts"
         var query = connection.query('INSERT INTO users SET ?',vals, function (error, results, fields){
-            console.log(query);
-            console.log(vals);
+            // console.log(query);
+            // console.log(vals);
             
         })
-        connection.query("select * from users where user_email = ? and user_pass = ?",[email, password], function(error, results, fields){
-            if (results.length > 0){
-                console.log("USER REGISTERED");
-                authcode = true;
-                my_user_id = results[0].user_id;
-                //Expires after 1800000 ms (30 minutes) from the time it is set.
-                res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
-                registration_error = ""
-                res.redirect("/home");
-            }else {
-                registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
+
+        checkCreatedUser = function(email, password){
+            return new Promise(function(resolve, reject){
+                connection.query(
+                    "select * from users where user_email = ? and user_pass = ?",[email, password],
+                    function(err, rows){
+                        if(rows === undefined){
+                            reject(new Error("Error rows is undefined"));
+                        }else{
+                            resolve(rows);
+                        }
+                    }
+                )
+            })
+        }
+
+        async function runQuery(){
+            try {
+                const results = await checkCreatedUser(email, password);
+                console.log(results);
+                if (results.length > 0){
+                    console.log("USER REGISTERED");
+                    authcode = true;
+                    my_user_id = results[0].user_id;
+                    //Expires after 1800000 ms (30 minutes) from the time it is set.
+                    res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
+                    registration_error = ""
+                    email_contents = {
+                        recipient: email,
+                        subject: 'MyTourney Registration',
+                        message: 'Welcome to MyTourney!\n'+
+                                    '✔ Please verify your account by following this'+' link:'.link(`${url}/verify?code=${verify_code}`)+
+                                    '✔ Find a team or create one to get started and join a tourney.\n'+
+                                    '💸 You can win cash prizes by winning Tourneys.\n'+
+                                    '🔥 I hope to see you crush the competition, and most importantly have fun!',
+                        html: `<h1 style="text-align: center;">
+                                Welcome to MyTourney!
+                                </h1><br>
+                                <div style="align-items: center; display: flex;">
+                                    <ul style="list-style: none; margin: auto;">
+                                    <li>✔ Please verify your account by following this <a href="http://${url}/verify?code=${verify_code}">link</a></li>
+                                    <li>✔ Your verification code is ${verify_code}
+                                    <li>✔ Find a team or create one to get started and join a tourney.</li>
+                                    <li>💸 You can win cash prizes by winning Tourneys.</li>
+                                    <li>🔥 I hope to see you crush the competition, and most importantly have fun!</li>
+                                    </ul>
+                                </div>`
+                    }
+                    mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
+                    res.redirect("/home");
+                }else {
+                    registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
+                    res.redirect("/register");
+                }res.end();
+            } catch (error) {
+                console.error(error)
                 res.redirect("/register");
             }
-            res.end();
-        })
+        }
+
+        runQuery();
+
+    //     connection.query("select * from users where user_email = ? and user_pass = ?",[email, password], function(error, results, fields){
+    //         if (results.length > 0){
+    //             console.log("USER REGISTERED");
+    //             authcode = true;
+    //             my_user_id = results[0].user_id;
+    //             //Expires after 1800000 ms (30 minutes) from the time it is set.
+    //             res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
+    //             registration_error = ""
+    //             email_contents = {
+    //                 recipient: email,
+    //                 subject: 'MyTourney Registration',
+    //                 message: 'Welcome to MyTourney! Find a team or create one to get started and join a tourney. You can win cash prizes by winning Tourneys. I hope to see you crush the competition, and most importantly have fun!'
+    //             }
+    //             email(email_contents.recipient, email_contents.subject, email_contents.message);
+    //             res.redirect("/home");
+    //         }else {
+    //             registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
+    //             res.redirect("/register");
+    //         }
+    //         res.end();
+    //     })
     } catch{
         console.log("CATCH")
         res.redirect("/register");

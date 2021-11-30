@@ -17,6 +17,8 @@
     -> Finished working on participating teams feature
         -Added number_of_teams_participating to tourneys table
     -> Completed detailed view for the tourney from the player perspective
+    -> Completed native share button
+    -> Set up emails and email verification
 
 # To do next:
     ** UPDATE MYSQL DATABASE ON MAC
@@ -39,7 +41,9 @@
             -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
     -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
         //NOTES
-            -Important to consider the order in which the users get paid. (ie. I get paid everything, then I pay the host, and I also pay the winning team)
+            -Two transactions:
+                1) Collect payments from players and use charge-transfer function of Stripe to keep my cut and transfer the host's cut
+                2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
     -> Add game-management and score update page
         -Include match-making function
 

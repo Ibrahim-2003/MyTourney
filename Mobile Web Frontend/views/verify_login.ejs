@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.png?">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>Login - MyTourney</title>
+</head>
+    <body>
+        <div style="color: #91c2e7; font-size: 36px; text-align: center; margin: auto; font-weight: 500; padding-bottom: 15px; padding-top: 50px;">
+            MYTOURNEY
+        </div>
+        <div id="container">
+            <div>
+                <img src="images/MyTourney Logo.png" id="login-img">
+            </div>
+        </div>
+        <div id="login-form-container">
+        <form method="POST" action="/login">
+            <div class="form-group">
+                <input name="email" type="email" autocomplete="username" class="form-control" id="exampleInputEmail1" placeholder="EMAIL">
+            </div>
+            <div class="form-group">
+                <input name="password" type="password" autocomplete="current-password" class="form-control" id="exampleInputPassword1" placeholder="PASSWORD">
+            </div>
+            <div class="form-group">
+                <input type="submit" id="submit-btn" value="LOGIN">
+            </div>
+        </form>
+        </div>
+        <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
+            Need to sign up?&emsp;
+            <a href="/register" style="font-family: Varsity; color: #91c2e7;font-weight: 500;">REGISTER</a>
+        </div>
+        <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
+            Forgot password?&emsp;
+            <button style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="forgotPass">FORGOT</button>
+        </div>
+        <script src="forgot.js"></script>
+    </body>
+</html>

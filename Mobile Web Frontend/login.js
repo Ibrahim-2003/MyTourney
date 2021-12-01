@@ -169,9 +169,9 @@ app.get("/profile_player", checkAuthenticated, function(req, res){
 app.get("/host", checkAuthenticated, function(req, res){
     
     if(req.cookies.id){
-        console.log(req.cookies.id)
+        // console.log(req.cookies.id)
        var search = connection.query("select * from tourney_hosts where users_user_id = ?", parseInt(req.cookies.id), function(error, results, fields){
-        console.log(search)
+        // console.log(search)
         var res_len;
         if (results != undefined){
             res_len = results.length;
@@ -190,13 +190,104 @@ app.get("/host", checkAuthenticated, function(req, res){
     
 })
 app.get("/balance", checkAuthenticated, function(req, res){
-    res.render('balance.ejs');
+    const user_id = req.cookies.id;
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    async function runQuery(user_id){
+        try {
+            const results = await getUserById(user_id);
+            res.render('balance.ejs', {user: results});
+        } catch (error) {
+            console.error(error)
+        }
+        
+    }
+
+    runQuery(user_id);
 })
 app.get("/host_signup", checkAuthenticated, function(req, res){
     res.render('host_signup.ejs');
 })
+
+
 app.get("/leaderboard", checkAuthenticated, function(req, res){
-    res.render('leaderboard.ejs')
+    const selection = req.query.selection;
+    const search_low = parseInt(req.query.rankings_from);
+    const search_high = parseInt(req.query.rankings_to);
+    const search_amount = parseInt(search_high - search_low + 1);
+
+    function rankByPoints(selection, lower, amount){
+        return new Promise(function(resolve, reject){
+            if(selection == 'teams'){
+                connection.query(
+                    'SELECT * FROM ' + selection + ' ORDER BY team_points DESC LIMIT ' + lower + ',' + amount,
+                    function(err, rows){                                                
+                        if(rows === undefined){
+                            reject(new Error("Error rows is undefined"));
+                      }else{
+                            resolve(rows);
+                      }
+                  }
+              )}
+            else{
+                connection.query(
+                    'SELECT * FROM ' + selection + ' ORDER BY points DESC LIMIT ' + lower + ',' + amount,
+                    function(err, rows){                                                
+                        if(rows === undefined){
+                            reject(new Error("Error rows is undefined"));
+                      }else{
+                            resolve(rows);
+                      }
+                  }
+              )}
+            }
+            
+        )}
+    
+    async function runQuery(selection, lower, amount){
+        try {
+            const ranked_results = await rankByPoints(selection,  lower, amount)
+            const indexer = []
+            if(search_low > 0){
+                for (i=search_low-1; i<search_high; i++){
+                    indexer.push(i)
+                }
+            }else{
+                for (i=search_low; i<search_high; i++){
+                    indexer.push(i)
+                }
+            }
+            
+            // console.log(indexer)
+            // console.log(ranked_results)
+            res.render('leaderboard.ejs', {results: ranked_results,
+                                            option: selection,
+                                            search_amount: search_amount,
+                                            search_high: search_high,
+                                            search_low: search_low,
+                                            indexer: indexer,
+                                            profile_path: profile_path})
+        } catch (error) {
+            console.error(error)
+            res.redirect('/')
+        }
+    }
+
+    runQuery(selection, search_low, search_amount);
 })
 
 app.post("/register_host", encoder, function(req,res){

@@ -19,10 +19,14 @@
     -> Completed detailed view for the tourney from the player perspective
     -> Completed native share button
     -> Set up emails and email verification
+    -> Finished the leaderboards page
+    -> Finished balance page
 
 # To do next:
     ** UPDATE MYSQL DATABASE ON MAC
-    -> Setup the leaderboards page
+    -> Put an add members button to team page
+        //IDEAS
+            -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
     -> Paginate search results
     -> Add search, filter, sort functions to tourney listings
         *Sort by:
@@ -35,10 +39,8 @@
             -Team size
             -Distance (only show tourneys x miles from location)
             -Age Group (child (3-7), youth (7-12), high school (13-18),  adult (19+))
-    -> Setup history page and balance page for players and hosts
-    -> Put an add members button to team page
-        //IDEAS
-            -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
+    -> Setup history page for players
+    
     -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
         //NOTES
             -Two transactions:
@@ -49,6 +51,7 @@
         -At the start, only the team leader can initiate joining a tourney
 
     //Not essential for MVP
+    -> Add filters to sort leaderboards (ie. most goals, most saves, etc)
     -> Add fallback for native sharing (with hidden div and buttons)
     -> Fix look on iOS
     -> Work on making bracket screen

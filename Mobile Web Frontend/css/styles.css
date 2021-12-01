@@ -122,6 +122,13 @@ header {
     border-radius: 15px;
     text-align: center;
     margin-top: 10px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 #schedule {
@@ -149,6 +156,13 @@ header {
     border-radius: 15px;
     text-align: center;
     margin-top: 10px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 #search {
@@ -205,6 +219,7 @@ header {
 }
 
 .tourney-listing {
+    cursor: pointer;
     margin: 25px 15px;
     padding: 20px;
     background-color: #91c2e7;
@@ -244,6 +259,113 @@ header {
 
 .flex-child:first-child {
     margin-right: -50px;
+}
+
+#leader_ranking_img{
+    display: block;
+    margin: auto;
+    width: 10vw;
+    height: 10vw;
+    object-fit: fill;
+}
+
+#leaderboard_profile_pic {
+    display: block;
+    margin-right: 10px;
+    width: 10vw;
+    height: 10vw;
+    object-fit: fill;
+    border-radius: 50%;
+    image-rendering: -moz-crisp-edges;         /* Firefox */
+    image-rendering:   -o-crisp-edges;         /* Opera */
+    image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor; 
+}
+
+.lead_listing{
+    margin: 10px 15px 25px 15px;
+    padding: 10px;
+    background-color: #91c2e7;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.lead_titles{
+    margin: 25px 15px 0 15px;
+    color: #91c2e7;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.ld_tit{
+    margin: 0 20px;
+    text-align: center;
+    font-family: NTF-Grand;
+    font-size: 5vw;
+}
+
+.ld-val{
+    margin: auto;
+    text-align: center;
+    font-family: NTF-Grand;
+    font-size: 5vw;
+    display: inline-block;
+    vertical-align: middle;
+    color: #104b5f;
+}
+
+#ld_options{
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #91c2e7;
+    border-bottom: 1px solid #91c2e7;
+}
+
+.leader_rank{
+    margin: auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    color: #104b5f;
+    font-weight: 500;
+}
+
+.ld_options{
+    text-align: center;
+    color: #91c2e7;
+    font-family: NTF-Grand;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+#leader_img_container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #venue-img {

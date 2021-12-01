@@ -27,22 +27,50 @@
         </h1>
     </div>
 
-    <div class="container">
+    <div class="container" style="margin-bottom: 10px;">
     <ul id="balance-sheet">
+        <% var net_income = user[0].earnings - user[0].losses %> 
+        <% var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',}); %> 
+        <% net_income = formatter.format(net_income) %> 
+        <% var earnings = formatter.format(user[0].earnings) %> 
+        <% var losses = formatter.format(user[0].losses) %> 
+        <% var withdrawals = formatter.format(user[0].withdrawals) %>
+        <% var balance = formatter.format(user[0].balance) %>
         <li>
             <h4 style="color: #91c2e7; font-weight: 500;font-family: NTF-Grand; padding-inline: 15px;">NET INCOME</h4>
-            <span id="net-income-val">$0</span>
+            <span id="net-income-val"><%= net_income %> </span>
         </li>
         <li style="border-left:1px solid #91c2e7;">
             <h4 style="color: #91c2e7; font-weight: 500;font-family: NTF-Grand; padding-inline: 15px;">EARNINGS</h4>
-            <span id="earnings-val">$0</span>
+            <span id="earnings-val"><%= earnings %></span>
         </li>
         <li style="border-left:1px solid #91c2e7;">
-            <h4 style="color: #91c2e7; font-weight: 500;font-family: NTF-Grand;padding-inline: 15px;">WITHDRAWALS</h4>
-            <span id="withdrawals-val">$0</span>
+            <h4 style="color: #91c2e7; font-weight: 500;font-family: NTF-Grand;padding-inline: 15px;">LOSSES</h4>
+            <span id="withdrawals-val"><%= losses %></span>
         </li>
     </ul>
     </div>
+    <div style="font-family: Varsity; color: #91c2e7; text-align: center; font-size: 10vw; border-top: 1px solid #91c2e7; font-weight: 500; padding-top: 30px;">
+        WITHDRAWALS
+    </div>
+    <div style="font-family: NTF-Grand; color: #91c2e7; text-align: center; font-size: 15vw; padding: 30px 0 30px 0;"> <!--  border-bottom: 1px solid #91c2e7; -->
+        <%= withdrawals %> 
+    </div>
+    <div style="font-family: Varsity; color: #91c2e7; text-align: center; font-size: 10vw; font-weight: 500; margin-top: 10px; padding-top: 30px; border-top: 1px solid #91c2e7;"> <!-- border-top: 1px solid #91c2e7; -->
+        CURRENT BALANCE
+    </div>
+    <div style="font-family: NTF-Grand; color: #91c2e7; text-align: center; font-size: 15vw; border-bottom: 1px solid #91c2e7; padding: 30px 0 30px 0; margin-bottom: 40px;">
+        <%= balance %> 
+    </div>
+    <div style="justify-content: space-between; display: flex; align-items: center; margin-bottom: 40px;">
+        <div style="font-family: NTF-Grand; color: #104b5f; text-align: center; font-size: 12vw; padding: 10px; width: 50%; background-color: #91c2e7; border-radius: 5px; margin: 0 15px 0 15px;">
+            Add Funds
+        </div>
+        <div style="font-family: NTF-Grand; color: #104b5f; text-align: center; font-size: 12vw; padding: 10px; width: 50%; background-color: #91c2e7; border-radius: 5px; margin: 0 15px 0 15px;">
+            Withdraw
+        </div>
+    </div>
+    
 
     </section>
     <button onclick="topFunction()" id="my-btn" title="Go to top">

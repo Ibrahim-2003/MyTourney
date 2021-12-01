@@ -45,3 +45,6 @@
     Example:
         SQL -> ALTER TABLE 'users' DROP COLUMN 'team_id'
         English -> Delete the column named "team_id" from the table named "users"
+
+ # Node - MySQL Documentation
+    https://www.npmjs.com/package/mysql#performing-queries

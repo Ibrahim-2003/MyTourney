@@ -10,6 +10,21 @@
     <title>MyTourney</title>
 </head>
     <body>
+        <script>
+            function playerSelect(){
+                document.getElementById('ld-players').style.background = '#91c2e7'
+                document.getElementById('ld-players').style.color = '#104b5f'
+                document.getElementById('ld-teams').style.background = '#104b5f'
+                document.getElementById('ld-teams').style.color = '#91c2e7'
+            }
+    
+            function teamSelect(){
+                document.getElementById('ld-teams').style.background = '#91c2e7'
+                document.getElementById('ld-teams').style.color = '#104b5f'
+                document.getElementById('ld-players').style.background = '#104b5f'
+                document.getElementById('ld-players').style.color = '#91c2e7'
+            }
+        </script>
     <div class="navbar" id="nav_bar">
         <nav>
             <ul class="nav-links">
@@ -44,60 +59,113 @@
         </div>
     </section>
     <br><br>
-    <section class="searchbar">
-        <div class="container">
-            <div id="search">
-                <a href="#">
-                    <img src="images/Search Icon.png" style="height: 30px;">
-                </a>
-            </div>
-            
-            <div id="filter">
-                <a href="#">
-                    <img src="images/Filter Icon.png" style="height: 30px;">
-                </a>
-            </div>
-            <div id="sort">
-                <a href="#">
-                    <img src="images/Sort Icon.png" style="height: 30px;">
-                </a>
-            </div>
-            <div style="float: right; width: 50%;">
-                <h1 id="tornearme">Leaderboards</h1>
-            </div>
+    <div id="ld_options">
+        <% if(option == 'teams') {%> 
+        <div class="ld_options" id="ld-teams" style="padding-right: 20%; padding-left: 20%; background-color: #91c2e7; color: #104b5f;" onclick="window.location=`/leaderboard?selection=teams&rankings_from=<%= search_low %>&rankings_to=<%= search_high %>`">
+            TEAMS
         </div>
-    </section>
+        <div class="ld_options" id="ld-players" style="padding-left: 20%; padding-right: 20%; border-left: 1px solid #91c2e7; background-color: #104b5f;  color: #91c2e7;" onclick="window.location=`/leaderboard?selection=users&rankings_from=<%= search_low %>&rankings_to=<%= search_high %>`">
+            PLAYERS
+        </div>
+        <% } else if (option == 'users'){%> 
+            <div class="ld_options" id="ld-teams" style="padding-right: 20%; padding-left: 20%; background-color: #104b5f; color: #91c2e7;" onclick="window.location=`/leaderboard?selection=teams&rankings_from=<%= search_low %>&rankings_to=<%= search_high %>`">
+                TEAMS
+            </div>
+            <div class="ld_options" id="ld-players" style="padding-left: 20%; padding-right: 20%; border-left: 1px solid #91c2e7; background-color:#91c2e7;  color: #104b5f;" onclick="window.location=`/leaderboard?selection=users&rankings_from=<%= search_low %>&rankings_to=<%= search_high %>`">
+                PLAYERS
+            </div>
+        <% } %> 
+    </div>
     <section id="listings">
-            <div class="tourney-listing">
-                <div id="venue-img-container" class="flex-child img">
-                    <img src='https://community.adobe.com/legacyfs/online/1709169_latam-logo-symbol.png' id="venue-img">
+            <div class="lead_titles">
+                <div class="ld_tit" style="grid-column: span 2;">
+                    RANK 
                 </div>
-                <div id="listview-info" class="flex-child info">
-                    <div style="text-align: center;">
-                        <strong>NAME</strong>
+                <div class="ld_tit">
+                    NAME 
+                </div>
+                <div class="ld_tit">
+                    POINTS 
+                </div>
+                <div class="ld_tit">
+                    WINS 
+                </div>
+            </div>
+            <% if (option == 'users') {%> 
+            <% for (var index=0; index<indexer.length; index++) {%> 
+            <% var result = results[index]%>
+                <div class="lead_listing">
+                    <% if (index + search_low + 1 == 1) {%> 
+                        <div class="leader_img_container">
+                            <img src='images/rank1.png' id="leader_ranking_img">
+                        </div>
+                    <% } %> 
+                    <% if (index + search_low + 1 == 2) {%> 
+                        <div class="leader_img_container">
+                            <img src='images/rank2.png' id="leader_ranking_img">
+                        </div>
+                    <% } %> 
+                    <% if (index + search_low + 1 == 3) {%> 
+                        <div class="leader_img_container">
+                            <img src='images/rank3.png' id="leader_ranking_img">
+                        </div>
+                    <% } else if (index + search_low + 1 > 3){%> 
+                    <div class="leader_rank">
+                        <%= index + search_low + 1 %> 
                     </div>
-                    <table style="width: 100%; margin: 0 auto;" class="venue-table">
-                        <tr>
-                            <td>
-                                Game: v   Age Group: 
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Entry: $ Duration:  min
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                # of Teams Participating:  / 
-                            </td>
-                        </tr>
-                    </table>                    
-                </div>
-            </div> 
-        <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
-            <a href="/logout" style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="logout">LOGOUT</a>
-        </div>
+                    <% } %> 
+                    <div class="leader_img_container">
+                        <img src='images/default_profile.jpg' id="leaderboard_profile_pic">
+                    </div>
+                    <div class="ld-val">
+                        <%= result.user_name %>
+                    </div>
+                    <div class="ld-val">
+                        <%= result.points %>
+                    </div>
+                    <div class="ld-val">
+                        <%= result.games_won %>
+                    </div>
+                    </div>                
+            <% } %> 
+            <% } else { %>
+            <% for (var index=0; index<indexer.length; index++) {%> 
+            <% var result = results[index]%>
+                <div class="lead_listing">
+                    <% if (index + search_low + 1 == 1) {%> 
+                        <div class="leader_img_container">
+                            <img src='images/rank1.png' id="leader_ranking_img">
+                        </div>
+                    <% } %> 
+                    <% if (index + search_low + 1 == 2) {%> 
+                        <div class="leader_img_container">
+                            <img src='images/rank2.png' id="leader_ranking_img">
+                        </div>
+                    <% } %> 
+                    <% if (index + search_low + 1 == 3) {%> 
+                        <div class="leader_img_container">
+                            <img src='images/rank3.png' id="leader_ranking_img">
+                        </div>
+                    <% } else if (index + search_low + 1 > 3){%> 
+                    <div class="leader_rank">
+                        <%= index + search_low + 1 %> 
+                    </div>
+                    <% } %> 
+                    <div class="leader_img_container">
+                        <img src='images/default_profile.jpg' id="leaderboard_profile_pic">
+                    </div>
+                    <div class="ld-val">
+                        <%= result.team_name %>
+                    </div>
+                    <div class="ld-val">
+                        <%= result.team_points %>
+                    </div>
+                    <div class="ld-val">
+                        <%= result.games_won %>
+                    </div>
+                    </div>                
+            <% } %> 
+            <% } %> 
 
     </section>
     <button onclick="topFunction()" id="my-btn" title="Go to top">

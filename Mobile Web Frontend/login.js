@@ -498,30 +498,106 @@ app.post("/login",encoder, function(req,res){
 app.post("/verified_login",encoder, function(req,res){
     var email = req.body.email;
     var password = req.body.password;
-    var code = req.body.code;
-    console.log(password);
-    connection.query("select * from users where user_email = ?",[email, password], function(error, results, fields){
-        console.log(results);
-        if (results.length > 0){
-            if (bcrypt.compare(password, results[0].user_pass)){
-                authcode = true;
-                my_user_id = results[0].user_id;
-                res.clearCookie('id')
-                res.cookie('id', my_user_id);
-                console.log(req.cookies.id)
-                res.redirect("/home");
+    var code = req.query.code;
+    
+
+    getUserById = function(user_id, password){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                              
+                const check_pass = bcrypt.compare(password, rows[0].user_pass);
+                if(rows === undefined || check_pass == false){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                    authcode = true;
+                    my_user_id = rows[0].user_id;
+                    res.clearCookie('id')
+                    res.cookie('id', my_user_id);
+                    console.log(req.cookies.id);
+                    resolve(rows)
+                }
             }
-        }else {
-            res.redirect(`/verified_login?code=${code}`);
+        )}
+    )}
+
+    checkPassword = function(email){
+        return new Promise(function(resolve, reject){
+          connection.query(
+            "SELECT * FROM users WHERE user_email = ?",
+              email, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    verifyUser = function(user_id){
+        return new Promise(function(resolve, reject){
+          var q = connection.query(
+              "UPDATE users SET verified = 1 WHERE user_id = ?",
+              user_id)          
+                if(q === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(q);
+                }
+            }
+        )}
+
+
+    async function runQuery(code, email, password){
+        try {
+            const users = await checkPassword(email);
+            const user_id = users[0].user_id;
+            const results = await getUserById(user_id, password);
+            if (bcrypt.compare(code, results[0].verification_code)){
+                await verifyUser(user_id);
+                console.log('Your account has been verified');
+                res.redirect('/')
+            }else{
+                console.log('WRONG VERIFICATION CODE')
+            }
+        } catch (error) {
+            console.error(error);
+            res.redirect(`/verify_login?code=${code}`)
         }
-        res.end();
-    })
+    }
+
+    runQuery(code, email, password);
+
+    // connection.query("select * from users where user_email = ?", email, function(error, results, fields){
+    //     console.log(results);
+    //     if (results.length > 0){
+    //         if (bcrypt.compare(password, results[0].user_pass)){
+    //             authcode = true;
+    //             my_user_id = results[0].user_id;
+    //             res.clearCookie('id')
+    //             res.cookie('id', my_user_id);
+    //             console.log(req.cookies.id);
+    //             runQuery(code, my_user_id);
+    //             res.redirect("/home");
+    //         }
+    //     }else {
+    //         res.redirect(`/verified_login?code=${code}`);
+    //     }
+    //     res.end();
+    // })
+})
+
+app.get("/verified_login", function(req, res){
+    res.render('verify_login.ejs', {code: req.query.code})
 })
 
 app.post("/join",encoder,checkAuthenticated, function(req, res){
     var tourney_id = req.query.id;
     var user_id = req.cookies.id;
-    var id = req.query.id
+    var id = req.query.id;
 
     getUserById = function(user_id){
         return new Promise(function(resolve, reject){
@@ -663,7 +739,7 @@ app.get("/home", checkAuthenticated, function(req, res){
     res.render('home.ejs');
 })
 
-app.get('/verify', checkAuthenticated, function(req,res){
+app.get('/verify', function(req,res){
     var code = req.query.code;
     var user_id = req.cookies.id;
 
@@ -706,11 +782,20 @@ app.get('/verify', checkAuthenticated, function(req,res){
             }
         } catch (error) {
             console.error(error);
-            res.redirect(`/verify_login?code=${code}`)
+            
         }
     }
 
-    runQuery(code, user_id);
+    console.log(user_id)
+
+    if(user_id>0){
+        runQuery(code, user_id);
+    }else{
+        let link = `/verified_login?code=${code}`
+        console.log(`Redirecting... ${link}`)
+        res.redirect(link)
+    }
+    
 
 })
 

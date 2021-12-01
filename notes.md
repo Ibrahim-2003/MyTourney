@@ -21,10 +21,11 @@
     -> Set up emails and email verification
     -> Finished the leaderboards page
     -> Finished balance page
+    -> Finished form for users to join tournament
 
 # To do next:
     ** UPDATE MYSQL DATABASE ON MAC
-    -> Put an add members button to team page
+    -> Put an add members button and create team to team page
         //IDEAS
             -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
     -> Paginate search results
@@ -65,9 +66,6 @@
 ## Creating Forms
     -> Form for users to edit profile
     -> Form for users to create team and adjust team members
-    -> Form for users to join tournament
-        //IDEAS
-            -The tourneys on the home screen will link to a URL page with the tourney ID as a query parameter. When the GET request for that URL is made, the page updates with that tourney's detailed info. A button will show up that allows a team member to start the enter process. Other members will receive a notification if they want to join. The notification will link to the payment screen.
 
 ## Production Cost
     <<<MVP: $28/month>>>

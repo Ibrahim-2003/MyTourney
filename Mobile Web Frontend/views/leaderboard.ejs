@@ -1,2 +1,108 @@
-LEADERBOARD HOLDER
-<img src="uploads/venues/197083635375227b8ffed058548604e3">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.png?">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>MyTourney</title>
+</head>
+    <body>
+    <div class="navbar" id="nav_bar">
+        <nav>
+            <ul class="nav-links">
+                <!-- Make this so that the "PROFILE" changes to "LOGIN" -->
+                <!-- Make it so that if the user does not have a team, he can join a team or create one -->
+                <li><a href="profile_player">PROFILE</a></li>
+                <li><a href="balance">BALANCE</a></li>
+                <li><a href="friends">FRIENDS</a></li>
+                <li><a href="team_player">TEAM</a></li>
+            </ul>
+        </nav>
+    </div>
+    <br><br>
+    <section class="logo">
+        <div class="container">
+            <div style="background-color: #91c2e7;
+            float: left;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            width: 25%;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 10px;">
+                <a href="home" >BACK<br>HOME</a>
+            </div>
+            <div id="logo_img_home">
+                <img src="images/MyTourney Logo.png" style="height: 85px;">
+            </div>
+            <div style="background-color: #91c2e7;" id="host">
+                <a href="host">HOST<br>MODE</a>
+            </div>
+        </div>
+    </section>
+    <br><br>
+    <section class="searchbar">
+        <div class="container">
+            <div id="search">
+                <a href="#">
+                    <img src="images/Search Icon.png" style="height: 30px;">
+                </a>
+            </div>
+            
+            <div id="filter">
+                <a href="#">
+                    <img src="images/Filter Icon.png" style="height: 30px;">
+                </a>
+            </div>
+            <div id="sort">
+                <a href="#">
+                    <img src="images/Sort Icon.png" style="height: 30px;">
+                </a>
+            </div>
+            <div style="float: right; width: 50%;">
+                <h1 id="tornearme">Leaderboards</h1>
+            </div>
+        </div>
+    </section>
+    <section id="listings">
+            <div class="tourney-listing">
+                <div id="venue-img-container" class="flex-child img">
+                    <img src='https://community.adobe.com/legacyfs/online/1709169_latam-logo-symbol.png' id="venue-img">
+                </div>
+                <div id="listview-info" class="flex-child info">
+                    <div style="text-align: center;">
+                        <strong>NAME</strong>
+                    </div>
+                    <table style="width: 100%; margin: 0 auto;" class="venue-table">
+                        <tr>
+                            <td>
+                                Game: v   Age Group: 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Entry: $ Duration:  min
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                # of Teams Participating:  / 
+                            </td>
+                        </tr>
+                    </table>                    
+                </div>
+            </div> 
+        <div id="register-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
+            <a href="/logout" style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="logout">LOGOUT</a>
+        </div>
+
+    </section>
+    <button onclick="topFunction()" id="my-btn" title="Go to top">
+    <img src="images/Up Arrow.jpeg" style="height: 25px; padding-top: 5px;">
+    </button>
+    <script src="app.js"></script>
+    </body>
+</html>

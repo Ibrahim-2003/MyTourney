@@ -46,8 +46,11 @@
                 2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
     -> Add game-management and score update page
         -Include match-making function
+        -At the start, only the team leader can initiate joining a tourney
 
     //Not essential for MVP
+    -> Add fallback for native sharing (with hidden div and buttons)
+    -> Fix look on iOS
     -> Work on making bracket screen
     -> Add password length and character requirements
     -> Add errors to the forms to catch any impossible birthdates, too many max participants, too low or too high entry fee, etc.

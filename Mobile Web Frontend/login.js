@@ -346,7 +346,7 @@ app.get("/listing", function(req, res){
         try{
         const tourney_result = await getTourneyById(id);
         const host_result = await getUserById(tourney_result[0].hosts_users_user_id);
-        const user_result = await getUserById(req.cookies.id)
+        const user_result = await getUserById(req.cookies.id);
 
         // console.log(tourney_result)
         // console.log(host_result)

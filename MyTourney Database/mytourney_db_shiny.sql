@@ -109,7 +109,7 @@ CREATE TABLE `teams` (
   UNIQUE KEY `team_name_UNIQUE` (`team_name`),
   KEY `fk_teams_users1_idx` (`users_user_id`),
   CONSTRAINT `fk_teams_users1` FOREIGN KEY (`users_user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -118,6 +118,7 @@ CREATE TABLE `teams` (
 
 LOCK TABLES `teams` WRITE;
 /*!40000 ALTER TABLE `teams` DISABLE KEYS */;
+INSERT INTO `teams` VALUES (1,'Madrid','Ibrahim',NULL,0,0,0,0,0,0,100,0,0,0,0,0,1);
 /*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -165,7 +166,7 @@ CREATE TABLE `tourney_hosts` (
   PRIMARY KEY (`hosts_id`,`users_user_id`),
   KEY `fk_hosts_users_idx` (`users_user_id`),
   CONSTRAINT `fk_hosts_users` FOREIGN KEY (`users_user_id`) REFERENCES `users` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -174,7 +175,7 @@ CREATE TABLE `tourney_hosts` (
 
 LOCK TABLES `tourney_hosts` WRITE;
 /*!40000 ALTER TABLE `tourney_hosts` DISABLE KEYS */;
-INSERT INTO `tourney_hosts` VALUES (2,NULL,NULL,1),(3,NULL,NULL,5);
+INSERT INTO `tourney_hosts` VALUES (2,NULL,NULL,1),(3,NULL,NULL,5),(4,NULL,NULL,20);
 /*!40000 ALTER TABLE `tourney_hosts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -205,7 +206,7 @@ CREATE TABLE `tourneys` (
   PRIMARY KEY (`tourneys_id`,`hosts_hosts_id`,`hosts_users_user_id`),
   KEY `fk_tourneys_hosts1_idx` (`hosts_hosts_id`,`hosts_users_user_id`),
   CONSTRAINT `fk_tourneys_hosts1` FOREIGN KEY (`hosts_hosts_id`, `hosts_users_user_id`) REFERENCES `tourney_hosts` (`hosts_id`, `users_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,7 +215,7 @@ CREATE TABLE `tourneys` (
 
 LOCK TABLES `tourneys` WRITE;
 /*!40000 ALTER TABLE `tourneys` DISABLE KEYS */;
-INSERT INTO `tourneys` VALUES (7,3,'M','youth','NutCrax','Houston',29.7157,-95.3977,600000,16,10,'08a90bed7b23617ff146410e79d6404d',2,1,0,'2022-01-01 00:00:00'),(8,3,'M','youth','Eternals','Corpus Christi',27.666,-97.3736,600000,12,10,'197083635375227b8ffed058548604e3',3,5,0,'2022-01-01 00:00:00'),(9,11,'M','adult','World Cup','San Antonio',29.2128,-98.447,600000,16,30,'846aa5c1a1aa18fbf1a0bfee31d623e2',2,1,0,'2022-01-01 00:00:00'),(10,11,'M','child','CHAMPIONS LEAGUE','Washington DC',38.8637,-76.9468,5400000,16,27,'4eb6ab7169f939de7f114f767187d050',2,1,0,'2022-01-01 00:00:00'),(11,5,'M','mix','OWL CUP','Houston',29.7216,-95.391,900000,8,10,'cbea784ecc9bbdd04f87a4ba19cb6e23',3,5,0,'2022-01-01 00:00:00');
+INSERT INTO `tourneys` VALUES (9,11,'M','adult','World Cup','San Antonio',29.2128,-98.447,600000,16,30,'846aa5c1a1aa18fbf1a0bfee31d623e2',2,1,0,'2022-01-01 00:00:00'),(10,11,'M','child','CHAMPIONS LEAGUE','Washington DC',38.8637,-76.9468,5400000,16,27,'4eb6ab7169f939de7f114f767187d050',2,1,0,'2022-01-01 00:00:00'),(11,5,'M','mix','OWL CUP','Houston',29.7216,-95.391,900000,8,10,'cbea784ecc9bbdd04f87a4ba19cb6e23',3,5,0,'2022-01-01 00:00:00');
 /*!40000 ALTER TABLE `tourneys` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -283,9 +284,14 @@ CREATE TABLE `users` (
   `shutouts` int DEFAULT NULL,
   `balance` float DEFAULT NULL,
   `team_id` int DEFAULT NULL,
+  `earnings` float DEFAULT NULL,
+  `withdrawals` float DEFAULT NULL,
+  `losses` float DEFAULT NULL,
+  `verification_code` varchar(255) DEFAULT NULL,
+  `verified` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_email_UNIQUE` (`user_email`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +300,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'user','$2b$10$cx4sdvkui2FN5Ue3oPlnM.FQXNhi683wjKk4KF4roqYQiUSYDD4R.','isa1@rice.edu','Ibrahim','Al-Akash','M','2003-02-27',NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,NULL),(5,'Nuts','$2b$10$miPRUkfwCKn5vaatyVTN8O0uk0Lo01hUtziP1z4mZCPTls739bqhu','user@gmail.com','Luke','Vader','M','2005-11-27',NULL,NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,30,NULL);
+INSERT INTO `users` VALUES (1,'Ibrahim','$2b$10$cx4sdvkui2FN5Ue3oPlnM.FQXNhi683wjKk4KF4roqYQiUSYDD4R.','isa1@rice.edu','Ibrahim','Al-Akash','M','2003-02-27',NULL,NULL,10000,0,0,0,0,0,0,0,0,0,0,0,0,NULL,0,0,0,NULL,1),(5,'Nuts','$2b$10$miPRUkfwCKn5vaatyVTN8O0uk0Lo01hUtziP1z4mZCPTls739bqhu','user@gmail.com','Luke','Vader','M','2005-11-27',NULL,NULL,0,0,0,0,0,0,0,0,0,0,0,0,30,NULL,0,100,30,NULL,1),(18,'boss','$2b$10$ecsKxfuV8FZob0rNSbB8h.ilyjD6sU3nH/sUXpK02079KaWA5KGjK','ibrahim.ceo@winmytourney.com','Ibrahim','Al-Akash','M','2003-02-27',NULL,NULL,100,0,0,0,0,0,0,0,0,0,0,0,0,NULL,0,0,0,'$2b$10$nFBaWkdqRAUeJAW0C7FSQuOTg9LU9u7WSwM.ygVAHqvD.gpb9EDpy',1),(20,'texasTanker','$2b$10$dyUgYGdzPyi0JhkkwS2N8eAWE9YwA13byjB9XKNAmvS6eft5dmlJO','ialakash@live.com','Porfirio','Zamora','M','2003-02-27',NULL,NULL,0,0,0,0,0,0,0,0,0,0,0,0,0,NULL,0,0,0,'$2b$10$vqI95bWQgdMZ9TzISHN6CuMUJEL2xbYUbTaH5OEZVlp4YHlZoy1te',1),(21,'alakais391','$2b$10$TNy7/8/gue59wZMNJIrbC.3anBOADhnii7qh2wIXeWpHqC662IEve','alakashibrahim@gmail.com','Ibrahim','Al-Akash','M','2003-02-27',NULL,NULL,0,0,0,0,0,0,0,0,0,0,0,0,0,NULL,0,0,0,'$2b$10$1cbZ20RX6kziIuWcNu1mjOt42HXI3O4ZSRz4ZAlD/kNd1UsojLbEC',1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -307,4 +313,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-11-30  0:34:10
+-- Dump completed on 2021-12-13  7:19:45

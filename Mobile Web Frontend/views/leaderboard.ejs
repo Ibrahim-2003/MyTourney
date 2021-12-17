@@ -92,7 +92,9 @@
                 </div>
             </div>
             <% if (option == 'users') {%> 
-            <% for (var index=0; index<indexer.length; index++) {%> 
+            <% for (var index=0; index<indexer.length; index++) {%>
+            <% if(index > results.length - 1) {%> 
+            <% }else{ %>
             <% var result = results[index]%>
                 <div class="lead_listing">
                     <% if (index + search_low + 1 == 1) {%> 
@@ -126,10 +128,13 @@
                     <div class="ld-val">
                         <%= result.games_won %>
                     </div>
-                    </div>                
+                    </div>
+            <% } %>                 
             <% } %> 
             <% } else { %>
-            <% for (var index=0; index<indexer.length; index++) {%> 
+            <% for (var index=0; index<indexer.length; index++) {%>
+            <% if(index > results.length - 1) {%> 
+            <% }else{ %> 
             <% var result = results[index]%>
                 <div class="lead_listing">
                     <% if (index + search_low + 1 == 1) {%> 
@@ -150,9 +155,25 @@
                     <div class="leader_rank">
                         <%= index + search_low + 1 %> 
                     </div>
-                    <% } %> 
-                    <div class="leader_img_container">
-                        <img src='images/default_profile.jpg' id="leaderboard_profile_pic">
+                    <% } %>
+                    <% var team_logo = result.team_logo %>
+                    <% if(team_logo != null){ %>
+                        <div class="leader_img_container_team">
+                            <img src="<%= team_path %>/<%= result.team_logo %>" id="leaderboard_team_pic">
+                        </div>
+                        <div class="ld-val">
+                            <%= result.team_name %>
+                        </div>
+                        <div class="ld-val">
+                            <%= result.team_points %>
+                        </div>
+                        <div class="ld-val">
+                            <%= result.games_won %>
+                        </div>
+                        </div>
+                    <% }else{ %> 
+                    <div class="leader_img_container_team">
+                        <img src='images/default_profile.jpg' id="leaderboard_team_pic">
                     </div>
                     <div class="ld-val">
                         <%= result.team_name %>
@@ -163,7 +184,9 @@
                     <div class="ld-val">
                         <%= result.games_won %>
                     </div>
-                    </div>                
+                    </div>
+                    <% } %> 
+            <% } %> 
             <% } %> 
             <% } %> 
 

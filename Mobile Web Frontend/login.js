@@ -164,7 +164,35 @@ app.get("/friends", checkAuthenticated, function(req, res){
     res.render('friends.ejs');
 })
 app.get("/profile_player", checkAuthenticated, function(req, res){
-    res.render('profile_player.ejs');
+
+    const user_id = req.cookies.id;
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    async function runQuery(user_id){
+        try {
+            const results = await getUserById(user_id);
+            res.render('profile_player.ejs', {user: results});
+        } catch (error) {
+            console.error(error)
+        }
+        
+    }
+
+    runQuery(user_id);
 })
 app.get("/host", checkAuthenticated, function(req, res){
     
@@ -280,7 +308,8 @@ app.get("/leaderboard", checkAuthenticated, function(req, res){
                                             search_high: search_high,
                                             search_low: search_low,
                                             indexer: indexer,
-                                            profile_path: profile_path})
+                                            profile_path: profile_path,
+                                            team_path: team_path})
         } catch (error) {
             console.error(error)
             res.redirect('/')
@@ -469,7 +498,97 @@ app.get("/add_tourney", checkAuthenticated, function(req, res){
     res.render('add_tourney.ejs', {add_error: add_tourney_error});
 })
 app.get("/team_player", checkAuthenticated, function(req, res){
-    res.render('team_player.ejs');
+    var user_id = req.cookies.id;
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTeamById = function(team_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM teams WHERE teams_id=?",
+              team_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTeamMembers = function(team_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE team_id=?",
+                team_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQuery(user_id){
+        try {
+            const results = await getUserById(user_id);
+            if(results[0].team_id > 0){
+                const team = await getTeamById(results[0].team_id);
+                const members = await getTeamMembers(results[0].team_id);
+                function getAge(birthday) {
+                    var today = new Date();
+                    var thisYear = 0;
+                    if (today.getMonth() < birthday.getMonth()) {
+                        thisYear = 1;
+                    } else if ((today.getMonth() == birthday.getMonth()) && today.getDate() < birthday.getDate()) {
+                        thisYear = 1;
+                    }
+                    var age = today.getFullYear() - birthday.getFullYear() - thisYear;
+                    return age;
+                }
+                res.render('team_player.ejs', {team: team,
+                                                members: members,
+                                                team_path: team_path,
+                                                profile_path: profile_path,
+                                                getAge: getAge,
+                                                user_id: user_id});
+            }else{
+                res.render('no_team.ejs');
+            }
+            
+        } catch (error) {
+            console.error(error)
+        }
+        
+    }
+
+    runQuery(user_id);
+})
+
+app.get("/create_team", checkAuthenticated, function(req, res){
+    res.render('create_team.ejs');
+})
+
+app.get("/join_team", checkAuthenticated, function(req, res){
+    const team_id = req.query.teamId;
+    res.render('join_team.ejs');
 })
 
 app.get("/", checkAuthenticated, function(req, res){
@@ -564,6 +683,112 @@ function SortTourneysByDistance(results){
     //     }
     // })
 
+    
+
+
+app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, res){
+    const file_name = req.file != null ? req.file.filename : null;
+    console.log(file_name)
+    var team_name = req.body.teamname;
+    var user_id = req.cookies.id;
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    createTeam = function(team_name, team_logo, user_id, user_name){
+        return new Promise(function(resolve, reject){
+            var vals = {
+                team_name: team_name,
+                team_logo: team_logo,
+                team_leader: user_name,
+                users_user_id: user_id,
+                tourneys_played: 0,
+                tourneys_lost: 0,
+                tourneys_won: 0,
+                games_played: 0,
+                games_won: 0,
+                games_lost: 0,
+                goals_for: 0,
+                goals_against: 0,
+                shots: 0,
+                saves: 0,
+                shutouts: 0,
+                team_points: 0
+            }
+            connection.query(
+                'INSERT INTO teams SET ?',
+                vals,
+                function(err, rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined createTeam"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    linkTeamId = function(team_id, user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                'UPDATE users SET team_id = ? WHERE user_id = ?;',
+                [team_id, user_id],
+                function(err, rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined linkTeamId"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    getTeamOfUser = function(user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams WHERE users_user_id = ?",
+                user_id,
+                function(err, rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined getTeamofUser"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQuery(user_id, team_name, file_name){
+        try {
+            const user = await getUserById(user_id);
+            await createTeam(team_name, file_name, user_id,user[0].user_name);
+            const team = await getTeamOfUser(user_id);
+            console.log(`Team ID: ${team[0].teams_id}`)
+            await(linkTeamId(team[0].teams_id, user_id));
+            res.redirect('/team_player');
+        } catch (error) {
+            console.error(error);
+            res.redirect('/team_player')
+        }
+    }
+    
+    runQuery(user_id, team_name, file_name);
+})
 
 app.post("/login",encoder, function(req,res){
     var email = req.body.email;
@@ -1073,4 +1298,4 @@ function checkNotAuthenticatedReg(req, res, next){
 //'168.5.180.127' || 'localhost'
 // Start mysql server windows: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
 // Start mysql server mac: sudo /usr/local/mysql/support-files/mysql.server start
-app.listen(4500);
+app.listen(459);

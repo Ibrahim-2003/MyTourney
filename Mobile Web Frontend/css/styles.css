@@ -35,6 +35,18 @@
     cream white = #e4fde1
 */
 
+/* Disable Selection:
+
+-webkit-touch-callout: none;  iOS Safari 
+    -webkit-user-select: none; Safari 
+     -khtml-user-select: none; Konqueror HTML 
+       -moz-user-select: none; Old versions of Firefox 
+        -ms-user-select: none; Internet Explorer/Edge 
+            user-select: none; Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox 
+
+*/
+
 body {
     font-family: Varsity;
     background-color: #104b5f;
@@ -528,6 +540,7 @@ header {
     height: 65px;
     width: 65px;
     border-radius: 10px;
+    margin: auto;
 }
 
 #tornearme {
@@ -904,6 +917,44 @@ select {
 #balance-tourney-join-outer {
     display: grid;
     text-align: center;
+}
+
+#teamlogo_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 65vw;
+    height: 65vw;
+    background-color: black;
+}
+
+#team-logo-img {
+    display: inline;
+    height: 100%;
+    margin: auto;
+    width: auto;
+}
+
+.leader_img_container_team{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 10vw;
+    height: 10vw;
+    background-color: black;
+}
+
+#leaderboard_team_pic {
+    display: inline;
+    height: 100%;
+    margin: auto;
+    width: auto;
 }
 
 /* Small Phone Design */

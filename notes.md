@@ -22,12 +22,19 @@
     -> Finished the leaderboards page
     -> Finished balance page
     -> Finished form for users to join tournament
+    ** UPDATED MYSQL DATABASE ON MAC
+    -> Fixed the create team function
+    -> Fixed leaderboard errors
 
 # To do next:
-    ** UPDATE MYSQL DATABASE ON MAC
-    -> Put an add members button and create team to team page
+    **Note: The team captain enters the team into a tourney, and the team can sub out players between matches.
+    -> Add deleting capabilities
+    -> Make home_coords dynamic in node.js server
+        -Idea: Make the client-side js extract ip, then pass that as query parameter and read into the server-side login.js
+    -> Add join functionality
         //IDEAS
             -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
+    -> Make host tourney screen dynamic
     -> Paginate search results
     -> Add search, filter, sort functions to tourney listings
         *Sort by:

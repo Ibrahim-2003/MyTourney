@@ -23,69 +23,58 @@
     <br><br>
     <div>
         <h1 style="font-family: Varsity; color: #91c2e7; padding: 15px; font-size: 36px; text-align: center; font-weight: 300;">
-        MY TEAM
+        <%= team[0].team_name.toUpperCase() %> 
         </h1>
     </div>
-    <div class="container">
-        <div class="team-member" style="margin-top: 5px;">
-            <div class="flex-child img">
-                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="team-member-prof-pic">
-            </div>
-            <div class="flex-child info" style="color: #303549; font-size: 18px; font-weight: 500;">
-                FIRST LAST</br>
-                AGE</br>
-                POSITION</br>
-            </div>
-        </div>
-
-        <div class="team-member" style="margin-top: 5px;">
-            <div class="flex-child img">
-                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="team-member-prof-pic">
-            </div>
-            <div class="flex-child info" style="color: #303549; font-size: 18px; font-weight: 500;">
-                FIRST LAST</br>
-                AGE</br>
-                POSITION</br>
-            </div>
-        </div>
-
-        <div class="team-member" style="margin-top: 5px;">
-            <div class="flex-child img">
-                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="team-member-prof-pic">
-            </div>
-            <div class="flex-child info" style="color: #303549; font-size: 18px; font-weight: 500;">
-                FIRST LAST</br>
-                AGE</br>
-                POSITION</br>
-            </div>
-        </div>
-
-        <div class="team-member" style="margin-top: 5px;">
-            <div class="flex-child img">
-                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="team-member-prof-pic">
-            </div>
-            <div class="flex-child info" style="color: #303549; font-size: 18px; font-weight: 500;">
-                FIRST LAST</br>
-                AGE</br>
-                POSITION</br>
-            </div>
-        </div>
-
-        <div class="team-member" style="margin-top: 5px;">
-            <div class="flex-child img">
-                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="team-member-prof-pic">
-            </div>
-            <div class="flex-child info" style="color: #303549; font-size: 18px; font-weight: 500;">
-                FIRST LAST</br>
-                AGE</br>
-                POSITION</br>
-            </div>
-        </div>
+    <div id="teamlogo_container">
+        <img src="<%= team_path %>/<%= team[0].team_logo %>" id="team-logo-img">
     </div>
+    <div class="container">
+        <% for (var member of members){ %>
+            <div class="team-member" style="margin-top: 5px;">
+                <div class="flex-child img">
+                    <% if(member.photo === undefined || member.photo === null) {%> 
+                    <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="team-member-prof-pic">
+                    <% }else{ %> 
+                        <img src=<%= profile_path %><%= member.photo %>   id="team-member-prof-pic">
+                    <% } %> 
+                </div>
+                <div class="flex-child info" style="color: #303549; font-size: 18px; font-weight: 500;">
+                    <%= member.user_name.toUpperCase() %> </br>
+                    <% var age = getAge(member.age); %> 
+                    <%= age %> YRS </br>
+                    <% if(member.user_id == team[0].users_user_id){ %> 
+                        CAPTAIN 🎖</br>
+                    <% } %> 
+                </div>
+            </div>
+        <% } %>
+        <% if(user_id == team[0].users_user_id) {%>
+            <div style="margin: auto; text-align: center; background-color: #91c2e7; border-radius: 15px; color: #303549; padding-top: 15px; padding-bottom: 15px;" onclick="copyLink(<%= team[0].teams_id %>)">
+                INVITE TEAM MEMBERS
+            </div>
+        <% } %> 
 
     <button onclick="topFunction()" id="my-btn" title="Go to top">
     <img src="images/Up Arrow.jpeg" style="height: 25px; padding-top: 5px;">
     </button>
     <script src="app.js"></script>
+    <script>
+        function copyLink(team_id) {
+            var inputc = document.body.appendChild(document.createElement("input"));
+            inputc.value = `localhost:459/join_team?team_id=${team_id}`;
+            inputc.focus();
+            inputc.select();
+            if(navigator.share){
+                navigator.share({
+                    title: "Join my team on MyTourney!",
+                    url: `localhost:459/join_team?team_id=${team_id}`
+                })
+            }else{
+                document.execCommand('copy');
+            }
+            inputc.parentNode.removeChild(inputc);
+        }
+    </script>
     </body>
 </html>

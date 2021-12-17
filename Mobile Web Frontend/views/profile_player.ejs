@@ -23,7 +23,7 @@
     <br><br>
     <div>
         <h1 style="font-family: Varsity; color: #91c2e7; padding: 15px; font-size: 36px; text-align: center; font-weight: 300;">
-        MY PROFILE
+        <%= user[0].user_name.toUpperCase() %>
         </h1>
     </div>
     <div id="container">
@@ -31,7 +31,7 @@
             <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="profile-img">
         </div>
         <div id="txp" style="text-align: center; color: #91c2e7; margin-top: 5%">
-            1,000</br>
+            <%= user[0].points.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %></br>
             TXP
         </div>
     </div>
@@ -51,7 +51,7 @@
                         <tr>Tourneys Entered</tr>
                         <tr class="stat-vals" id="tourney-count"></tr>
                         <script>
-                            document.getElementById("tourney-count").innerHTML = "1";
+                            document.getElementById("tourney-count").textContent = <%= user[0].tourneys_played %>;
                         </script>
                     </table>
                 </div>
@@ -60,7 +60,7 @@
                         <tr>Tourneys Won</tr>
                         <tr class="stat-vals" id="tourney-wins"></tr>
                         <script>
-                            document.getElementById("tourney-wins").innerHTML = "1";
+                            document.getElementById("tourney-wins").textContent = <%= user[0].tourneys_won %>;
                         </script>
                     </table>
                 </div>
@@ -69,7 +69,7 @@
                         <tr>Tourneys Lost</tr>
                         <tr class="stat-vals" id="tourney-loss"></tr>
                         <script>
-                            document.getElementById("tourney-loss").innerHTML = "1";
+                            document.getElementById("tourney-loss").textContent = <%= user[0].tourneys_lost %>;
                         </script>
                     </table>
                 </div>
@@ -78,7 +78,7 @@
                         <tr>Games Played</tr>
                         <tr class="stat-vals" id="game-count"></tr>
                         <script>
-                            document.getElementById("game-count").innerHTML = "1";
+                            document.getElementById("game-count").textContent = <%= user[0].games_played %>;
                         </script>
                     </table>
                 </div>
@@ -87,7 +87,7 @@
                         <tr>Games Won</tr>
                         <tr class="stat-vals" id="game-wins"></tr>
                         <script>
-                            document.getElementById("game-wins").innerHTML = "1";
+                            document.getElementById("game-wins").textContent = <%= user[0].games_won %>;
                         </script>
                     </table>
                 </div>
@@ -96,7 +96,7 @@
                         <tr>Games Lost</tr>
                         <tr class="stat-vals" id="game-loss"></tr>
                         <script>
-                            document.getElementById("game-loss").innerHTML = "1";
+                            document.getElementById("game-loss").textContent = <%= user[0].games_lost %>;
                         </script>
                     </table>
                 </div>
@@ -123,11 +123,11 @@
                     <td class="stat-vals" id="losses">{{LOSSES}}</td>
                 </tr>
                 <script>
-                    document.getElementById("tourney-count").innerHTML = "1";
-                    document.getElementById("tourney-wins").innerHTML = "1";
-                    document.getElementById("tourney-losses").innerHTML = "0";
-                    document.getElementById("winnings").innerHTML = "$80";
-                    document.getElementById("losses").innerHTML = "$0";
+                    document.getElementById("tourney-count").textContent = "1";
+                    document.getElementById("tourney-wins").textContent = "1";
+                    document.getElementById("tourney-losses").textContent = "0";
+                    document.getElementById("winnings").textContent = "$80";
+                    document.getElementById("losses").textContent = "$0";
                 </script>
             </table> -->
         </div>

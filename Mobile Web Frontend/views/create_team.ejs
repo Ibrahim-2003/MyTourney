@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="images/favicon.png?">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>Register - MyTourney</title>
+</head>
+    <body>
+        <div style="color: #91c2e7; font-size: 36px; text-align: center; margin: auto; font-weight: 500; padding-bottom: 15px; padding-top: 50px;">
+            MYTOURNEY
+        </div>
+        <div id="container">
+            <div>
+                <img src="images/MyTourney Logo.png" id="login-img">
+            </div>
+        </div>
+
+        <!-- Find a way to use dynamic EJS to decide which error output to say (email already exists, short password, etc.) -->
+        <div id="login-form-container" style="margin-bottom: 50px;">
+        <form method="POST" action="/create_team" enctype="multipart/form-data">
+            <div class="form-group">
+                <input name="teamname" type="text" class="form-control" id="exampleInputUsername1" placeholder="TEAM NAME">
+            </div>
+            <label for="teamlogo" style="color: #303549; font-weight: 500;">
+                TEAM LOGO
+            </label>
+            <div class="form-group">
+                <input type="file" name="teamlogo" style="width: 100%;
+                font-size: 18px;
+                padding: 15px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+                <input style="margin-top: 10px;" type="submit" id="submit-btn-reg" value="REGISTER">
+            </div>
+        </form>
+        </div>
+        <div id="login-redirect" style="font-family: NTF-Grand; color: #91c2e7;">
+            Want to join existing team?&emsp;
+            <a href="/join_team" style="font-family: Varsity; color: #91c2e7;font-weight: 500;">JOIN TEAM</a>
+        </div>
+    </body>
+</html>

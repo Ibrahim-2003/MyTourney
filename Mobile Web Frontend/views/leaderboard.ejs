@@ -115,7 +115,22 @@
                     <div class="leader_rank">
                         <%= index + search_low + 1 %> 
                     </div>
-                    <% } %> 
+                    <% } %>
+                    <% if(result.photo != null) {%>
+                        <div class="leader_img_container">
+                            <img src="<%= profile_path %>/<%= result.photo %>" id="leaderboard_profile_pic">
+                        </div>
+                        <div class="ld-val">
+                            <%= result.user_name %>
+                        </div>
+                        <div class="ld-val">
+                            <%= result.points %>
+                        </div>
+                        <div class="ld-val">
+                            <%= result.games_won %>
+                        </div>
+                        </div> 
+                    <% }else{ %> 
                     <div class="leader_img_container">
                         <img src='images/default_profile.jpg' id="leaderboard_profile_pic">
                     </div>
@@ -129,6 +144,7 @@
                         <%= result.games_won %>
                     </div>
                     </div>
+                    <% } %> 
             <% } %>                 
             <% } %> 
             <% } else { %>
@@ -188,7 +204,21 @@
                     <% } %> 
             <% } %> 
             <% } %> 
-            <% } %> 
+            <% } %>
+            <div id="page-btns">
+                <% var count = search_high - search_low %> 
+                <% if(search_low>0) {%>
+                    <div style="display: flex; background-color: #91c2e7; height: 10vw; width: 10vw; padding: 5px; border-radius: 10px;">
+                        <img src="images/back.png" style="margin: auto; height: 100%;"onclick="window.location=`/leaderboard?selection=users&rankings_from=<%= search_low-count %>&rankings_to=<%= search_high-count %>`">
+                    </div>
+                <% } %>  
+                <% if(total_num>search_high) {%>
+                    <div style="display: flex; background-color: #91c2e7; height: 10vw; width: 10vw; padding: 5px; border-radius: 10px;">
+                        <img src="images/back.png" style="margin: auto; height: 100%; transform: rotate(180deg);" onclick="window.location=`/leaderboard?selection=users&rankings_from=<%= search_low+count %>&rankings_to=<%= search_high+count %>`">
+                    </div>
+                <% } %>
+            </div>
+            
 
     </section>
     <button onclick="topFunction()" id="my-btn" title="Go to top">

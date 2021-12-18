@@ -25,16 +25,38 @@
     ** UPDATED MYSQL DATABASE ON MAC
     -> Fixed the create team function
     -> Fixed leaderboard errors
+    -> Added edit profile picture
+    -> Added pagination to leaderboards
+    -> Changed the create team function to incorporate each individual balance, change balance screen at join tourney page, add team balance viewer on team page
+    -> Added join team functionality
+    -> Teams can now join tourneys
+    -> Made home_coords dynamic in node.js server
+        -Idea: Make the client-side js extract ip, then pass that as query parameter and read into the server-side login.js
+    -> Made host tourney screen dynamic
 
 # To do next:
-    **Note: The team captain enters the team into a tourney, and the team can sub out players between matches.
+    **Players earn according to how much money they put in their balance (if a single player accounts for 50% of the team balance, he will receive 50% of the team earnings)
     -> Add deleting capabilities
-    -> Make home_coords dynamic in node.js server
-        -Idea: Make the client-side js extract ip, then pass that as query parameter and read into the server-side login.js
-    -> Add join functionality
-        //IDEAS
-            -The team page will have the team id in the url. Add a share button that copies the url of the team id and allows the users to join their friend's team.
-    -> Make host tourney screen dynamic
+    -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
+        //NOTES
+            -Two transactions:
+                1) Collect payments from players and use charge-transfer function of Stripe to keep my cut and transfer the host's cut
+                2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
+    -> Add game-management and score update page
+        -Include match-making function / bracketing
+        **Note: Will probably have a matchmaking screen with separate logic from the individual game screen
+            - So the matchmaker will link to a game page with score buttons and a start button
+            - Once the start button is pressed, the timer runs
+            - At the end, the match score is either saved or the teams go to penalties
+            - Game data is saved and the next round of matches are generated back at matchmaking screen
+        **Note: I am using a class to keep track of the match info while it is in progress. At the conclusion of the match,
+        the data will be uploaded to the database. The initial draw is randomized, however, there may be a bye for the team
+        with the most goals scored and if there is a tie, the team with the least goals against will get it.
+
+    //Not essential for MVP
+    -> Add scheduling conflict errors
+    -> Add feature to allow team captain to hand the captain role to another team member
+    -> Setup history page for players
     -> Paginate search results
     -> Add search, filter, sort functions to tourney listings
         *Sort by:
@@ -47,18 +69,6 @@
             -Team size
             -Distance (only show tourneys x miles from location)
             -Age Group (child (3-7), youth (7-12), high school (13-18),  adult (19+))
-    -> Setup history page for players
-    
-    -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
-        //NOTES
-            -Two transactions:
-                1) Collect payments from players and use charge-transfer function of Stripe to keep my cut and transfer the host's cut
-                2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
-    -> Add game-management and score update page
-        -Include match-making function
-        -At the start, only the team leader can initiate joining a tourney
-
-    //Not essential for MVP
     -> Add filters to sort leaderboards (ie. most goals, most saves, etc)
     -> Add fallback for native sharing (with hidden div and buttons)
     -> Fix look on iOS
@@ -71,8 +81,7 @@
     -> Refactor CSS to be organized
 
 ## Creating Forms
-    -> Form for users to edit profile
-    -> Form for users to create team and adjust team members
+    **COMPLETED**
 
 ## Production Cost
     <<<MVP: $28/month>>>

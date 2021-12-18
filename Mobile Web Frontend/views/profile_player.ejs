@@ -26,112 +26,159 @@
         <%= user[0].user_name.toUpperCase() %>
         </h1>
     </div>
-    <div id="container">
-        <div>
-            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="profile-img">
+    <div id="master_cont">
+        <div id="edit_pic_form_cont">
+            <div id="x_btn_cont">
+                <img src="https://visualpharm.com/assets/860/Close%20Window-595b40b75ba036ed117d9309.svg" id="x_btn_img" onclick="hideForm()">
+            </div>
+            <form method="POST" action="/edit_profile_pic" enctype="multipart/form-data">
+                <label for="profpic" style="color: #303549; font-weight: 500;">
+                    EDIT PROFILE PICTURE
+                </label>
+                <div class="form-group">
+                    <input type="file" name="profpic" style="width: 100%;
+                    font-size: 18px;
+                    padding: 15px;
+                    margin: 8px 0;
+                    display: inline-block;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    box-sizing: border-box;">
+                </div>
+                <div class="form-group">
+                    <input style="margin-top: 10px;" type="submit" id="submit-btn-reg" value="SUBMIT">
+                </div>
+            </form>
         </div>
-        <div id="txp" style="text-align: center; color: #91c2e7; margin-top: 5%">
-            <%= user[0].points.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %></br>
-            TXP
-        </div>
-    </div>
-    <div id="container">
-        <div style="background-color: #91c2e7;" id="stat-header">
-            Stats
-        </div>
-        <style>
-            td {
-                padding-left: 50px;
-            }
-        </style>
-        <div id="stat-container">
-            <div id="grid-stats">
-                <div class="grid-stats-item">
-                    <table style="text-align: center;">
-                        <tr>Tourneys Entered</tr>
-                        <tr class="stat-vals" id="tourney-count"></tr>
-                        <script>
-                            document.getElementById("tourney-count").textContent = <%= user[0].tourneys_played %>;
-                        </script>
-                    </table>
+        <div id="container">
+            <div id="ppedcont">
+                <div id="profile_picmg_container">
+                <% if(user[0].photo == null) {%> 
+                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="profile-img">
+                <% }else{ %> 
+                <img src="<%= profile_path %>/<%= user[0].photo %>" id="profile-img">
+                <% } %>
                 </div>
-                <div class="grid-stats-item">
-                    <table style="text-align: center;">
-                        <tr>Tourneys Won</tr>
-                        <tr class="stat-vals" id="tourney-wins"></tr>
-                        <script>
-                            document.getElementById("tourney-wins").textContent = <%= user[0].tourneys_won %>;
-                        </script>
-                    </table>
-                </div>
-                <div class="grid-stats-item">
-                    <table style="text-align: center;">
-                        <tr>Tourneys Lost</tr>
-                        <tr class="stat-vals" id="tourney-loss"></tr>
-                        <script>
-                            document.getElementById("tourney-loss").textContent = <%= user[0].tourneys_lost %>;
-                        </script>
-                    </table>
-                </div>
-                <div class="grid-stats-item">
-                    <table style="text-align: center;">
-                        <tr>Games Played</tr>
-                        <tr class="stat-vals" id="game-count"></tr>
-                        <script>
-                            document.getElementById("game-count").textContent = <%= user[0].games_played %>;
-                        </script>
-                    </table>
-                </div>
-                <div class="grid-stats-item">
-                    <table style="text-align: center;">
-                        <tr>Games Won</tr>
-                        <tr class="stat-vals" id="game-wins"></tr>
-                        <script>
-                            document.getElementById("game-wins").textContent = <%= user[0].games_won %>;
-                        </script>
-                    </table>
-                </div>
-                <div class="grid-stats-item">
-                    <table style="text-align: center;">
-                        <tr>Games Lost</tr>
-                        <tr class="stat-vals" id="game-loss"></tr>
-                        <script>
-                            document.getElementById("game-loss").textContent = <%= user[0].games_lost %>;
-                        </script>
-                    </table>
+                <div id="edit_pic_cont">
+                    <img src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-camera-512.png" id="edit_pic" onclick="editPicForm()">
                 </div>
             </div>
-            <!-- <table id="stats">
-                <tr>
-                    <td>Tourneys Entered</td>
-                    <td class="stat-vals" id="tourney-count">{{TOURNEY_COUNT}}</td>
-                </tr>
-                <tr>
-                    <td>Tourneys Won</td>
-                    <td class="stat-vals" id="tourney-wins">{{TOURNEYWINS}}</td>
-                </tr>
-                <tr>
-                    <td>Tourneys Lost</td>
-                    <td class="stat-vals" id="tourney-losses">{{TOURNEYLOSSES}}</td>
-                </tr>
-                <tr>
-                    <td>Winnings</td>
-                    <td class="stat-vals" id="winnings">{{WINNINGS}}</td>
-                </tr>
-                <tr>
-                    <td>Losses</td>
-                    <td class="stat-vals" id="losses">{{LOSSES}}</td>
-                </tr>
-                <script>
-                    document.getElementById("tourney-count").textContent = "1";
-                    document.getElementById("tourney-wins").textContent = "1";
-                    document.getElementById("tourney-losses").textContent = "0";
-                    document.getElementById("winnings").textContent = "$80";
-                    document.getElementById("losses").textContent = "$0";
-                </script>
-            </table> -->
+            
+            <div id="txp" style="text-align: center; color: #91c2e7; margin-top: 5%">
+                <%= user[0].points.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") %></br>
+                TXP
+            </div>
+        </div>
+        <div id="container">
+            <div style="background-color: #91c2e7;" id="stat-header">
+                Stats
+            </div>
+            <style>
+                td {
+                    padding-left: 50px;
+                }
+            </style>
+            <div id="stat-container">
+                <div id="grid-stats">
+                    <div class="grid-stats-item">
+                        <table style="text-align: center;">
+                            <tr>Tourneys Entered</tr>
+                            <tr class="stat-vals" id="tourney-count"></tr>
+                            <script>
+                                document.getElementById("tourney-count").textContent = <%= user[0].tourneys_played %>;
+                            </script>
+                        </table>
+                    </div>
+                    <div class="grid-stats-item">
+                        <table style="text-align: center;">
+                            <tr>Tourneys Won</tr>
+                            <tr class="stat-vals" id="tourney-wins"></tr>
+                            <script>
+                                document.getElementById("tourney-wins").textContent = <%= user[0].tourneys_won %>;
+                            </script>
+                        </table>
+                    </div>
+                    <div class="grid-stats-item">
+                        <table style="text-align: center;">
+                            <tr>Tourneys Lost</tr>
+                            <tr class="stat-vals" id="tourney-loss"></tr>
+                            <script>
+                                document.getElementById("tourney-loss").textContent = <%= user[0].tourneys_lost %>;
+                            </script>
+                        </table>
+                    </div>
+                    <div class="grid-stats-item">
+                        <table style="text-align: center;">
+                            <tr>Games Played</tr>
+                            <tr class="stat-vals" id="game-count"></tr>
+                            <script>
+                                document.getElementById("game-count").textContent = <%= user[0].games_played %>;
+                            </script>
+                        </table>
+                    </div>
+                    <div class="grid-stats-item">
+                        <table style="text-align: center;">
+                            <tr>Games Won</tr>
+                            <tr class="stat-vals" id="game-wins"></tr>
+                            <script>
+                                document.getElementById("game-wins").textContent = <%= user[0].games_won %>;
+                            </script>
+                        </table>
+                    </div>
+                    <div class="grid-stats-item">
+                        <table style="text-align: center;">
+                            <tr>Games Lost</tr>
+                            <tr class="stat-vals" id="game-loss"></tr>
+                            <script>
+                                document.getElementById("game-loss").textContent = <%= user[0].games_lost %>;
+                            </script>
+                        </table>
+                    </div>
+                </div>
+                <!-- <table id="stats">
+                    <tr>
+                        <td>Tourneys Entered</td>
+                        <td class="stat-vals" id="tourney-count">{{TOURNEY_COUNT}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tourneys Won</td>
+                        <td class="stat-vals" id="tourney-wins">{{TOURNEYWINS}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tourneys Lost</td>
+                        <td class="stat-vals" id="tourney-losses">{{TOURNEYLOSSES}}</td>
+                    </tr>
+                    <tr>
+                        <td>Winnings</td>
+                        <td class="stat-vals" id="winnings">{{WINNINGS}}</td>
+                    </tr>
+                    <tr>
+                        <td>Losses</td>
+                        <td class="stat-vals" id="losses">{{LOSSES}}</td>
+                    </tr>
+                    <script>
+                        document.getElementById("tourney-count").textContent = "1";
+                        document.getElementById("tourney-wins").textContent = "1";
+                        document.getElementById("tourney-losses").textContent = "0";
+                        document.getElementById("winnings").textContent = "$80";
+                        document.getElementById("losses").textContent = "$0";
+                    </script>
+                </table> -->
+            </div>
         </div>
     </div>
+    
     <script src="app.js"></script>
+    <script>
+        function hideForm(){
+            var form = document.getElementById("edit_pic_form_cont");
+            form.style.display = "none";
+        }
+
+        function editPicForm(){
+            var form = document.getElementById("edit_pic_form_cont");
+            form.style.display = "block";
+        }
+    </script>
     </body>
 </html>

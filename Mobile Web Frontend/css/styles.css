@@ -424,6 +424,11 @@ header {
     text-align: center;
 }
 
+.venue-table-host td{
+    text-align: center;
+    color: #560000;
+}
+
 #add-tourney-img-container {
     margin: auto;
 }
@@ -443,6 +448,12 @@ header {
     text-align: left;
     font-family: NTF-Grand;
     color: #303549;
+}
+
+#listview-info-host {
+    text-align: left;
+    font-family: NTF-Grand;
+    color: #560000;
 }
 
 #my-btn {
@@ -465,15 +476,6 @@ header {
 }
 
 
-#profile-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 10%;
-    border-radius: 50%;
-    width: 50%;
-    height: 50%;
-}
 
 #stat-header {
     font-family: NTF-Grand;
@@ -879,6 +881,7 @@ select {
     background-color: #f45b6a;
     border-radius: 10px;
     display: flex;
+    font-family: NTF-Grand;
 }
 
 .tourney-listing-host {
@@ -887,6 +890,7 @@ select {
     background-color: #f45b6a;
     border-radius: 10px;
     display: flex;
+    font-family: NTF-Grand;
 }
 
 .tourney-listing-adding {
@@ -955,6 +959,117 @@ select {
     height: 100%;
     margin: auto;
     width: auto;
+}
+
+#profile_picmg_container{
+    margin: auto;
+    border-radius: 50%;
+    width: 50vw;
+    height: 50vw;
+    overflow: hidden;
+    background-color: black;
+}
+
+#ppedcont{
+    position: relative;
+}
+
+#profile-img {
+    display: inline;
+    height: 100%;
+    margin: auto;
+    width: auto;
+}
+
+#edit_pic_cont{
+    position: absolute;
+    top: 40vw;
+    right: 28vw;
+    width: 10vw;
+    height: 10vw;
+    background-color: #c9d6e0;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+#edit_pic {
+    height: 100%;
+    margin: auto;
+}
+
+#master_cont{
+    position: relative;
+}
+
+#edit_pic_form_cont{
+    position: absolute;
+    top: 25vh;
+    left: 0;
+    z-index: 10;
+    padding: 20px;
+    margin: 10px;
+    background-color: #91c2e7;
+    border-radius: 15px;
+    display: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#x_btn_cont{
+    position: absolute;
+    overflow: hidden;
+    height: 7vw;
+    width: 7vw;
+    top: 3vw;
+    right: 3vw;
+}
+
+#x_btn_img{
+    height: 100%;
+}
+
+#page-btns{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    margin: auto;
+    padding: 1rem 0;
+    text-align: center;
+    align-items: center;
+}
+
+.mking_team_cont{
+    height: 15vw;
+    width: 15vw;
+    display: flex;
+    overflow: hidden;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    background-color: black;
+    margin-top: 10px;
+}
+
+#matchmaking_cont{
+    margin: 15px;
+    font-family: NTF-Grand;
+    color: #560000;
+}
+
+.mking_team_caption{
+    text-align: center;
+    align-self: center;
+    justify-content: center;
+    font-size: 6vw;
+}
+
+.sijo{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    justify-content: space-evenly;
+    background-color: #f45b6a;
+    border-radius: 15px;
 }
 
 /* Small Phone Design */

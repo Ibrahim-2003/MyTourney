@@ -14,8 +14,9 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const email_js = require('./email.js');
-const { join } = require("path");
+const { join, resolve } = require("path");
 const { start } = require("repl");
+const QRCode = require("qrcode");
 
 const port = 4500;
 const url = '168.5.173.166:'+port;
@@ -122,7 +123,13 @@ app.get("/register", checkNotAuthenticatedReg, function(req, res){
 
 app.get("/home", checkAuthenticated, function(req, res){
     let tourneys;
-    var coords = [];
+    
+    if(req.query.lat && req.query.lon){
+        home_coords = [req.query.lat, req.query.lon];
+        console.log('Dynamic Lat: ' + req.query.lat);
+    }else{
+        home_coords = [27.648909,-97.390611];
+    }
     //This allows me to extract mysql query results to use as variable
     getTourneys = function(){
         return new Promise(function(resolve, reject){
@@ -185,7 +192,8 @@ app.get("/profile_player", checkAuthenticated, function(req, res){
     async function runQuery(user_id){
         try {
             const results = await getUserById(user_id);
-            res.render('profile_player.ejs', {user: results});
+            res.render('profile_player.ejs', {user: results,
+                                                profile_path: profile_path});
         } catch (error) {
             console.error(error)
         }
@@ -194,27 +202,62 @@ app.get("/profile_player", checkAuthenticated, function(req, res){
 
     runQuery(user_id);
 })
+
+
 app.get("/host", checkAuthenticated, function(req, res){
-    
-    if(req.cookies.id){
-        // console.log(req.cookies.id)
-       var search = connection.query("select * from tourney_hosts where users_user_id = ?", parseInt(req.cookies.id), function(error, results, fields){
-        // console.log(search)
-        var res_len;
-        if (results != undefined){
-            res_len = results.length;
-        }else{
-            res_len = 0
-        }
-        if (res_len > 0){
-            res.render('host_home.ejs');
-        }
-        else{
-            res.redirect('/host_signup');
-        }
-    }); 
+    var user_id = req.cookies.id
+
+    checkHost = function(user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM tourney_hosts WHERE users_user_id = ?",
+                user_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(false)
+                    }else{
+                        resolve(rows)
+                    }
+                }
+            )
+        })
     }
     
+    getHostedTourneys = function(user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM tourneys WHERE hosts_users_user_id = ?",
+                user_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows undefined getHostedTourneys"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQuery(user_id){
+        try {
+            var check = await checkHost;
+            if(check == false){
+                res.redirect('/host_signup');
+            }else{
+                var tourneys = await getHostedTourneys(user_id);
+                console.log(tourneys[0])
+                res.render('host_home.ejs', {
+                    tourneys: tourneys,
+                    tourney_path: venue_path+'/'
+                })
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    
+    runQuery(user_id);
     
 })
 app.get("/balance", checkAuthenticated, function(req, res){
@@ -285,10 +328,40 @@ app.get("/leaderboard", checkAuthenticated, function(req, res){
             }
             
         )}
+
+        function allResults(selection){
+            return new Promise(function(resolve, reject){
+                if(selection == 'teams'){
+                    connection.query(
+                        'SELECT * FROM ' + selection,
+                        function(err, rows){                                                
+                            if(rows === undefined){
+                                reject(new Error("Error rows is undefined"));
+                          }else{
+                                resolve(rows);
+                          }
+                      }
+                  )}
+                else{
+                    connection.query(
+                        'SELECT * FROM ' + selection,
+                        function(err, rows){                                                
+                            if(rows === undefined){
+                                reject(new Error("Error rows is undefined"));
+                          }else{
+                                resolve(rows);
+                          }
+                      }
+                  )}
+                }
+                
+            )}
     
     async function runQuery(selection, lower, amount){
         try {
             const ranked_results = await rankByPoints(selection,  lower, amount)
+            const all = await allResults(selection)
+            const total_num = all.length
             const indexer = []
             if(search_low > 0){
                 for (i=search_low-1; i<search_high; i++){
@@ -309,7 +382,8 @@ app.get("/leaderboard", checkAuthenticated, function(req, res){
                                             search_low: search_low,
                                             indexer: indexer,
                                             profile_path: profile_path,
-                                            team_path: team_path})
+                                            team_path: team_path,
+                                            total_num: total_num})
         } catch (error) {
             console.error(error)
             res.redirect('/')
@@ -332,7 +406,26 @@ app.post("/register_host", encoder, function(req,res){
     })
 })
 
+app.post('/manage', encoder, function(req, res){
+    var tourney_id = req.query.id;
+    var host_user_id = req.cookies.id;
 
+    function randomNoRepeats(array) {
+        var copy = array.slice(0);
+        return function() {
+          if (copy.length < 1) { copy = array.slice(0); }
+          var index = Math.floor(Math.random() * copy.length);
+          var item = copy[index];
+          copy.splice(index, 1);
+          return item;
+        };
+    }
+
+    res.render('manage_tourney.ejs',{
+                tourney: tourney_id,
+                host: host_user_id
+    })
+})
 
 app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, res){
     const file_name = req.file != null ? req.file.filename : null;
@@ -445,6 +538,21 @@ app.get("/listing", function(req, res){
             }
         )}
     )}
+
+    getTeamInfo = function(team_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams WHERE teams_id=?",
+                team_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                  }else{
+                        resolve(rows);
+                  }
+              }
+          )}
+        )}
     
     getUserById = function(user_id){
         return new Promise(function(resolve, reject){
@@ -467,22 +575,132 @@ app.get("/listing", function(req, res){
         const tourney_result = await getTourneyById(id);
         const host_result = await getUserById(tourney_result[0].hosts_users_user_id);
         const user_result = await getUserById(req.cookies.id);
-
-        // console.log(tourney_result)
-        // console.log(host_result)
-         
-        // here you can do something with the three results
-        results = {tourney_result: tourney_result,
+        if(user_result[0].team_id > 0){
+            const team_result = await getTeamInfo(user_result[0].team_id)
+            results = {tourney_result: tourney_result,
                 host_result: host_result}
 
-        res.render('tourney_details.ejs',
-            {id: id,
-            tourney: results.tourney_result,
-            host: results.host_result,
-            user: user_result,
-            venue_path: venue_path+'/',
-            profile_path: profile_path+'/',
-            join_error: null})
+            res.render('tourney_details.ejs',
+                {id: id,
+                tourney: results.tourney_result,
+                host: results.host_result,
+                user: user_result,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: null,
+                team: team_result})
+        }else{
+                // console.log(tourney_result)
+            // console.log(host_result)
+            
+            // here you can do something with the three results
+            results = {tourney_result: tourney_result,
+                host_result: host_result}
+
+            res.render('tourney_details.ejs',
+                {id: id,
+                tourney: results.tourney_result,
+                host: results.host_result,
+                user: user_result,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: null,
+                team: null})
+        }
+         
+        } catch(error){
+        console.log(error)
+        }
+        }
+    
+    sequentialQueries();
+    
+
+})
+
+app.get("/host_listing", function(req, res){
+    // console.log(req.query)
+    id = req.query.tourney_id
+    getTourneyById = function(id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys WHERE tourneys_id=?",
+              id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getJoinedTeamIds = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams_entered_in_tourney WHERE tourneys_tourneys_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                  }else{
+                        resolve(rows);
+                  }
+              }
+          )}
+        )}
+
+    getTeamInfo = function(team_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams WHERE teams_id=?",
+                team_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined getTeamInfo"));
+                  }else{
+                        resolve(rows);
+                  }
+              }
+          )}
+        )}
+    
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    async function sequentialQueries () {
+ 
+        try{
+            const tourney_result = await getTourneyById(id);
+            const host_result = await getUserById(tourney_result[0].hosts_users_user_id);
+            const teams_entered = await getJoinedTeamIds(id);
+            var teams = [];
+            for(var team of teams_entered){
+                var team = await getTeamInfo(team.teams_teams_id);
+                teams.push(team)
+            }
+
+            res.render('host_tourney_details.ejs',
+                {id: id,
+                tourney: tourney_result,
+                host: host_result,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                team_path: team_path+'/',
+                teams: teams})
          
         } catch(error){
         console.log(error)
@@ -587,8 +805,69 @@ app.get("/create_team", checkAuthenticated, function(req, res){
 })
 
 app.get("/join_team", checkAuthenticated, function(req, res){
-    const team_id = req.query.teamId;
-    res.render('join_team.ejs');
+
+    const user_id = req.cookies.id;
+
+    joinTeam = function(team_id, user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE users SET team_id = ? WHERE user_id = ?",
+                [team_id, user_id],
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    addMember = function(team_id, user_balance){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE teams SET member_count = member_count + 1, team_balance = team_balance + ? WHERE teams_id = ?",
+                [user_balance,team_id],
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQuery(team_id, user_id){
+        await joinTeam(team_id, user_id);
+        const user = await getUserById(user_id);
+        await addMember(team_id, user[0].balance);
+    }
+
+    if(req.query.team_id){
+        const team_id = req.query.team_id;
+        runQuery(team_id, user_id);
+        res.redirect('/team_player')
+    }else{
+        res.render('join_team.ejs');
+    }
 })
 
 app.get("/", checkAuthenticated, function(req, res){
@@ -644,7 +923,7 @@ function SortTourneysByDistance(results){
                     Lon: results[i]['lon_coord'],
                     Distance: distance(home_coords[0], home_coords[1], results[i]['lat_coord'], results[i]['lon_coord']),
                     Id: results[i]['tourneys_id']})
-            // console.log(coords)
+            // console.log(home_coords)
         }
         // console.log(coords)
         coords.sort((a,b) => {
@@ -660,30 +939,38 @@ function SortTourneysByDistance(results){
 
 
 
-    // var coords = [];
-    // connection.query("select * from tourneys", function(error, results, fields){
-    //     if (results.length > 0){
-    //         var i;
-    //             for (var i = 0; i < results.length; i++){
-    //             coords.push({Lat: results[i]['lat_coord'], 
-    //                     Lon: results[i]['lon_coord'],
-    //                     Distance: distance(home_coords[0], home_coords[1], results[i]['lat_coord'], results[i]['lon_coord']),
-    //                     Id: results[i]['tourneys_id']})
-    //             // console.log(coords)
-    //         }
-    //         // console.log(coords)
-    //         coords.sort((a,b) => {
-    //             return a.Distance - b.Distance
-    //         })
-    //         console.log(coords)
-    //         return coords
-    //         // console.log(coords)
-    //     }else {
-    //         console.log("NO TOURNEYS")
-    //     }
-    // })
+app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, function(req,res){
+    const file_name = req.file != null ? req.file.filename : null;
+    var user_id = req.cookies.id;
 
-    
+    editProfilePic = function(user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE users SET photo = ? WHERE user_id = ?",
+                [file_name, user_id],
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined linkTeamId"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQuery(user_id){
+        try {
+            await editProfilePic(user_id);
+            res.redirect('/profile_player');
+        } catch (e) {
+            console.error(e);
+            res.redirect('/profile_player');
+        }
+    }
+
+    runQuery(user_id);
+})
 
 
 app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, res){
@@ -707,7 +994,7 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
         )}
     )}
 
-    createTeam = function(team_name, team_logo, user_id, user_name){
+    createTeam = function(team_name, team_logo, user_id, user_name, user_balance){
         return new Promise(function(resolve, reject){
             var vals = {
                 team_name: team_name,
@@ -725,7 +1012,9 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
                 shots: 0,
                 saves: 0,
                 shutouts: 0,
-                team_points: 0
+                team_points: 0,
+                member_count: 1,
+                team_balance: user_balance
             }
             connection.query(
                 'INSERT INTO teams SET ?',
@@ -776,7 +1065,7 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
     async function runQuery(user_id, team_name, file_name){
         try {
             const user = await getUserById(user_id);
-            await createTeam(team_name, file_name, user_id,user[0].user_name);
+            await createTeam(team_name, file_name, user_id,user[0].user_name,user[0].balance);
             const team = await getTeamOfUser(user_id);
             console.log(`Team ID: ${team[0].teams_id}`)
             await(linkTeamId(team[0].teams_id, user_id));
@@ -922,7 +1211,7 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
               user_id, 
               function(err, rows){                                                
                   if(rows === undefined){
-                      reject(new Error("Error rows is undefined"));
+                      reject(new Error("Error rows is undefined getUserbyId"));
                 }else{
                       resolve(rows);
                 }
@@ -933,11 +1222,11 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
     getTeamById = function(team_id){
         return new Promise(function(resolve, reject){
           connection.query(
-              "SELECT * FROM teams WHERE team_id=?",
+              "SELECT * FROM teams WHERE teams_id=?",
               team_id, 
               function(err, rows){                                                
                   if(rows === undefined){
-                      reject(new Error("Error rows is undefined"));
+                      reject(new Error("Error rows is undefined getTeambyId"));
                 }else{
                       resolve(rows);
                 }
@@ -952,7 +1241,7 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
               id, 
               function(err, rows){                                                
                   if(rows === undefined){
-                      reject(new Error("Error rows is undefined"));
+                      reject(new Error("Error rows is undefined getTourneybyId"));
                 }else{
                       resolve(rows);
                 }
@@ -960,14 +1249,14 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
         )}
     )}
 
-    getTeamOfUser = function(user_id){
+    getTeamOfUser = function(team_id){
         return new Promise(function(resolve, reject){
             connection.query(
-                "SELECT * FROM users WHERE team_id IS NOT NULL and user_id = ?",
-                user_id,
+                "SELECT * FROM teams WHERE teams_id = ?",
+                team_id,
                 function(err, rows){
                     if(rows === undefined){
-                        reject(new Error("Error rows is undefined"));
+                        reject(new Error("Error rows is undefined getTeamofUser"));
                     }else{
                         resolve(rows);
                     }
@@ -990,7 +1279,7 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
                 vals,
                 function(err, rows){
                     if(rows === undefined){
-                        reject(new Error("Error rows is undefined"));
+                        reject(new Error("Error rows is undefined joinTOurney"));
                     }else{
                         resolve(rows);
                     }
@@ -999,29 +1288,153 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
         })
     }
 
-    async function runQueries(){
+    logPurchase = function(price,
+                            tourneys_tourneys_id,
+                            tourneys_hosts_hosts_id,
+                            tourneys_hosts_users_user_id,
+                            users_user_id,
+                            entity_id){
+        return new Promise(function(resolve, reject){
+            var timestamp = new Date();
+            var direction = 'team-host';
+            var entity = 'team';
+            var vals = {
+                price: price,
+                timestamp: timestamp,
+                direction: direction,
+                tourneys_tourneys_id: tourneys_tourneys_id,
+                tourneys_hosts_hosts_id: tourneys_hosts_hosts_id,
+                tourneys_hosts_users_user_id: tourneys_hosts_users_user_id,
+                users_user_id: users_user_id,
+                entity: entity,
+                entity_id: entity_id
+            }
+            console.log(vals)
+            connection.query(
+                'INSERT INTO transactions SET ?',
+                vals,
+                function(err, rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined logPurchase"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    registerTeamTourney = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE tourneys SET current_participants = current_participants + 1 WHERE tourneys_id=?",
+                tourney_id,
+                function(err,rows){
+                    if(rows===undefined){
+                        reject(new Error("Error rows is undefined registerTeamTourney"))
+                    }else{
+                        resolve(rows)
+                    }
+                }
+            )
+        })
+    }
+
+    makepurchase = function(price){
+        return new Promise(function(resolve,reject){
+            var purchase = 'SUCCESS ' + '$' + price.toFixed(2);
+            if(purchase){
+                resolve(purchase);
+            }else{
+                reject(new Error('FAILURE'));
+            }
+        })
+    }
+
+    getTourneyLogistics = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams_entered_in_tourney WHERE tourneys_tourneys_id = ?",
+                tourney_id,
+                function(err,rows){
+                    if(rows===undefined){
+                        reject(new Error("Error rows undefined getTourneyLogistics"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    deductBalance = function(team_id, price){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE teams SET team_balance = team_balance - ? WHERE teams_id = ?",
+                [price, team_id],
+                function(err,rows){
+                    if(rows===undefined){
+                        reject(new Error("Error rows undefined deductBalance"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQueries(user_id, tourney_id){
         try {
             const user_results = await getUserById(user_id);
             const tourney_results = await getTourneyById(tourney_id);
             const host_results = await getUserById(tourney_results[0].hosts_users_user_id);
-            const team_results = await getTeamOfUser(user_id);
+            const team_results = await getTeamOfUser(user_results[0].team_id);
+            const tourney_logs = await getTourneyLogistics(tourney_id);
+            var tourney_log_team_id = null;
+            if(tourney_logs.length > 0){
+                tourney_log_team_id = tourney_logs[0].teams_teams_id;
+            }
 
-            if(team_results.length <= 0){
+            if(tourney_results[0].hosts_users_user_id == user_id){
                 res.render('tourney_details.ejs',
                 {id: id,
                 tourney: tourney_results,
                 host: host_results,
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
-                join_error: 'YOU CANNOT JOIN WITHOUT A TEAM! PLEASE CREATE A TEAM OR JOIN A TEAM TO ENTER A TOURNAMENT!'})
-            }else if(user_results[0].balance < tourney_results[0].entry_fee){
+                join_error: 'YOU CANNOT ENTER A TOURNAMENT YOU ARE HOSTING! PLEASE JOIN ANOTHER TOURNAMENT!',
+                user: user_results,
+                team: team_results})
+            }else if(team_results[0].users_user_id != user_id){
                 res.render('tourney_details.ejs',
                 {id: id,
                 tourney: tourney_results,
                 host: host_results,
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
-                join_error: 'INSUFFICIENT FUNDS! PLEASE ADD FUNDS AND TRY AGAIN!'})
+                join_error: 'ONLY TEAM CAPTAIN CAN ENTER TEAM INTO TOURNEY! PLEASE CONTACT YOUR TEAM CAPTAIN TO JOIN!',
+                user: user_results,
+                team: team_results})
+            }else if(team_results.length <= 0){
+                res.render('tourney_details.ejs',
+                {id: id,
+                tourney: tourney_results,
+                host: host_results,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: 'YOU CANNOT JOIN WITHOUT A TEAM! PLEASE CREATE A TEAM OR JOIN A TEAM TO ENTER A TOURNAMENT!',
+                user: user_results,
+                team: null})
+            }else if(team_results[0].team_balance < tourney_results[0].entry_fee * tourney_results[0].team_sizes){
+                res.render('tourney_details.ejs',
+                {id: id,
+                tourney: tourney_results,
+                host: host_results,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: 'INSUFFICIENT FUNDS! PLEASE ADD FUNDS AND TRY AGAIN!',
+                user: user_results,
+                team: team_results})
             }else if(tourney_results[0].current_participants == tourney_results[0].max_participants){
                 res.render('tourney_details.ejs',
                 {id: id,
@@ -1029,23 +1442,71 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
                 host: host_results,
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
-                join_error: 'TEAM QUOTA REACHED! PLEASE TRY JOINING A DIFFERENT TOURNEY!'})
+                join_error: 'TEAM QUOTA REACHED! PLEASE TRY JOINING A DIFFERENT TOURNEY!',
+                user: user_results,
+                team: team_results})
+            }else if(tourney_results[0].team_size > team_results[0].member_count){
+                res.render('tourney_details.ejs',
+                {id: id,
+                tourney: tourney_results,
+                host: host_results,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: 'NOT ENOUGH PLAYERS ON YOUR TEAM! PLEASE INVITE MORE MEMBERS AND TRY AGAIN!',
+                user: user_results,
+                team: team_results})
+            }else if(tourney_log_team_id != null && tourney_log_team_id == user_results[0].team_id){
+                res.render('tourney_details.ejs',
+                {id: id,
+                tourney: tourney_results,
+                host: host_results,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: 'YOU HAVE ALREADY REGISTERED FOR THIS TOURNEY!',
+                user: user_results,
+                team: team_results})
             }else{
-                const team = await getTeamById(team_results[0].team_id);
-                var team_id = team_results[0].team_id;
+                const team = await getTeamById(user_results[0].team_id);
+                var team_id = team_results[0].teams_id;
                 var team_leader_user_id = team[0].users_user_id;
                 var host_user_id = tourney_results[0].hosts_users_user_id;
+                var tourney_id = tourney_results[0].tourneys_id;
                 var host_id = tourney_results[0].hosts_hosts_id;
+                var price = tourney_results[0].entry_fee * tourney_results[0].team_sizes;
+                var purchase = await makepurchase(price);
+                console.log(purchase)
+                await logPurchase(price, tourney_id, host_id, host_user_id, user_id, team_id);
+                await deductBalance(team_results[0].teams_id, price);
+                // var tourney_qr_id = makeid(6);
+                // var tourney_qr = await bcrypt.hash(tourney_qr_id, 10);
                 await joinTourney(tourney_id, team_id, host_id, host_user_id, team_leader_user_id);
-                console.log('JOINED TOURNEY')
-                res.redirect('/home')
+                await registerTeamTourney(tourney_id);
+                console.log('JOINED TOURNEY');
+                email_contents = {
+                    recipient: user_results[0].user_email,
+                    subject: 'MyTourney Team Registration',
+                    message: `Your team ${team[0].team_name} been registered to join ${tourney_results[0].tourney_name}!\n`+
+                                '💸 You can win cash prizes by winning Tourneys.\n'+
+                                'Have fun at your Tourney!',
+                    html: `<h1 style="text-align: center;">
+                                You have been registered to join ${tourney_results[0].tourney_name}!
+                            </h1><br>
+                            <div style="align-items: center; display: flex;">
+                                <ul style="list-style: none; margin: auto;">
+                                <li>💸 You can win cash prizes by winning Tourneys.</li>
+                                <li>🔥 I hope to see you crush the competition, and most importantly have fun!</li>
+                                </ul>
+                            </div>`
+                }
+                mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
+                res.redirect('/home');
             }
         } catch (error) {
             console.error(error)
         }
     }
 
-    runQueries()
+    runQueries(user_id,tourney_id);
 
 
 })
@@ -1165,7 +1626,8 @@ app.post("/register", async function(req,res){
             saves: 0,
             shutouts: 0,
             verification_code: verification_code,
-            verified: 0};
+            verified: 0,
+            team_contribution: 0};
 
         //Columns: "user_name", "user_pass", "user_email", "user_first", "user_last", "user_gender", "age", "bio", "photo", "points", "tourneys_played", "tourneys_won", "tourneys_lost", "games_played", "games_won", "games_lost", "goals_for", "goals_against", "shots", "saves", "shutouts"
         var query = connection.query('INSERT INTO users SET ?',vals, function (error, results, fields){

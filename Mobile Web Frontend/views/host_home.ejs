@@ -18,7 +18,7 @@
                 <li><a style="color: #560000" href="profile_player">PROFILE</a></li>
                 <li><a style="color: #560000" href="balance">BALANCE</a></li>
                 <li><a style="color: #560000" href="friends">FRIENDS</a></li>
-                <li><a style="color: #560000" href="team_player">RECORD</a></li>
+                <li><a style="color: #560000" href="host_record">RECORD</a></li>
             </ul>
         </nav>
     </div>
@@ -49,62 +49,41 @@
         <div style="color: #ffd2d2; font-weight: 500; text-align: center;margin: auto; font-size: 28px; margin-bottom: -20px;">MYTOURNEY LISTINGS</div>
     </section>
     <section id="listings">
-        <!-- {% for x in object_list %}
-            <div class="tourney-listing">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="{{ x.photo }}" id="venue-img">
-            </div>
-            <div id="listview-info" class="flex-child info">
-                Game: {{ x.team_size }}    Age Group: {{ x.age_group }}<br>
-                Entry: ${{ x.entry_fee }}/{{ x.entry_type }} Duration: {{ x.duration_points }} Goals<br>
-                # of Current Participants: {{ x.current_participants }}
-            </div>
-        </div>
-            
-        {% endfor %} -->
-        <div class="tourney-listing-host">
-                    <div id="venue-img-container" class="flex-child img">
-                        <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
+        <% for (var tourney of tourneys){%> 
+            <div class="tourney-listing-host" onclick="window.location='/host_listing?tourney_id=<%= tourney.tourneys_id %>'">
+                <div id="venue-img-container" class="flex-child img">
+                    <img src=<%= tourney_path %><%= tourney.photo %> id="venue-img">
+                </div>
+                <% if(tourney.age_group == 'child') {var ages = '3-7'}%> 
+                <% if(tourney.age_group == 'youth') {var ages = '8-12'}%> 
+                <% if(tourney.age_group == 'highschool') {var ages = '13-18'}%> 
+                <% if(tourney.age_group == 'adult') {var ages = '19+'}%>
+                <% duration = new Date(tourney.duration_time) %>
+                <% duration = duration.getMinutes() %>  
+                <div id="listview-info-host" class="flex-child info">
+                    <div style="text-align: center;">
+                        <strong><%= tourney.name %></strong>
                     </div>
-                    <div id="listview-info-host" class="flex-child info">
-                        Game: 3v3   Age Group: U16<br/>
-                        Entry: $10/team Duration: 5 Goals<br/>
-                        # of Teams Participating: 5
-                    </div>
-        </div>
-        
-        <div class="tourney-listing-host">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
+                    <table style="width: 100%; margin: 0 auto;" class="venue-table-host">
+                        <tr>
+                            <td>
+                                Game: <%= tourney.team_sizes %>v<%= tourney.team_sizes %>   Age Group: <%= ages %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Entry: $<%= tourney.entry_fee.toFixed(2) %> Duration: <%= duration %> min
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                # of Teams Participating: <%= tourney.current_participants %> / <%= tourney.max_participants %> 
+                            </td>
+                        </tr>
+                    </table>                    
+                </div>
             </div>
-            <div id="listview-info-host" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>
-
-        <div class="tourney-listing-host">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info-host" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>
-
-        <div class="tourney-listing-host">
-            <div id="venue-img-container" class="flex-child img">
-                <img src="http://westhoustonindoor.com/wp-content/uploads/2021/01/WHIS-field-pic-1024x683.jpg" id="venue-img">
-            </div>
-            <div id="listview-info-host" class="flex-child info">
-                Game: 3v3   Age Group: U16<br/>
-                Entry: $10/team Duration: 5 Goals<br/>
-                # of Teams Participating: 5
-            </div>
-        </div>        
+        <% } %> 
 
         <div class="tourney-listing-adding">
             <div id="add-tourney-img-container">

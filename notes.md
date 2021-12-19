@@ -44,6 +44,7 @@
                 2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
     -> Add game-management and score update page
         -Include match-making function / bracketing
+            -> UNIQUE VARIABLE FOR EVERY OUTCOME PAY CLOSE ATTENTION TO DETAILS
         **Note: Will probably have a matchmaking screen with separate logic from the individual game screen
             - So the matchmaker will link to a game page with score buttons and a start button
             - Once the start button is pressed, the timer runs

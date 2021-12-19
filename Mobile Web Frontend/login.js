@@ -680,7 +680,7 @@ app.get("/host_listing", function(req, res){
                     if(rows === undefined){
                         reject(false);
                   }else{
-                        resolve(rows);
+                        resolve(true);
                   }
               }
           )}
@@ -699,12 +699,19 @@ app.get("/host_listing", function(req, res){
 
     
     function matchmaking(teams){
-        var chosen_teams = [];
-        var chooser = randomNoRepeats(teams);
-        for(team of teams){
-            chosen_teams.push(chooser())
-        }
-        return chosen_teams;
+        return new Promise(function(resolve, reject){
+            var chosen_teams = [];
+            var chooser = randomNoRepeats(teams);
+            for(team of teams){
+                chosen_teams.push(chooser());
+            }
+            if(chosen_teams != null){
+                resolve(chosen_teams);
+            }else{
+                reject(new Error("Error chosen_teams null"))
+            }
+        })
+        
     }
 
     async function sequentialQueries () {
@@ -718,11 +725,48 @@ app.get("/host_listing", function(req, res){
                 var team = await getTeamInfo(team.teams_teams_id);
                 teams.push(team)
             }
-            if(checkMatchmaking){
+            var team_count = teams.length;
+
+            var query;
+
+            if(checkMatchmaking == true){
                 console.log("TOURNEY ALREADY GENERATED!")
             }else{
-                var matchedteams = matchmaking(teams);
+                var matchedteams = await matchmaking(teams);
                 console.log('NEW TOURNEY GENERATED!')
+                var matchids = []
+                for(match of matchedteams){
+                    matchids.push(match[0].teams_id);
+                }
+                switch(team_count){
+                    case 6:
+                        query = `?gen=1&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&s1=${matchids[4]}-${matchids[5]}`;
+                        break;
+                    case 7:
+                        query = `?gen=1&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
+                                `&s1=${matchids[6]}-0`;
+                        break;
+                    case 8:
+                        query = `?gen=1&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
+                                `&g4=${matchids[6]}-${matchids[7]}`;
+                        break;
+                    case 9:
+                        query = `?gen=1&p1=${matchids[0]}-${matchids[1]}&g1=${matchids[2]}-${matchids[3]}&g2=${matchids[4]}-${matchids[5]}&g3=${matchids[6]}-${matchids[7]}`+
+                                `&g4=${matchids[8]}-0`;
+                        break;
+                    case 10:
+                        query = `?gen=1&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}&g1=${matchids[4]}-${matchids[5]}`+
+                                `&g2=${matchids[6]}-${matchids[7]}&g3=${matchids[8]}-0&g4=${matchids[9]}-0`
+                        break;
+                    case 11:
+                        query = `?gen=1&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}`+
+                                `&p3=${matchids[4]}-${matchids[5]}&g1=${matchids[6]}-${matchids[7]}`+
+                                `&g2=${matchids[8]}-0&g3=${matchids[9]}-0&g4=${matchids[10]}`
+                        break;
+                    default:
+                        query = '?gen=0';
+                        break;
+                }
             }
 
             res.render('host_tourney_details.ejs',
@@ -733,7 +777,8 @@ app.get("/host_listing", function(req, res){
                 profile_path: profile_path+'/',
                 team_path: team_path+'/',
                 teams: teams,
-                matchedteams: matchedteams})
+                matchedteams: matchedteams,
+                managelink: query})
          
         } catch(error){
         console.log(error)
@@ -875,7 +920,7 @@ app.get("/join_team", checkAuthenticated, function(req, res){
     addMember = function(team_id, user_balance){
         return new Promise(function(resolve,reject){
             connection.query(
-                "UPDATE teams SET member_count = member_count + 1, team_balance = team_balance + ? WHERE teams_id = ?",
+                "UPDATE teams SET member_count = member_count + 1, team_balance = team_balance + ?, team_contribution = 1 WHERE teams_id = ?",
                 [user_balance,team_id],
                 function(err,rows){
                     if(rows === undefined){

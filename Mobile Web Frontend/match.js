@@ -45,22 +45,11 @@ class Match{
     }
 }
 
-function matchmaking(teams){
-    if(teams.length == 6){
-        var chooser = randomNoRepeats(teams);
-        var team1 = chooser();
-        var team2 = chooser();
-        var team3 = chooser();
-        var team4 = chooser();
-        var team5 = chooser();
-        var team6 = chooser();
-    
-        const g1 = new Match(team1, team2);
-        const g2 = new Match(team3, team4);
-        const g3 = new Match(team5, team6);
-    
-    }
-}
+
+const g1 = new Match(team1, team2);
+const g2 = new Match(team3, team4);
+const g3 = new Match(team5, team6);
+
 
 function startMatch(duration){
     var countdown_date = new Date().getTime() + duration;

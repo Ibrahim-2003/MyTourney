@@ -410,16 +410,6 @@ app.post('/manage', encoder, function(req, res){
     var tourney_id = req.query.id;
     var host_user_id = req.cookies.id;
 
-    function randomNoRepeats(array) {
-        var copy = array.slice(0);
-        return function() {
-          if (copy.length < 1) { copy = array.slice(0); }
-          var index = Math.floor(Math.random() * copy.length);
-          var item = copy[index];
-          copy.splice(index, 1);
-          return item;
-        };
-    }
 
     res.render('manage_tourney.ejs',{
                 tourney: tourney_id,
@@ -681,6 +671,42 @@ app.get("/host_listing", function(req, res){
         )}
     )}
 
+    checkMatchmaking = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM matchmaking WHERE tourney_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(false);
+                  }else{
+                        resolve(rows);
+                  }
+              }
+          )}
+        )}
+
+    function randomNoRepeats(array) {
+        var copy = array.slice(0);
+        return function() {
+          if (copy.length < 1) { copy = array.slice(0); }
+          var index = Math.floor(Math.random() * copy.length);
+          var item = copy[index];
+          copy.splice(index, 1);
+          return item;
+        };
+    }
+
+    
+    function matchmaking(teams){
+        var chosen_teams = [];
+        var chooser = randomNoRepeats(teams);
+        for(team of teams){
+            chosen_teams.push(chooser())
+        }
+        return chosen_teams;
+    }
+
     async function sequentialQueries () {
  
         try{
@@ -692,6 +718,12 @@ app.get("/host_listing", function(req, res){
                 var team = await getTeamInfo(team.teams_teams_id);
                 teams.push(team)
             }
+            if(checkMatchmaking){
+                console.log("TOURNEY ALREADY GENERATED!")
+            }else{
+                var matchedteams = matchmaking(teams);
+                console.log('NEW TOURNEY GENERATED!')
+            }
 
             res.render('host_tourney_details.ejs',
                 {id: id,
@@ -700,7 +732,8 @@ app.get("/host_listing", function(req, res){
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
                 team_path: team_path+'/',
-                teams: teams})
+                teams: teams,
+                matchedteams: matchedteams})
          
         } catch(error){
         console.log(error)

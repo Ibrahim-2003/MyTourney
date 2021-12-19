@@ -72,6 +72,7 @@
     -> Add filters to sort leaderboards (ie. most goals, most saves, etc)
     -> Add fallback for native sharing (with hidden div and buttons)
     -> Fix look on iOS
+    -> Animations
     -> Work on making bracket screen
     -> Add password length and character requirements
     -> Add errors to the forms to catch any impossible birthdates, too many max participants, too low or too high entry fee, etc.

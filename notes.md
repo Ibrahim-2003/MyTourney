@@ -55,6 +55,7 @@
         with the most goals scored and if there is a tie, the team with the least goals against will get it.
 
     //Not essential for MVP
+    -> Add status to tourneys (in-progress, listing, concluded)
     -> Add scheduling conflict errors
     -> Add feature to allow team captain to hand the captain role to another team member
     -> Setup history page for players

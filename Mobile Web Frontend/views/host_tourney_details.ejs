@@ -38,7 +38,7 @@
     </section>
     <br><br>
     <section style="padding: 10px;">
-        <div class="balance-tourney-join-container" style="background-color: #91c2e7; border-radius: 10px;">
+        <div class="balance-tourney-join-container" style="background-color: #91c2e7; border-radius: 10px; grid-template-columns: 1fr 1fr;">
             <div class="balance-tourney-join" id="balance-tourney-join-outer">
                 <div style="font-size: 8vw; font-weight: 500; color: #560000;" class="balance-tourney-join-inner">
                     MY
@@ -49,11 +49,6 @@
             </div>
             <div class="balance-tourney-join" style="font-weight: 500; font-size: 10vw; color: #560000;">
                 $<%= host[0].balance.toFixed(2) %> 
-            </div>
-            <div  class="balance-tourney-join">
-                <div style="background-color: #104b5f; padding: 5px; border-radius: 8px;">
-                    <a href="/balance" style="font-family: NTF-Grand; font-size: 6vw; color: #f45b6a">Add Funds</a>
-                </div>
             </div>
         </div>
     </section>
@@ -122,11 +117,9 @@
                 <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="window.location='/host'">
             </div>
             <div id="join-btn" style="font-family: NTF-Grand; color: #91c2e7;">
-                <form method="POST" action="/manage?id=<%= id %> ">
                     <div>
-                        <input type="submit" id="join-btn-submit" style="background-color: #91c2e7; color: #560000;" value="MANAGE">
+                        <input type="submit" id="join-btn-submit" style="background-color: #91c2e7; color: #560000;" value="TOURNEY" onclick="window.location=`/manage?id=<%= id %><%= managelink %>`">
                     </div>
-                </form>
                 <!-- <a href="/join?id=" style="font-family: Varsity; color: #104b5f;font-weight: 500;border: 0;" id="logout">JOIN</a> -->
             </div>
             <div style="background-color: #91c2e7; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;" onclick="copyLink()">

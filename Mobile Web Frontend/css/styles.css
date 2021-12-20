@@ -873,8 +873,28 @@ select {
     justify-content: space-around;
     width: 100%;
 }
+
 .nav-links-host a{
     color: #560000;
+}
+
+#popup-manage{
+    position: absolute;
+    display: table;
+    border-radius: 15px;
+    top: 30%;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-family: NTF-Grand;
+    font-size: 12vw;
+    color: #560000;
+    background-color: #f45b6a;
+    align-content: center;
+    justify-content: center;
+    width: 90vw;
+    height: 50vh;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .tourney-listing-host:first-of-type {

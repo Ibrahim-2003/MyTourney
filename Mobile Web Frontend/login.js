@@ -406,15 +406,549 @@ app.post("/register_host", encoder, function(req,res){
     })
 })
 
-app.post('/manage', encoder, function(req, res){
+app.get('/manage', encoder, function(req, res){
     var tourney_id = req.query.id;
     var host_user_id = req.cookies.id;
+    var teams;
 
+    getTeamInfo = function(sql_search){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams WHERE ?",
+                sql_search, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                  }else{
+                        resolve(rows);
+                }
+            }
+        )}
+    )}
 
-    res.render('manage_tourney.ejs',{
-                tourney: tourney_id,
-                host: host_user_id
-    })
+    function generateSQLSearch(team_ids){
+        if(team_ids != undefined){
+            var sql_search;
+            sql_search = '('
+            for(var i=0; i < team_ids.length; i++){
+                if(i==team_ids.length-1){
+                    sql_search = sql_search + `teams_id = ${team_ids[i]})`
+                }else{
+                    sql_search = sql_search + `teams_id = ${team_ids[i]} || `
+                }
+            }
+            return sql_search;
+        }else{
+            console.log('NOT ENOUGH TEAMS')
+        }
+    }
+
+    function addTBD(rows){
+        var TBD = []
+        if(rows.length == 0){
+            TBD.push(0);
+            TBD.push(0);
+            return TBD;
+        }else if(rows.length == 1){
+            TBD.push(rows[0]);
+            TBD.push(0);
+            return TBD;
+        }else{
+            return rows;
+        }
+    }
+
+    async function blastThem(){
+        var team_count = req.query.team_count;
+        var matches;
+        if(team_count){
+            switch(team_count){
+                case 6:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var s1_rows = await getTeamInfo(s1);
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 7:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 8:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var g4_rows = await getTeamInfo(g4);
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 9:
+                    var p1 = req.query.p1.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(p1);
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var g4_rows = addTBD(await getTeamInfo(g4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        p1: p1_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 10:
+                    var p1 = req.query.p1.split('-');
+                    var p2 = req.query.p2.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(p1);
+                    var p2_rows = await getTeamInfo(p2);
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = addTBD(await getTeamInfo(g3));
+                    var g4_rows = addTBD(await getTeamInfo(g4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        p1: p1_rows,
+                        p2: p2_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 11:
+                    var p1 = req.query.p1.split('-');
+                    var p2 = req.query.p2.split('-');
+                    var p3 = req.query.p3.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(p1);
+                    var p2_rows = await getTeamInfo(p2);
+                    var p3_rows = await getTeamInfo(p3);
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = addTBD(await getTeamInfo(g2));
+                    var g3_rows = addTBD(await getTeamInfo(g3));
+                    var g4_rows = addTBD(await getTeamInfo(g4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        p1: p1_rows,
+                        p2: p2_rows,
+                        p3: p3_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 12:
+                    var p1 = req.query.p1.split('-');
+                    var p2 = req.query.p2.split('-');
+                    var p3 = req.query.p3.split('-');
+                    var p4 = req.query.p4.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(p1);
+                    var p2_rows = await getTeamInfo(p2);
+                    var p3_rows = await getTeamInfo(p3);
+                    var p4_rows = await getTeamInfo(p4);
+                    var g1_rows = addTBD(await getTeamInfo(g1));
+                    var g2_rows = addTBD(await getTeamInfo(g2));
+                    var g3_rows = addTBD(await getTeamInfo(g3));
+                    var g4_rows = addTBD(await getTeamInfo(g4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        p1: p1_rows,
+                        p2: p2_rows,
+                        p3: p3_rows,
+                        p4: p4_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 13:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var g4_rows = await getTeamInfo(g4);
+                    var g5_rows = await getTeamInfo(g5);
+                    var q1_rows = addTBD(await getTeamInfo(q1));
+                    var q2_rows = addTBD(await getTeamInfo(q2));
+                    var q3_rows = addTBD(await getTeamInfo(q3));
+                    var q4_rows = addTBD(await getTeamInfo(q4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 14:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var g6 = req.query.g6.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var g4_rows = await getTeamInfo(g4);
+                    var g5_rows = await getTeamInfo(g5);
+                    var g6_rows = await getTeamInfo(g6);
+                    var q1_rows = addTBD(await getTeamInfo(q1));
+                    var q2_rows = addTBD(await getTeamInfo(q2));
+                    var q3_rows = addTBD(await getTeamInfo(q3));
+                    var q4_rows = addTBD(await getTeamInfo(q4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        g6: g6_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 15:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var g6 = req.query.g6.split('-');
+                    var g7 = req.query.g7.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var g4_rows = await getTeamInfo(g4);
+                    var g5_rows = await getTeamInfo(g5);
+                    var g6_rows = await getTeamInfo(g6);
+                    var g7_rows = await getTeamInfo(g7);
+                    var q1_rows = addTBD(await getTeamInfo(q1));
+                    var q2_rows = addTBD(await getTeamInfo(q2));
+                    var q3_rows = addTBD(await getTeamInfo(q3));
+                    var q4_rows = addTBD(await getTeamInfo(q4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        g6: g6_rows,
+                        g7: g7_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 16:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var g6 = req.query.g6.split('-');
+                    var g7 = req.query.g7.split('-');
+                    var g8 = req.query.g8.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(g1);
+                    var g2_rows = await getTeamInfo(g2);
+                    var g3_rows = await getTeamInfo(g3);
+                    var g4_rows = await getTeamInfo(g4);
+                    var g5_rows = await getTeamInfo(g5);
+                    var g6_rows = await getTeamInfo(g6);
+                    var g7_rows = await getTeamInfo(g7);
+                    var g8_rows = await getTeamInfo(g8);
+                    var q1_rows = addTBD(await getTeamInfo(q1));
+                    var q2_rows = addTBD(await getTeamInfo(q2));
+                    var q3_rows = addTBD(await getTeamInfo(q3));
+                    var q4_rows = addTBD(await getTeamInfo(q4));
+                    var s1_rows = addTBD(await getTeamInfo(s1));
+                    var s2_rows = addTBD(await getTeamInfo(s2));
+                    var f_rows = addTBD(await getTeamInfo(f));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        g6: g6_rows,
+                        g7: g7_rows,
+                        g8: g8_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                default:
+                    res.render('manage_tourney.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: 0,
+                        matches: 0
+                    })
+                    break;
+            }
+        }
+    }
+
+    blastThem();
 })
 
 app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, res){
@@ -680,7 +1214,7 @@ app.get("/host_listing", function(req, res){
                     if(rows === undefined){
                         reject(false);
                   }else{
-                        resolve(true);
+                        resolve(rows);
                   }
               }
           )}
@@ -729,42 +1263,74 @@ app.get("/host_listing", function(req, res){
 
             var query;
 
-            if(checkMatchmaking == true){
+            if(checkMatchmaking != false){
                 console.log("TOURNEY ALREADY GENERATED!")
+                query = checkMatchmaking[0].tourney_query;
             }else{
                 var matchedteams = await matchmaking(teams);
-                console.log('NEW TOURNEY GENERATED!')
                 var matchids = []
                 for(match of matchedteams){
                     matchids.push(match[0].teams_id);
                 }
                 switch(team_count){
                     case 6:
-                        query = `?gen=1&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&s1=${matchids[4]}-${matchids[5]}`;
+                        query = `&gen=1&team_count=6&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&s1=${matchids[4]}-${matchids[5]}`+
+                                `&s2=0-0&f=0-0`;
                         break;
                     case 7:
-                        query = `?gen=1&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
-                                `&s1=${matchids[6]}-0`;
+                        query = `&gen=1&team_count=7&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
+                                `&s1=${matchids[6]}-0&s2=0-0&f=0-0`;
                         break;
                     case 8:
-                        query = `?gen=1&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
-                                `&g4=${matchids[6]}-${matchids[7]}`;
+                        query = `&gen=1&team_count=8&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
+                                `&g4=${matchids[6]}-${matchids[7]}&s1=0-0&s2=0-0&f=0-0`;
                         break;
                     case 9:
-                        query = `?gen=1&p1=${matchids[0]}-${matchids[1]}&g1=${matchids[2]}-${matchids[3]}&g2=${matchids[4]}-${matchids[5]}&g3=${matchids[6]}-${matchids[7]}`+
-                                `&g4=${matchids[8]}-0`;
+                        query = `&gen=1&team_count=9&p1=${matchids[0]}-${matchids[1]}&g1=${matchids[2]}-${matchids[3]}&g2=${matchids[4]}-${matchids[5]}&g3=${matchids[6]}-${matchids[7]}`+
+                                `&g4=${matchids[8]}-0&s1=0-0&s2=0-0&f=0-0`;
                         break;
                     case 10:
-                        query = `?gen=1&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}&g1=${matchids[4]}-${matchids[5]}`+
-                                `&g2=${matchids[6]}-${matchids[7]}&g3=${matchids[8]}-0&g4=${matchids[9]}-0`
+                        query = `&gen=1&team_count=10&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}&g1=${matchids[4]}-${matchids[5]}`+
+                                `&g2=${matchids[6]}-${matchids[7]}&g3=${matchids[8]}-0&g4=${matchids[9]}-0&s1=0-0&s2=0-0&f=0-0`
                         break;
                     case 11:
-                        query = `?gen=1&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}`+
+                        query = `&gen=1&team_count=11&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}`+
                                 `&p3=${matchids[4]}-${matchids[5]}&g1=${matchids[6]}-${matchids[7]}`+
-                                `&g2=${matchids[8]}-0&g3=${matchids[9]}-0&g4=${matchids[10]}`
+                                `&g2=${matchids[8]}-0&g3=${matchids[9]}-0&g4=${matchids[10]}&s1=0-0&s2=0-0&f=0-0`
+                        break;
+                    case 12:
+                        query = `&gen=1&team_count=12&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}`+
+                                `&p3=${matchids[4]}-${matchids[5]}&p4=${matchids[6]}-${matchids[7]}`+
+                                `&g1=${matchids[8]}-0&g2=${matchids[9]}-0&g3=${matchids[10]}&g4=${matchids[11]}-0&s1=0-0&s2=0-0&f=0-0`
+                        break;
+                    case 13:
+                        query = `&gen=1&team_count=13&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
+                                `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
+                                `&g5=${matchids[8]}-${matchids[9]}&q1=${matchids[10]}-0&q2=${matchids[11]}-0&q3=${matchids[12]}-0`+
+                                `&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        break;
+                    case 14:
+                        query = `&gen=1&team_count=14&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
+                                `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
+                                `&g5=${matchids[8]}-${matchids[9]}&g6=${matchids[10]}-${matchids[11]}`+
+                                `&q1=${matchids[12]}-0&q2=${matchids[13]}-0&q3=0-0&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        break;
+                    case 15:
+                        query = `&gen=1&team_count=15&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
+                                `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
+                                `&g5=${matchids[8]}-${matchids[9]}&g6=${matchids[10]}-${matchids[11]}`+
+                                `&g7=${matchids[12]}-${matchids[13]}&q1=${matchids[14]}-0&q2=0-0&q3=0-0&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        break;
+                    case 16:
+                        query = `&gen=1&team_count=16&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
+                                `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
+                                `&g5=${matchids[8]}-${matchids[9]}&g6=${matchids[10]}-${matchids[11]}`+
+                                `&g7=${matchids[12]}-${matchids[13]}&g8=${matchids[14]}-${matchids[15]}`+
+                                `&q1=0-0&q2=0-0&q3=0-0&q4=0-0&s1=0-0&s2=0-0&f=0-0`
                         break;
                     default:
-                        query = '?gen=0';
+                        query = '&gen=0';
+                        console.log('NOT ENOUGH TEAMS, TOURNEY NOT GENERATED!')
                         break;
                 }
             }

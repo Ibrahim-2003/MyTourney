@@ -10,9 +10,14 @@
     <title>Host Home - MyTourney</title>
 </head>
     <body style="background-color: #560000;">
-        <div class="navbar" id="nav_bar">
+        <div id="popup-manage">
+            <div style="text-align: center; margin: 0 auto; vertical-align: middle; display: table-cell;">
+                NOT ENOUGH TEAMS HAVE ENTERED, PLEASE TRY AGAIN ONCE MORE TEAMS JOIN!
+            </div>
+        </div>
+        <div class="navbar-host" id="nav_bar-host">
             <nav>
-                <ul class="nav-links">
+                <ul class="nav-links-host">
                     <!-- Make this so that the "PROFILE" changes to "LOGIN" -->
                     <!-- Make it so that if the user does not have a team, he can join a team or create one -->
                     <li><a href="profile_player">PROFILE</a></li>
@@ -37,7 +42,7 @@
             </div>
         </section>
         <br><br>
-        <% if(teams.length == 6) {%>
+        <% if(team_count == 6) {%>
 
 
 
@@ -181,7 +186,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 7){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 7){ %>
 
 
 
@@ -351,7 +361,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 8){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 8){ %>
 
 
             
@@ -547,7 +562,12 @@
                     </div>
                 </div>
             </div>
-        <% }else if(teams.length == 9){ %>
+            <div id="details-btns">
+                <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                    <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                </div>
+            </div>
+        <% }else if(team_count == 9){ %>
 
 
 
@@ -771,7 +791,12 @@
                             TBD-M7
                         </div>
                     </div>
-        <% }else if(teams.length == 10){ %>
+                    <div id="details-btns">
+                        <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                            <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                        </div>
+                    </div>
+        <% }else if(team_count == 10){ %>
 
 
 
@@ -1022,7 +1047,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 11){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 11){ %>
 
 
 
@@ -1299,7 +1329,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 12){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 12){ %>
             
 
 
@@ -1602,7 +1637,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 13){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 13){ %>
 
 
 
@@ -1931,7 +1971,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 14){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 14){ %>
 
 
 
@@ -2286,7 +2331,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 15){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 15){ %>
 
 
 
@@ -2667,7 +2717,12 @@
                         </div>
                     </div>
                 </div>
-        <% }else if(teams.length == 16){ %>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
+        <% }else if(team_count == 16){ %>
 
 
 
@@ -3074,166 +3129,174 @@
                         </div>
                     </div>
                 </div>
+                <div id="details-btns">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+                    </div>
+                </div>
         <% }else { %>        
 
 
 
             <div id="matchmaking_cont">
-                <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
-                    GROUP STAGE
+                <div style="display: none;">
+                    <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
+                        GROUP STAGE
+                    </div>
+                    <div class="sijo">
+                        <div id="team1" style="margin: 0 15px 0 0;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TEAM 1
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
+                                MATCH 1
+                            </div>
+                            <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
+                                VS
+                            </div>
+                        </div>
+                        <div id="team2" style="margin: 0 0 0 15px;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TEAM 2
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sijo">
+                        <div id="team1" style="margin: 0 15px 0 0;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TEAM 3
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
+                                MATCH 2
+                            </div>
+                            <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
+                                VS
+                            </div>
+                        </div>
+                        <div id="team2" style="margin: 0 0 0 15px;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TEAM 4
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sijo">
+                        <div id="team1" style="margin: 0 15px 0 0;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TEAM 5
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
+                                MATCH 3
+                            </div>
+                            <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
+                                VS
+                            </div>
+                        </div>
+                        <div id="team2" style="margin: 0 0 0 15px;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TEAM 6
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
+                        SEMIFINAL STAGE
+                    </div>
+                    <div class="sijo">
+                        <div id="team1" style="margin: 0 15px 0 0;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TBD
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
+                                MATCH 4
+                            </div>
+                            <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
+                                VS
+                            </div>
+                        </div>
+                        <div id="team2" style="margin: 0 0 0 15px;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TBD
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sijo">
+                        <div id="team1" style="margin: 0 15px 0 0;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TBD - BYE
+                            </div>
+                        </div>
+                    </div>
+                    <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
+                        FINAL STAGE
+                    </div>
+                    <div class="sijo">
+                        <div id="team1" style="margin: 0 15px 0 0;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TBD
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
+                                MATCH 5
+                            </div>
+                            <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
+                                VS
+                            </div>
+                        </div>
+                        <div id="team2" style="margin: 0 0 0 15px;">
+                            <div class="mking_team_cont">
+                                <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
+                            </div>
+                            <div class="mking_team_caption">
+                                TBD
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="sijo">
-                    <div id="team1" style="margin: 0 15px 0 0;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TEAM 1
-                        </div>
-                    </div>
-                    <div>
-                        <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
-                            MATCH 1
-                        </div>
-                        <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
-                            VS
-                        </div>
-                    </div>
-                    <div id="team2" style="margin: 0 0 0 15px;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TEAM 2
-                        </div>
-                    </div>
                 </div>
-                <div class="sijo">
-                    <div id="team1" style="margin: 0 15px 0 0;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TEAM 3
-                        </div>
-                    </div>
-                    <div>
-                        <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
-                            MATCH 2
-                        </div>
-                        <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
-                            VS
-                        </div>
-                    </div>
-                    <div id="team2" style="margin: 0 0 0 15px;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TEAM 4
-                        </div>
-                    </div>
-                </div>
-                <div class="sijo">
-                    <div id="team1" style="margin: 0 15px 0 0;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TEAM 5
-                        </div>
-                    </div>
-                    <div>
-                        <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
-                            MATCH 3
-                        </div>
-                        <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
-                            VS
-                        </div>
-                    </div>
-                    <div id="team2" style="margin: 0 0 0 15px;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TEAM 6
-                        </div>
-                    </div>
-                </div>
-                <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
-                    SEMIFINAL STAGE
-                </div>
-                <div class="sijo">
-                    <div id="team1" style="margin: 0 15px 0 0;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TBD
-                        </div>
-                    </div>
-                    <div>
-                        <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
-                            MATCH 4
-                        </div>
-                        <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
-                            VS
-                        </div>
-                    </div>
-                    <div id="team2" style="margin: 0 0 0 15px;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TBD
-                        </div>
-                    </div>
-                </div>
-                <div class="sijo">
-                    <div id="team1" style="margin: 0 15px 0 0;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TBD - BYE
-                        </div>
-                    </div>
-                </div>
-                <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
-                    FINAL STAGE
-                </div>
-                <div class="sijo">
-                    <div id="team1" style="margin: 0 15px 0 0;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TBD
-                        </div>
-                    </div>
-                    <div>
-                        <div style="font-family: Varsity; color: #560000; text-align: center; align-self: center; font-weight: 500;">
-                            MATCH 5
-                        </div>
-                        <div style="align-self: center; font-family: Varsity; font-size: 15vw; font-weight: 500;">
-                            VS
-                        </div>
-                    </div>
-                    <div id="team2" style="margin: 0 0 0 15px;">
-                        <div class="mking_team_cont">
-                            <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
-                        </div>
-                        <div class="mking_team_caption">
-                            TBD
-                        </div>
+                <div id="details-btns" style="position: absolute; bottom: 5vw; left: 10vw;">
+                    <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
+                        <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
                     </div>
                 </div>
         <% } %> 
-            <div id="details-btns">
-                <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;">
-                    <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
-                </div>
-            </div>
         </div>
     </body>
 </html>

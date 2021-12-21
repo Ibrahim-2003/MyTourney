@@ -56,6 +56,7 @@
 
     //Not essential for MVP
     -> Add status to tourneys (in-progress, listing, concluded)
+    -> Add redundant checks for the matches (check query string is in database before starting match to combat potential exploits)
     -> Add scheduling conflict errors
     -> Add feature to allow team captain to hand the captain role to another team member
     -> Setup history page for players

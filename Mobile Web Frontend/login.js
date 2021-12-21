@@ -126,7 +126,7 @@ app.get("/home", checkAuthenticated, function(req, res){
     
     if(req.query.lat && req.query.lon){
         home_coords = [req.query.lat, req.query.lon];
-        console.log('Dynamic Lat: ' + req.query.lat);
+        // console.log('Dynamic Lat: ' + req.query.lat);
     }else{
         home_coords = [27.648909,-97.390611];
     }
@@ -246,7 +246,7 @@ app.get("/host", checkAuthenticated, function(req, res){
                 res.redirect('/host_signup');
             }else{
                 var tourneys = await getHostedTourneys(user_id);
-                console.log(tourneys[0])
+                // console.log(tourneys[0])
                 res.render('host_home.ejs', {
                     tourneys: tourneys,
                     tourney_path: venue_path+'/'
@@ -414,7 +414,7 @@ app.get('/manage', encoder, function(req, res){
     getTeamInfo = function(sql_search){
         return new Promise(function(resolve, reject){
             connection.query(
-                "SELECT * FROM teams WHERE ?",
+                "SELECT * FROM teams WHERE " +
                 sql_search, 
                 function(err, rows){                                                
                     if(rows === undefined){
@@ -461,8 +461,8 @@ app.get('/manage', encoder, function(req, res){
     async function blastThem(){
         var team_count = req.query.team_count;
         var matches;
-        if(team_count){
-            switch(team_count){
+        if(team_count != undefined){
+            switch(parseInt(team_count)){
                 case 6:
                     var g1 = req.query.g1.split('-');
                     var g2 = req.query.g2.split('-');
@@ -470,11 +470,11 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var s1_rows = await getTeamInfo(s1);
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var s1_rows = await getTeamInfo(generateSQLSearch(s1));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -487,7 +487,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -499,12 +500,12 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -518,7 +519,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -531,13 +533,13 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var g4_rows = await getTeamInfo(g4);
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -552,7 +554,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -566,14 +569,14 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var p1_rows = await getTeamInfo(p1);
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var g4_rows = addTBD(await getTeamInfo(g4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         p1: p1_rows,
@@ -589,7 +592,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -604,15 +608,15 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var p1_rows = await getTeamInfo(p1);
-                    var p2_rows = await getTeamInfo(p2);
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = addTBD(await getTeamInfo(g3));
-                    var g4_rows = addTBD(await getTeamInfo(g4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var p2_rows = await getTeamInfo(generateSQLSearch(p2));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = addTBD(await getTeamInfo(generateSQLSearch(g3)));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         p1: p1_rows,
@@ -629,7 +633,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -645,16 +650,16 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var p1_rows = await getTeamInfo(p1);
-                    var p2_rows = await getTeamInfo(p2);
-                    var p3_rows = await getTeamInfo(p3);
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = addTBD(await getTeamInfo(g2));
-                    var g3_rows = addTBD(await getTeamInfo(g3));
-                    var g4_rows = addTBD(await getTeamInfo(g4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var p2_rows = await getTeamInfo(generateSQLSearch(p2));
+                    var p3_rows = await getTeamInfo(generateSQLSearch(p3));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = addTBD(await getTeamInfo(generateSQLSearch(g2)));
+                    var g3_rows = addTBD(await getTeamInfo(generateSQLSearch(g3)));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         p1: p1_rows,
@@ -672,7 +677,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -689,17 +695,17 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var p1_rows = await getTeamInfo(p1);
-                    var p2_rows = await getTeamInfo(p2);
-                    var p3_rows = await getTeamInfo(p3);
-                    var p4_rows = await getTeamInfo(p4);
-                    var g1_rows = addTBD(await getTeamInfo(g1));
-                    var g2_rows = addTBD(await getTeamInfo(g2));
-                    var g3_rows = addTBD(await getTeamInfo(g3));
-                    var g4_rows = addTBD(await getTeamInfo(g4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var p2_rows = await getTeamInfo(generateSQLSearch(p2));
+                    var p3_rows = await getTeamInfo(generateSQLSearch(p3));
+                    var p4_rows = await getTeamInfo(generateSQLSearch(p4));
+                    var g1_rows = addTBD(await getTeamInfo(generateSQLSearch(g1)));
+                    var g2_rows = addTBD(await getTeamInfo(generateSQLSearch(g2)));
+                    var g3_rows = addTBD(await getTeamInfo(generateSQLSearch(g3)));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         p1: p1_rows,
@@ -718,7 +724,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -736,18 +743,18 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var g4_rows = await getTeamInfo(g4);
-                    var g5_rows = await getTeamInfo(g5);
-                    var q1_rows = addTBD(await getTeamInfo(q1));
-                    var q2_rows = addTBD(await getTeamInfo(q2));
-                    var q3_rows = addTBD(await getTeamInfo(q3));
-                    var q4_rows = addTBD(await getTeamInfo(q4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -767,7 +774,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -786,19 +794,19 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var g4_rows = await getTeamInfo(g4);
-                    var g5_rows = await getTeamInfo(g5);
-                    var g6_rows = await getTeamInfo(g6);
-                    var q1_rows = addTBD(await getTeamInfo(q1));
-                    var q2_rows = addTBD(await getTeamInfo(q2));
-                    var q3_rows = addTBD(await getTeamInfo(q3));
-                    var q4_rows = addTBD(await getTeamInfo(q4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var g6_rows = await getTeamInfo(generateSQLSearch(g6));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -819,7 +827,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -839,20 +848,20 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var g4_rows = await getTeamInfo(g4);
-                    var g5_rows = await getTeamInfo(g5);
-                    var g6_rows = await getTeamInfo(g6);
-                    var g7_rows = await getTeamInfo(g7);
-                    var q1_rows = addTBD(await getTeamInfo(q1));
-                    var q2_rows = addTBD(await getTeamInfo(q2));
-                    var q3_rows = addTBD(await getTeamInfo(q3));
-                    var q4_rows = addTBD(await getTeamInfo(q4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var g6_rows = await getTeamInfo(generateSQLSearch(g6));
+                    var g7_rows = await getTeamInfo(generateSQLSearch(g7));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -874,7 +883,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -895,21 +905,21 @@ app.get('/manage', encoder, function(req, res){
                     var s2 = req.query.s2.split('-');
                     var f = req.query.f.split('-');
 
-                    var g1_rows = await getTeamInfo(g1);
-                    var g2_rows = await getTeamInfo(g2);
-                    var g3_rows = await getTeamInfo(g3);
-                    var g4_rows = await getTeamInfo(g4);
-                    var g5_rows = await getTeamInfo(g5);
-                    var g6_rows = await getTeamInfo(g6);
-                    var g7_rows = await getTeamInfo(g7);
-                    var g8_rows = await getTeamInfo(g8);
-                    var q1_rows = addTBD(await getTeamInfo(q1));
-                    var q2_rows = addTBD(await getTeamInfo(q2));
-                    var q3_rows = addTBD(await getTeamInfo(q3));
-                    var q4_rows = addTBD(await getTeamInfo(q4));
-                    var s1_rows = addTBD(await getTeamInfo(s1));
-                    var s2_rows = addTBD(await getTeamInfo(s2));
-                    var f_rows = addTBD(await getTeamInfo(f));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var g6_rows = await getTeamInfo(generateSQLSearch(g6));
+                    var g7_rows = await getTeamInfo(generateSQLSearch(g7));
+                    var g8_rows = await getTeamInfo(generateSQLSearch(g8));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
 
                     matches = {
                         g1: g1_rows,
@@ -932,7 +942,8 @@ app.get('/manage', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: team_count,
-                        matches: matches
+                        matches: matches,
+                        team_path: team_path
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -945,6 +956,13 @@ app.get('/manage', encoder, function(req, res){
                     })
                     break;
             }
+        }else{
+            res.render('manage_tourney.ejs',{
+                tourney: tourney_id,
+                host: host_user_id,
+                team_count: 0,
+                matches: 0
+            })
         }
     }
 
@@ -1212,9 +1230,11 @@ app.get("/host_listing", function(req, res){
                 tourney_id, 
                 function(err, rows){                                                
                     if(rows === undefined){
-                        reject(false);
-                  }else{
+                        resolve(false);
+                  }else if(rows != undefined){
                         resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up checkMAtchmaking'))
                   }
               }
           )}
@@ -1230,6 +1250,27 @@ app.get("/host_listing", function(req, res){
           return item;
         };
     }
+
+    saveQuery = function(tourney_id, query){
+        var vals = {
+            tourney_query: query,
+            tourney_id: tourney_id
+        }
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "INSERT INTO matchmaking SET ?",
+                vals, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up saveQuery'))
+                  }
+              }
+          )}
+        )}
 
     
     function matchmaking(teams){
@@ -1259,13 +1300,18 @@ app.get("/host_listing", function(req, res){
                 var team = await getTeamInfo(team.teams_teams_id);
                 teams.push(team)
             }
+
             var team_count = teams.length;
 
             var query;
+            var ch = false;
+            if(team_count > 0){
+                ch = await checkMatchmaking(id);
+            }
 
-            if(checkMatchmaking != false){
+            if(ch != false){
                 console.log("TOURNEY ALREADY GENERATED!")
-                query = checkMatchmaking[0].tourney_query;
+                query = ch[0].tourney_query;
             }else{
                 var matchedteams = await matchmaking(teams);
                 var matchids = []
@@ -1276,6 +1322,7 @@ app.get("/host_listing", function(req, res){
                     case 6:
                         query = `&gen=1&team_count=6&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&s1=${matchids[4]}-${matchids[5]}`+
                                 `&s2=0-0&f=0-0`;
+                        await saveQuery(parseInt(id), query);
                         break;
                     case 7:
                         query = `&gen=1&team_count=7&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
@@ -1335,6 +1382,7 @@ app.get("/host_listing", function(req, res){
                 }
             }
 
+
             res.render('host_tourney_details.ejs',
                 {id: id,
                 tourney: tourney_result,
@@ -1351,7 +1399,7 @@ app.get("/host_listing", function(req, res){
         }
         }
     
-    sequentialQueries();
+    sequentialQueries(id);
     
 
 })
@@ -1486,7 +1534,7 @@ app.get("/join_team", checkAuthenticated, function(req, res){
     addMember = function(team_id, user_balance){
         return new Promise(function(resolve,reject){
             connection.query(
-                "UPDATE teams SET member_count = member_count + 1, team_balance = team_balance + ?, team_contribution = 1 WHERE teams_id = ?",
+                "UPDATE teams SET member_count = member_count + 1, team_balance = team_balance + ? WHERE teams_id = ?",
                 [user_balance,team_id],
                 function(err,rows){
                     if(rows === undefined){
@@ -2089,7 +2137,7 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
                 join_error: 'TEAM QUOTA REACHED! PLEASE TRY JOINING A DIFFERENT TOURNEY!',
                 user: user_results,
                 team: team_results})
-            }else if(tourney_results[0].team_size > team_results[0].member_count){
+            }else if(tourney_results[0].team_sizes > team_results[0].member_count){
                 res.render('tourney_details.ejs',
                 {id: id,
                 tourney: tourney_results,

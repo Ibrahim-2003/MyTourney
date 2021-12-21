@@ -969,6 +969,78 @@ app.get('/manage', encoder, function(req, res){
     blastThem();
 })
 
+app.get('/match',encoder, function(req,res){
+    var tourney_id = req.query.id;
+    var match_type = req.query.code;
+    var team1_id = req.query.team1;
+    var team2_id = req.query.team2;
+
+    getTeamById = function(team1_id, team2_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM teams WHERE (teams_id=? || teams_id=?)",
+              [team1_id, team2_id], 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    checkMatchmaking = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM matchmaking WHERE tourney_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up checkMAtchmaking'))
+                  }
+              }
+          )}
+        )}
+
+        function getQueryVariable(q,variable) {
+            var query = q.substring(1)
+            var vars = query.split('&')
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=')
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1])
+                }
+            }
+            return 0;
+        }
+
+    async function runQueries(team1, team2){
+        try {
+            teams = await getTeamById(team1, team2);
+            stored_query = await checkMatchmaking(tourney_id);
+            get_expected_query = getQueryVariable(stored_query[0].tourney_query, match_type);
+            if(get_expected_query != `${team1}-${team2}`){
+                res.redirect(`/manage?id=${tourney_id}${stored_query[0].tourney_query}`);
+            }else{
+                console.log('CODES MATCH');
+                res.render('match_score.ejs',{
+                    teams: teams,
+                    team_path: team_path
+                })
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    runQueries(team1_id, team2_id);
+})
+
 app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, res){
     const file_name = req.file != null ? req.file.filename : null;
     var cookie_user_id = req.cookies.id;

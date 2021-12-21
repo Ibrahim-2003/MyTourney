@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="/images/favicon.png?">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <title>Host Home - MyTourney</title>
+</head>
+    <body style="background-color: #560000;">
+        <div class="navbar-host" id="nav_bar-host">
+            <nav>
+                <ul class="nav-links-host">
+                    <!-- Make this so that the "PROFILE" changes to "LOGIN" -->
+                    <!-- Make it so that if the user does not have a team, he can join a team or create one -->
+                    <li><a href="profile_player">PROFILE</a></li>
+                    <li><a href="balance">BALANCE</a></li>
+                    <li><a href="friends">FRIENDS</a></li>
+                    <li><a href="team_player">TEAM</a></li>
+                </ul>
+            </nav>
+        </div>
+        <br><br>
+        <section class="logo">
+            <div class="container">
+                <div style="background-color: #f45b6a;" id="leaderboard">
+                    <a href="leaderboard" style="font-size: 14px;color: #560000;">LEADER<br>BOARD</a>
+                </div>
+                <div id="logo_img_home">
+                    <img src="images/MyTourney Logo Soccer Inverted.png" style="height: 85px;">
+                </div>
+                <div style="background-color: #f45b6a;" id="host">
+                    <a href="home" style="font-size: 14px;color: #560000;">PLAYER<br>MODE</a>
+                </div>
+            </div>
+        </section>
+        <br><br>
+
+        <div id="home_team">
+                <%= teams[0].team_name.toUpperCase() %> 
+                <div id="home_team_logo_container">
+                    <% if(teams[0].team_logo) {%>
+                        <img src="<%= team_path %>/<%= teams[0].team_logo %> " id="home_team_logo">
+                    <% }else {%>  
+                    <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="home_team_logo">
+                    <% } %> 
+                </div>
+                <div id="goal-btn-cont">
+                    <div id="goal-btn">
+                        -
+                    </div>
+                    <div id="home_team_score">
+                        SCORE: 0
+                    </div>
+                    <div id="goal-btn">
+                        +
+                    </div>
+                </div>
+        </div>
+
+        <div id="away_team">
+                <%= teams[1].team_name.toUpperCase() %> 
+                <div id="away_team_logo_container">
+                    <% if(teams[1].team_logo) {%>
+                        <img src="<%= team_path %>/<%= teams[1].team_logo %> " id="away_team_logo">
+                    <% }else {%>  
+                    <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="away_team_logo">
+                    <% } %> 
+                </div>
+                <div id="goal-btn-cont">
+                    <div id="goal-btn">
+                        -
+                    </div>
+                    <div id="away_team_score">
+                        SCORE: 0
+                    </div>
+                    <div id="goal-btn">
+                        +
+                    </div>
+                </div>
+        </div>
+
+        <div id="submit-match-score">
+            FINALIZE
+        </div>
+        <div style="display: flex; background-color: #f45b6a; width: 15vw; height: 15vw; margin: 15px; border-radius: 10px;">
+            <img src="images/back_inverted.png" style="width: 10vw; height: 10vw; margin: auto;" onclick="history.back()">
+        </div>
+        <script src="match.js"></script>
+    </body>
+</html>

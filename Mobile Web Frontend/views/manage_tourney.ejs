@@ -37,6 +37,16 @@
             </div>
         </section>
         <br><br>
+        <div id="tbd-popup-manage">
+            <div style="text-align: center; margin: 0 auto; vertical-align: middle; display: table-cell;">
+                <div style="margin-bottom: 10px;">
+                    TEAMS ARE YET TO BE DETERMINED, PLEASE SUBMIT PREVIOUS MATCH SCORES TO PROCEED!
+                </div>
+                <div style="background-color: #560000; color: #f45b6a; text-align: center; width: 50%; height: auto; margin: auto; padding: 10px 0 10px 0;"  onclick="hidePopup()">
+                    CLOSE
+                </div>
+            </div>
+        </div>
         <% if(team_count == 6) {%>
 
 
@@ -45,7 +55,7 @@
                 <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
                     GROUP STAGE
                 </div>
-                <div class="sijo">
+                <div class="sijo" onclick="g1()">
                     <div id="team1" style="margin: 0 15px 0 0;">
                         <div class="mking_team_cont">
                             <% if(matches.g1[0].team_logo){ %>
@@ -79,7 +89,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="sijo">
+                <div class="sijo" onclick="g2()">
                     <div id="team1" style="margin: 0 15px 0 0;">
                         <div class="mking_team_cont">
                             <% if(matches.g2[0].team_logo){ %>
@@ -116,7 +126,7 @@
                 <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
                     SEMIFINAL STAGE
                 </div>
-                <div class="sijo">
+                <div class="sijo" onclick="s1()">
                     <div id="team1" style="margin: 0 15px 0 0;">
                         <div class="mking_team_cont">
                             <% if(matches.s1[0].team_logo){ %>
@@ -150,7 +160,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="sijo">
+                <div class="sijo" onclick="s2()">
                     <div id="team1" style="margin: 0 15px 0 0;">
                         <div class="mking_team_cont">
                             <% if(matches.s2[0].team_logo){ %>
@@ -199,7 +209,7 @@
                 <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
                     FINAL STAGE
                 </div>
-                <div class="sijo">
+                <div class="sijo" onclick="f()">
                     <div id="team1" style="margin: 0 15px 0 0;">
                         <div class="mking_team_cont">
                             <% if(matches.f[0].team_logo){ %>
@@ -1680,7 +1690,7 @@
                 <div class="sijo">
                     <div id="team1" style="margin: 0 15px 0 0;">
                         <div class="mking_team_cont">
-                            <% if(matches.g4].team_logo){ %>
+                            <% if(matches.g4[0].team_logo){ %>
                                 <img src="<%= team_path %>/<%= matches.g4[0].team_logo %> " style="display: inline; height: 100%; width: auto; margin: auto;">
                             <% }else{ %> 
                             <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" style="display: inline; height: 100%; width: auto; margin: auto;">
@@ -4421,6 +4431,7 @@
                     NOT ENOUGH TEAMS HAVE ENTERED, PLEASE TRY AGAIN ONCE AT LEAST 6 TEAMS JOIN!
                 </div>
             </div>
+
             <div id="matchmaking_cont">
                 <div style="display: none;">
                     <div style="font-family: Varsity; color: #f45b6a; text-align: center; align-self: center; font-weight: 500;">
@@ -4581,5 +4592,7 @@
                 </div>
         <% } %> 
         </div>
+        <script src="matchlink.js">
+        </script>
     </body>
 </html>

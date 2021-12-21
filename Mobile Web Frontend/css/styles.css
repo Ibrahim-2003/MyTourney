@@ -897,6 +897,25 @@ select {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+#tbd-popup-manage{
+    position: absolute;
+    display: none;
+    border-radius: 15px;
+    top: 30%;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-family: NTF-Grand;
+    font-size: 12vw;
+    color: #560000;
+    background-color: #f45b6a;
+    align-content: center;
+    justify-content: center;
+    width: 90vw;
+    height: 50vh;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 .tourney-listing-host:first-of-type {
     margin:0 15px;
     margin-top: 70px;
@@ -1046,8 +1065,22 @@ select {
     right: 3vw;
 }
 
+#x_btn_cont_manage{
+    position: absolute;
+    overflow: hidden;
+    height: 7vw;
+    width: 7vw;
+    top: 2vw;
+    right: 2vw;
+}
+
 #x_btn_img{
     height: 100%;
+}
+
+#x_btn_img_manage{
+    height: 100%;
+    margin: auto;
 }
 
 #page-btns{
@@ -1095,6 +1128,138 @@ select {
     border-radius: 15px;
     margin: 15px;
 }
+
+#home_team{
+    width: 90vw;
+    height: auto;
+    margin: auto;
+    padding: 10px 0 10px 0;
+    text-align: center;
+    color: #560000;
+    background-color: #f45b6a;
+    border-radius: 15px;
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+}
+
+#home_team_logo_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 45vw;
+    height: 45vw;
+    background-color: black;
+}
+
+#home_team_logo {
+    display: inline;
+    height: 100%;
+    margin: auto;
+    width: auto;
+}
+
+#home_team_score{
+    text-align: center;
+    color: #560000;
+    background-color: #f45b6a;
+    border-radius: 15px;
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+    align-self: center;
+}
+
+#goal-btn{
+    display: flex;
+    width: 15vw;
+    height: 15vw;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    justify-content: center;
+    font-family: Varsity;
+    color: #560000;
+    font-weight: 500;
+    font-size: 20vw;
+    background-color: #ffd2d2;
+    border-radius: 50%;
+}
+
+#goal-btn-cont{
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+#away_team{
+    width: 90vw;
+    height: auto;
+    margin: auto;
+    padding: 10px 0 10px 0;
+    text-align: center;
+    color: #560000;
+    background-color: #f45b6a;
+    border-radius: 15px;
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#away_team_logo_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 45vw;
+    height: 45vw;
+    background-color: black;
+}
+
+#away_team_logo {
+    display: inline;
+    height: 100%;
+    margin: auto;
+    width: auto;
+}
+
+#away_team_score{
+    text-align: center;
+    color: #560000;
+    background-color: #f45b6a;
+    border-radius: 15px;
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+    align-self: center;
+}
+
+#submit-match-score{
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+    text-align: center;
+    color: #560000;
+    background-color: #f45b6a;
+    margin: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 15px;
+}
+
 
 /* Small Phone Design */
 

@@ -1261,6 +1261,106 @@ select {
 }
 
 
+#submit-btn-pen {
+    width: 55%;
+    font-size: 16px;
+    text-align: center;
+    font-size: 4vw;
+    background-color: #ffd2d2;
+    color: #560000;
+    font-size: 7vw;
+}
+#pen-msg{
+    display: none;
+    color: #560000;
+    background-color: #f45b6a;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 7vw;
+    padding: 10px;
+    margin: 20px;
+}
+
+#trophy-cont{
+    position: relative;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 65vh;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+#fire-img{
+    height: 100%;
+    margin: auto;
+}
+
+#firework-img{
+    width: 100vw;
+    position: absolute;
+    top: 3vh;
+    right: 0;
+    z-index: -12;
+}
+
+#trophy-img{
+    height: 65vh;
+    position: absolute;
+    margin: auto;
+    z-index: 10;
+}
+
+#victory{
+    margin: auto;
+    margin-bottom: 25px;
+    background-color: transparent;
+    color: #91c2e7;
+    font-size: 10vw;
+    font-weight: 500;
+    width: 100%;
+    position: relative;
+}
+
+#winning-amount{
+    font-family: Varsity;
+    font-size: 30px;
+    font-weight: 500;
+    color: white;
+    position: absolute;
+    margin: auto;
+    top: 16vh;
+    right: 50;
+    z-index: 11;
+}
+
+#win-btn-cont{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.win-btn{
+    width: 15vw;
+    height: 15vw;
+    background-color: #91c2e7;
+    border-radius: 5px;
+    margin: 15px;
+}
+
+#home-btn-win{
+    width: 100%;
+}
+
+#logo_img_home_summary {
+    margin: auto;
+    width: 50%;
+}
+
 /* Small Phone Design */
 
 @media only screen and (min-width: 338px) {

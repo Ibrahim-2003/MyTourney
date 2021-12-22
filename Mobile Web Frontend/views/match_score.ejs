@@ -38,51 +38,61 @@
         </section>
         <br><br>
 
+        <div id="pen-msg">
+            THE MATCH IS A DRAW, DETERMINE WINNER BY PENALTIES!
+            <div class="form-group" onclick="pensHomeWin()">
+                <input style="margin-top: 25px;" type="submit" id="submit-btn-pen" value="<%= teams[0][0].team_name.toUpperCase() %>">
+            </div>
+            <div class="form-group" onclick="pensAwayWin()">
+                <input style="margin-bottom: 10px; margin-top: 20px;" type="submit" id="submit-btn-pen" value="<%= teams[1][0].team_name.toUpperCase() %>">
+            </div>
+        </div>
+
         <div id="home_team">
-                <%= teams[0].team_name.toUpperCase() %> 
+                <%= teams[0][0].team_name.toUpperCase() %> 
                 <div id="home_team_logo_container">
-                    <% if(teams[0].team_logo) {%>
-                        <img src="<%= team_path %>/<%= teams[0].team_logo %> " id="home_team_logo">
+                    <% if(teams[0][0].team_logo) {%>
+                        <img src="<%= team_path %>/<%= teams[0][0].team_logo %> " id="home_team_logo">
                     <% }else {%>  
                     <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="home_team_logo">
                     <% } %> 
                 </div>
                 <div id="goal-btn-cont">
-                    <div id="goal-btn">
+                    <div id="goal-btn" onclick="subtractPointsHome()">
                         -
                     </div>
                     <div id="home_team_score">
                         SCORE: 0
                     </div>
-                    <div id="goal-btn">
+                    <div id="goal-btn" onclick="addPointsHome()">
                         +
                     </div>
                 </div>
         </div>
 
         <div id="away_team">
-                <%= teams[1].team_name.toUpperCase() %> 
+                <%= teams[1][0].team_name.toUpperCase() %> 
                 <div id="away_team_logo_container">
-                    <% if(teams[1].team_logo) {%>
-                        <img src="<%= team_path %>/<%= teams[1].team_logo %> " id="away_team_logo">
+                    <% if(teams[1][0].team_logo) {%>
+                        <img src="<%= team_path %>/<%= teams[1][0].team_logo %> " id="away_team_logo">
                     <% }else {%>  
                     <img src="https://pbs.twimg.com/media/EJ0BSc7XsAEpIKR.jpg" id="away_team_logo">
                     <% } %> 
                 </div>
                 <div id="goal-btn-cont">
-                    <div id="goal-btn">
+                    <div id="goal-btn" onclick="subtractPointsAway()">
                         -
                     </div>
                     <div id="away_team_score">
                         SCORE: 0
                     </div>
-                    <div id="goal-btn">
+                    <div id="goal-btn" onclick="addPointsAway()">
                         +
                     </div>
                 </div>
         </div>
 
-        <div id="submit-match-score">
+        <div id="submit-match-score" onclick="submitFinalize()">
             FINALIZE
         </div>
         <div style="display: flex; background-color: #f45b6a; width: 15vw; height: 15vw; margin: 15px; border-radius: 10px;">

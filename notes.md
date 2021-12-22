@@ -33,29 +33,26 @@
     -> Made home_coords dynamic in node.js server
         -Idea: Make the client-side js extract ip, then pass that as query parameter and read into the server-side login.js
     -> Made host tourney screen dynamic
+    -> Added game-management and score update page
+        -> Includes minimal version of bracketing feature
+    -> Added status to tourneys (recruiting, in-progress, ended)
+    -> Each team member receives equal compensation for the tourney
 
 # To do next:
-    **Players earn according to how much money they put in their balance (if a single player accounts for 50% of the team balance, he will receive 50% of the team earnings)
     -> Add deleting capabilities
+        -> Remove team members
+        -> Delete Tourney
     -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
+        -> Need to add function to add earnings to player balances
+        -> Need to add individual's balance to team balance once they add funds
         //NOTES
             -Two transactions:
                 1) Collect payments from players and use charge-transfer function of Stripe to keep my cut and transfer the host's cut
                 2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
-    -> Add game-management and score update page
-        -Include match-making function / bracketing
-            -> UNIQUE VARIABLE FOR EVERY OUTCOME PAY CLOSE ATTENTION TO DETAILS
-        **Note: Will probably have a matchmaking screen with separate logic from the individual game screen
-            - So the matchmaker will link to a game page with score buttons and a start button
-            - Once the start button is pressed, the timer runs
-            - At the end, the match score is either saved or the teams go to penalties
-            - Game data is saved and the next round of matches are generated back at matchmaking screen
-        **Note: I am using a class to keep track of the match info while it is in progress. At the conclusion of the match,
-        the data will be uploaded to the database. The initial draw is randomized, however, there may be a bye for the team
-        with the most goals scored and if there is a tie, the team with the least goals against will get it.
-
+                
     //Not essential for MVP
-    -> Add status to tourneys (in-progress, listing, concluded)
+    **Note - Might want to add checkAuth to all the new app.gets
+    -> Refactor bracketing screen to look like bracket instead of list
     -> Add redundant checks for the matches (check query string is in database before starting match to combat potential exploits)
     -> Add scheduling conflict errors
     -> Add feature to allow team captain to hand the captain role to another team member

@@ -68,21 +68,21 @@
             </div>
         <% } %>
         <% if(user_id == team[0].users_user_id) {%>
-            <div style="margin: auto; text-align: center; background-color: #91c2e7; border-radius: 15px; color: #303549; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;" onclick="copyLink(<%= team[0].teams_id %>)">
+            <div style="margin: auto; text-align: center; background-color: #91c2e7; border-radius: 15px; color: #303549; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;" onclick="copyLink('<%= team[0].teams_id %>', '<%= url %>')">
                 INVITE TEAM MEMBERS
             </div>
         <% } %> 
 
     <script>
-        function copyLink(team_id) {
+        function copyLink(team_id, url) {
             var inputc = document.body.appendChild(document.createElement("input"));
-            inputc.value = `localhost:459/join_team?team_id=${team_id}`;
+            inputc.value = `${url}/join_team?team_id=${team_id}`;
             inputc.focus();
             inputc.select();
             if(navigator.share){
                 navigator.share({
                     title: "Join my team on MyTourney!",
-                    url: `localhost:459/join_team?team_id=${team_id}`
+                    url: `${url}/join_team?team_id=${team_id}`
                 })
             }else{
                 document.execCommand('copy');

@@ -17,6 +17,7 @@ const email_js = require('./email.js');
 const { join, resolve } = require("path");
 const { start } = require("repl");
 const QRCode = require("qrcode");
+const e = require("express");
 
 const port = 4500;
 const url = '168.5.173.166:'+port;
@@ -134,7 +135,7 @@ app.get("/home", checkAuthenticated, function(req, res){
     getTourneys = function(){
         return new Promise(function(resolve, reject){
           connection.query(
-              "SELECT * FROM tourneys", 
+              "SELECT * FROM tourneys WHERE status = 'recruiting'", 
               function(err, rows){                                                
                   if(rows === undefined){
                       reject(new Error("Error rows is undefined"));
@@ -226,7 +227,7 @@ app.get("/host", checkAuthenticated, function(req, res){
     getHostedTourneys = function(user_id){
         return new Promise(function(resolve, reject){
             connection.query(
-                "SELECT * FROM tourneys WHERE hosts_users_user_id = ?",
+                "SELECT * FROM tourneys WHERE (hosts_users_user_id = ? && status != 'ended')",
                 user_id,
                 function(err,rows){
                     if(rows === undefined){
@@ -969,17 +970,580 @@ app.get('/manage', encoder, function(req, res){
     blastThem();
 })
 
+app.get('/summary', encoder, function(req, res){
+    var tourney_id = req.query.id;
+    var host_user_id = req.cookies.id;
+    var teams;
+
+    getTeamInfo = function(sql_search){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams WHERE " +
+                sql_search, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                  }else{
+                        resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    function generateSQLSearch(team_ids){
+        if(team_ids != undefined){
+            var sql_search;
+            sql_search = '('
+            for(var i=0; i < team_ids.length; i++){
+                if(i==team_ids.length-1){
+                    sql_search = sql_search + `teams_id = ${team_ids[i]})`
+                }else{
+                    sql_search = sql_search + `teams_id = ${team_ids[i]} || `
+                }
+            }
+            return sql_search;
+        }else{
+            console.log('NOT ENOUGH TEAMS')
+        }
+    }
+
+    function addTBD(rows){
+        var TBD = []
+        if(rows.length == 0){
+            TBD.push(0);
+            TBD.push(0);
+            return TBD;
+        }else if(rows.length == 1){
+            TBD.push(rows[0]);
+            TBD.push(0);
+            return TBD;
+        }else{
+            return rows;
+        }
+    }
+
+    async function blastThem(){
+        var team_count = req.query.team_count;
+        var matches;
+        if(team_count != undefined){
+            switch(parseInt(team_count)){
+                case 6:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var s1_rows = await getTeamInfo(generateSQLSearch(s1));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 7:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 8:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 9:
+                    var p1 = req.query.p1.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        p1: p1_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 10:
+                    var p1 = req.query.p1.split('-');
+                    var p2 = req.query.p2.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var p2_rows = await getTeamInfo(generateSQLSearch(p2));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = addTBD(await getTeamInfo(generateSQLSearch(g3)));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        p1: p1_rows,
+                        p2: p2_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 11:
+                    var p1 = req.query.p1.split('-');
+                    var p2 = req.query.p2.split('-');
+                    var p3 = req.query.p3.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var p2_rows = await getTeamInfo(generateSQLSearch(p2));
+                    var p3_rows = await getTeamInfo(generateSQLSearch(p3));
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = addTBD(await getTeamInfo(generateSQLSearch(g2)));
+                    var g3_rows = addTBD(await getTeamInfo(generateSQLSearch(g3)));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        p1: p1_rows,
+                        p2: p2_rows,
+                        p3: p3_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 12:
+                    var p1 = req.query.p1.split('-');
+                    var p2 = req.query.p2.split('-');
+                    var p3 = req.query.p3.split('-');
+                    var p4 = req.query.p4.split('-');
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var p1_rows = await getTeamInfo(generateSQLSearch(p1));
+                    var p2_rows = await getTeamInfo(generateSQLSearch(p2));
+                    var p3_rows = await getTeamInfo(generateSQLSearch(p3));
+                    var p4_rows = await getTeamInfo(generateSQLSearch(p4));
+                    var g1_rows = addTBD(await getTeamInfo(generateSQLSearch(g1)));
+                    var g2_rows = addTBD(await getTeamInfo(generateSQLSearch(g2)));
+                    var g3_rows = addTBD(await getTeamInfo(generateSQLSearch(g3)));
+                    var g4_rows = addTBD(await getTeamInfo(generateSQLSearch(g4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        p1: p1_rows,
+                        p2: p2_rows,
+                        p3: p3_rows,
+                        p4: p4_rows,
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 13:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 14:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var g6 = req.query.g6.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var g6_rows = await getTeamInfo(generateSQLSearch(g6));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        g6: g6_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 15:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var g6 = req.query.g6.split('-');
+                    var g7 = req.query.g7.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var g6_rows = await getTeamInfo(generateSQLSearch(g6));
+                    var g7_rows = await getTeamInfo(generateSQLSearch(g7));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        g6: g6_rows,
+                        g7: g7_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                case 16:
+                    var g1 = req.query.g1.split('-');
+                    var g2 = req.query.g2.split('-');
+                    var g3 = req.query.g3.split('-');
+                    var g4 = req.query.g4.split('-');
+                    var g5 = req.query.g5.split('-');
+                    var g6 = req.query.g6.split('-');
+                    var g7 = req.query.g7.split('-');
+                    var g8 = req.query.g8.split('-');
+                    var q1 = req.query.q1.split('-');
+                    var q2 = req.query.q2.split('-');
+                    var q3 = req.query.q3.split('-');
+                    var q4 = req.query.q4.split('-');
+                    var s1 = req.query.s1.split('-');
+                    var s2 = req.query.s2.split('-');
+                    var f = req.query.f.split('-');
+
+                    var g1_rows = await getTeamInfo(generateSQLSearch(g1));
+                    var g2_rows = await getTeamInfo(generateSQLSearch(g2));
+                    var g3_rows = await getTeamInfo(generateSQLSearch(g3));
+                    var g4_rows = await getTeamInfo(generateSQLSearch(g4));
+                    var g5_rows = await getTeamInfo(generateSQLSearch(g5));
+                    var g6_rows = await getTeamInfo(generateSQLSearch(g6));
+                    var g7_rows = await getTeamInfo(generateSQLSearch(g7));
+                    var g8_rows = await getTeamInfo(generateSQLSearch(g8));
+                    var q1_rows = addTBD(await getTeamInfo(generateSQLSearch(q1)));
+                    var q2_rows = addTBD(await getTeamInfo(generateSQLSearch(q2)));
+                    var q3_rows = addTBD(await getTeamInfo(generateSQLSearch(q3)));
+                    var q4_rows = addTBD(await getTeamInfo(generateSQLSearch(q4)));
+                    var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
+                    var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
+                    var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+
+                    matches = {
+                        g1: g1_rows,
+                        g2: g2_rows,
+                        g3: g3_rows,
+                        g4: g4_rows,
+                        g5: g5_rows,
+                        g6: g6_rows,
+                        g7: g7_rows,
+                        g8: g8_rows,
+                        q1: q1_rows,
+                        q2: q2_rows,
+                        q3: q3_rows,
+                        q4: q4_rows,
+                        s1: s1_rows,
+                        s2: s2_rows,
+                        f: f_rows
+                    }
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: team_count,
+                        matches: matches,
+                        team_path: team_path
+                        // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
+                    })
+                    break;
+                default:
+                    res.render('summary.ejs',{
+                        tourney: tourney_id,
+                        host: host_user_id,
+                        team_count: 0,
+                        matches: 0
+                    })
+                    break;
+            }
+        }else{
+            res.render('summary.ejs',{
+                tourney: tourney_id,
+                host: host_user_id,
+                team_count: 0,
+                matches: 0
+            })
+        }
+    }
+
+    blastThem();
+})
+
 app.get('/match',encoder, function(req,res){
     var tourney_id = req.query.id;
     var match_type = req.query.code;
     var team1_id = req.query.team1;
     var team2_id = req.query.team2;
 
-    getTeamById = function(team1_id, team2_id){
+    getTeamById = function(team_id){
         return new Promise(function(resolve, reject){
           connection.query(
-              "SELECT * FROM teams WHERE (teams_id=? || teams_id=?)",
-              [team1_id, team2_id], 
+              "SELECT * FROM teams WHERE teams_id=?",
+              team_id, 
               function(err, rows){                                                
                   if(rows === undefined){
                       reject(new Error("Error rows is undefined"));
@@ -1021,10 +1585,14 @@ app.get('/match',encoder, function(req,res){
 
     async function runQueries(team1, team2){
         try {
-            teams = await getTeamById(team1, team2);
+            teams = []
+            teams.push(await getTeamById(team1));
+            teams.push(await getTeamById(team2));
+            console.log(teams);
             stored_query = await checkMatchmaking(tourney_id);
             get_expected_query = getQueryVariable(stored_query[0].tourney_query, match_type);
             if(get_expected_query != `${team1}-${team2}`){
+                console.log('CODES DO NOT MATCH');
                 res.redirect(`/manage?id=${tourney_id}${stored_query[0].tourney_query}`);
             }else{
                 console.log('CODES MATCH');
@@ -1476,6 +2044,1421 @@ app.get("/host_listing", function(req, res){
 
 })
 
+app.post('/finalize_match', encoder, function(req,res){
+    var tourney_id = req.query.id;
+    var team1_id = req.query.team1;
+    var match_code = req.query.code;
+    console.log(match_code);
+    var team2_id = req.query.team2;
+    var team1_goals = req.query.team1_goals;
+    var team2_goals = req.query.team2_goals;
+    var team1_points = req.query.team1_points;
+    var team2_points = req.query.team2_points;
+    var winner = req.query.winner;
+    var loser;
+    var winner_points;
+    var winner_goals;
+    var loser_points;
+    var loser_goals;
+
+    if(winner == team1_id){
+        loser = team2_id;
+        loser_points = team2_points;
+        loser_goals = team2_goals;
+        winner_points = team1_points;
+        winner_goals = team1_goals;
+    }else{
+        loser = team1_id;
+        loser_points = team1_points;
+        loser_goals = team1_goals;
+        winner_points = team2_points;
+        winner_goals = team2_goals;
+    }
+    var finalize_query = {
+        tourney_id: tourney_id,
+        match_code: match_code,
+        winner: winner,
+        loser: loser,
+        winner_points: winner_points,
+        winner_goals: winner_goals,
+        loser_points: loser_points,
+        loser_goals: loser_goals
+    };
+
+    saveQuery = function(tourney_id, query){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE matchmaking SET tourney_query = ? WHERE tourney_id = ?",
+                [query, tourney_id], 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up saveQuery'))
+                  }
+              }
+          )}
+        )}
+
+    function getQueryVariable(q,variable) {
+        var query = q.substring(1)
+        var vars = query.split('&')
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=')
+            if (decodeURIComponent(pair[0]) == variable) {
+                return decodeURIComponent(pair[1])
+            }
+        }
+        return 0;
+    }
+
+    getOriginalQuery = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM matchmaking WHERE tourney_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up checkMAtchmaking'))
+                  }
+              }
+        )}
+    )}
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+        var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+          return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+          return uri + separator + key + "=" + value;
+        }
+      }
+
+    updateWinningTeamPoints = function(team_id, team_points, goals_for, goals_against){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE teams SET games_played = games_played + 1, games_won = games_won + 1, team_points = team_points + ?, goals_for = goals_for + ?,"+
+                "goals_against = goals_against + ? WHERE teams_id = ?",
+                [team_points, goals_for, goals_against, team_id],
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined updateTeamStats"))
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    updateLosingTeamPoints = function(team_id, team_points, goals_for, goals_against){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE teams SET games_played = games_played + 1, games_lost = games_lost + 1, team_points = team_points + ?, goals_for = goals_for + ?, goals_against = goals_against + ? WHERE teams_id = ?",
+                [team_points, goals_for, goals_against, team_id],
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined updateTeamStats"))
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+    
+    async function perform(tourney_id, finalize_query){
+        try {
+            var orc = await getOriginalQuery(tourney_id);
+            var orc = orc[0].tourney_query;
+            var team_count = parseInt(getQueryVariable(orc,'team_count'));
+            var finalize_matchcode = finalize_query.match_code;
+            var manage_link = `/manage?id=${tourney_id}`;
+            var winner = finalize_query.winner;
+            var loser = finalize_query.loser;
+            var winner_points = finalize_query.winner_points;
+            var winner_goals = finalize_query.winner_goals;
+            var loser_points = finalize_query.loser_points;
+            var loser_goals = finalize_query.loser_goals;
+            switch(team_count){
+                case 6:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 7:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 8:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 9:
+                    switch(finalize_matchcode){
+                        case 'p1':
+                            var opponent = getQueryVariable(orc,'g4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 10:
+                    switch(finalize_matchcode){
+                        case 'p1':
+                            var opponent = getQueryVariable(orc,'g3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'p2':
+                            var opponent = getQueryVariable(orc,'g4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 11:
+                    switch(finalize_matchcode){
+                        case 'p1':
+                            var opponent = getQueryVariable(orc,'g2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'p2':
+                            var opponent = getQueryVariable(orc,'g3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'p3':
+                            var opponent = getQueryVariable(orc,'g4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 12:
+                    switch(finalize_matchcode){
+                        case 'p1':
+                            var opponent = getQueryVariable(orc,'g1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'p2':
+                            var opponent = getQueryVariable(orc,'g2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'p3':
+                            var opponent = getQueryVariable(orc,'g3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                        case 'p4':
+                            var opponent = getQueryVariable(orc,'g4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'g4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 13:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var opponent = getQueryVariable(orc,'q1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'q2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var opponent = getQueryVariable(orc,'q3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var new_query = updateQueryStringParameter(orc,'q4', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g5':
+                            var opponent = getQueryVariable(orc,'q4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 14:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var opponent = getQueryVariable(orc,'q1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'q2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'q3', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'q3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g5':
+                            var new_query = updateQueryStringParameter(orc,'q4', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g6':
+                            var opponent = getQueryVariable(orc,'q4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 15:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var opponent = getQueryVariable(orc,'q1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var new_query = updateQueryStringParameter(orc,'q2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var opponent = getQueryVariable(orc,'q2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var new_query = updateQueryStringParameter(orc,'q3', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g5':
+                            var opponent = getQueryVariable(orc,'q3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g6':
+                            var new_query = updateQueryStringParameter(orc,'q4', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g7':
+                            var opponent = getQueryVariable(orc,'q4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                case 16:
+                    switch(finalize_matchcode){
+                        case 'g1':
+                            var new_query = updateQueryStringParameter(orc,'q1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g2':
+                            var opponent = getQueryVariable(orc,'q1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g3':
+                            var new_query = updateQueryStringParameter(orc,'q2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g4':
+                            var opponent = getQueryVariable(orc,'q2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g5':
+                            var new_query = updateQueryStringParameter(orc,'q3', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g6':
+                            var opponent = getQueryVariable(orc,'q3').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q3', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g7':
+                            var new_query = updateQueryStringParameter(orc,'q4', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'g8':
+                            var opponent = getQueryVariable(orc,'q4').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'q4', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q1':
+                            var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q2':
+                            var opponent = getQueryVariable(orc,'s1').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s1', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q3':
+                            var new_query = updateQueryStringParameter(orc,'s2', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'q4':
+                            var opponent = getQueryVariable(orc,'s2').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'s2', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's1':
+                            var new_query = updateQueryStringParameter(orc,'f', `${winner}-0`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 's2':
+                            var opponent = getQueryVariable(orc,'f').split('-')[0];
+                            var new_query = updateQueryStringParameter(orc,'f', `${opponent}-${winner}`);
+                            console.log(`${new_query}`);
+                            await saveQuery(tourney_id, new_query);
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(`${manage_link}${new_query}`);
+                            break;
+                        case 'f':
+                            var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
+                            await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            res.redirect(new_query);
+                            break;
+                        default:
+                            console.log(`Error with finalize_matchcode ${finalize_matchcode}`);
+                            break;
+                    }
+                    break;
+                default:
+                    console.log("Error with team_count");
+                    break;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    perform(tourney_id, finalize_query);
+
+})
+
+app.get("/tourney_end",encoder,function(req, res){
+    var winner = req.query.winner;
+    var tourney_id = req.query.id;
+
+    getTeamById = function(team_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM teams WHERE teams_id=?",
+              team_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined getTeambyId"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTeamMembers = function(team_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE team_id=?",
+                team_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    getTourneyById = function(id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys WHERE tourneys_id=?",
+              id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined getTourneybyId"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    updateWinTeamStats = function(team_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE teams SET tourneys_won = tourneys_won + 1, tourneys_played = tourneys_played + 1, team_points = team_points + 1 WHERE teams_id=?",
+                team_id,
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined updateTeamStats"))
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    updateLossTeamStats = function(team_ids){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE teams SET tourneys_lost = tourneys_lost + 1, tourneys_played = tourneys_played + 1 WHERE teams_id=?",
+                team_ids,
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined updateTeamStats"))
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    getTeamsEnteredInTourney = function(tourney_id, winner){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM teams_entered_in_tourney WHERE (tourneys_tourneys_id = ? && teams_teams_id != ?)",
+                [tourney_id, winner],
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined getTeamsEnteredInTourney"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    endTourneyStatus = function(tourney_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE tourneys SET status = 'ended' WHERE tourneys_id = ?",
+                tourney_id,
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined getTeamsEnteredInTourney"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    checkMatchmaking = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM matchmaking WHERE tourney_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up checkMAtchmaking'))
+                  }
+              }
+          )}
+        )}
+
+    async function perform(winner, tourney_id){
+        try {
+            var team = await getTeamById(winner);
+            var users = await getTeamMembers(winner);
+            var tourney = await getTourneyById(tourney_id);
+            var earnings = (tourney[0].team_sizes * tourney[0].entry_fee * tourney[0].current_participants)*0.55;
+            var individual_earnings = tourney[0].entry_fee * tourney[0].current_participants*0.55
+
+            await updateWinTeamStats(winner);
+            var teams_entered = await getTeamsEnteredInTourney(tourney_id, winner);
+            for(team of teams_entered){
+                await updateLossTeamStats(team.teams_teams_id);
+            }
+            var weasel = await checkMatchmaking(tourney_id);
+            weasel = `/summary?id=${tourney_id}${weasel[0].tourney_query}`
+
+            var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
+            for(user of users){
+                if(user.team_id == team.teams_id){
+                    var email = user.user_email;
+                    email_contents = {
+                        recipient: email,
+                        subject: `${tourney[0].name} Results`,
+                        message: 'Congratulations, you won!\n'+
+                                    '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}`)+
+                                    `💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
+                                    '🔥 I hope you had fun!\n'+
+                                    '🔥 You can withdraw your winnings once your account has reached $100.00 in earnings.',
+                        html: `<h1 style="text-align: center;">
+                                Congratulations, you won!
+                                </h1><br>
+                                <div style="align-items: center; display: flex;">
+                                    <ul style="list-style: none; margin: auto;">
+                                    <li>✔ You can view your trophy at <a href="http://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
+                                    <li>💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
+                                    <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
+                                    <li>🔥 You can withdraw your individual winnings once your user balance has reached $100.00 in earnings.</li>
+                                    </ul>
+                                </div>`
+                    }
+                    mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
+                    // console.log(email_contents);
+                }else{
+                    var email = user.user_email;
+                    console.log(email)
+                    email_contents = {
+                        recipient: email,
+                        subject: `${tourney[0].name} Results`,
+                        message: "You'll Get Them Next Time!\n"+
+                                    '✔ You can review the tourney summary at this '+' link:'.link(`${weasel}`)+
+                                    `💸 Your team ${team.team_name} has lost!\n`+
+                                    '🔥 Although, your team did not win, I hope you had fun!\n'+
+                                    '🔥 You can still play again to try to win another Tourney!',
+                        html: `<h1 style="text-align: center;">
+                                You'll Get Them Next Time!
+                                </h1><br>
+                                <div style="align-items: center; display: flex;">
+                                    <ul style="list-style: none; margin: auto;">
+                                    <li>✔ You can review the tourney summary at this <a href="http://${weasel}">link</a></li>
+                                    <li>💸 Your team ${team.team_name} has lost!</li>
+                                    <li>🔥 Although, your team did not win, I hope you had fun!</li>
+                                    <li>🔥 You can still play again to try to win another Tourney!</li>
+                                    </ul>
+                                </div>`
+                    }
+                    mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
+                    // console.log(email_contents);
+                }
+            }
+
+            await endTourneyStatus(tourney_id);
+
+            res.redirect('/host');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    
+    perform(winner, tourney_id);
+})
+
+app.get('/winner', encoder, function(req,res){
+    var tourney_id = req.query.id;
+
+    checkMatchmaking = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM matchmaking WHERE tourney_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up checkMAtchmaking'))
+                  }
+              }
+          )}
+        )}
+
+
+    async function blast(tourney_id){
+        try {
+            var query = await checkMatchmaking(tourney_id);
+            var link = query[0].tourney_query;
+            var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
+            var earnings = formatter.format(req.query.earnings);
+            res.render('winner.ejs',{
+                earnings: earnings,
+                link: link
+            })
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    blast(tourney_id);
+})
+
 app.get("/add_tourney", checkAuthenticated, function(req, res){
     res.render('add_tourney.ejs', {add_error: add_tourney_error});
 })
@@ -1550,7 +3533,8 @@ app.get("/team_player", checkAuthenticated, function(req, res){
                                                 team_path: team_path,
                                                 profile_path: profile_path,
                                                 getAge: getAge,
-                                                user_id: user_id});
+                                                user_id: user_id,
+                                                url: url});
             }else{
                 res.render('no_team.ejs');
             }
@@ -1846,23 +3830,45 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
 app.post("/login",encoder, function(req,res){
     var email = req.body.email;
     var password = req.body.password;
-    console.log(password);
-    connection.query("select * from users where user_email = ?",[email, password], function(error, results, fields){
-        console.log(results);
-        if (results.length > 0){
-            if (bcrypt.compare(password, results[0].user_pass)){
-                authcode = true;
-                my_user_id = results[0].user_id;
-                res.clearCookie('id')
-                res.cookie('id', my_user_id);
-                console.log(req.cookies.id)
-                res.redirect("/home");
+
+    checkPass = function(email){
+        return new Promise(function(resolve,reject){
+            connection.query("SELECT * FROM users WHERE user_email = ?",[email],function(error,rows){
+                if(rows == undefined){
+                    reject(false);
+                }else{
+                    resolve(rows);
+                }
+            })
+        })
+    }
+
+
+    async function check(email){
+        try {
+            var chek = await checkPass(email);
+            if(chek != false){
+                if(await bcrypt.compare(req.body.password, chek[0].user_pass)){
+                    authcode = true;
+                    my_user_id = chek[0].user_id;
+                    res.clearCookie('id')
+                    res.cookie('id', my_user_id);
+                    console.log(req.cookies.id)
+                    res.redirect("/home");
+                }else{
+                    res.redirect("/login");
+                }
+                
+            }else{
+                res.redirect("/login");
             }
-        }else {
-            res.redirect("/login");
+        } catch (e) {
+            console.error(e);
         }
-        res.end();
-    })
+    }
+
+    check(email);
+    
 })
 app.post("/verified_login",encoder, function(req,res){
     var email = req.body.email;

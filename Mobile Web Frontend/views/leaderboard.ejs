@@ -209,12 +209,12 @@
                 <% var count = search_high - search_low %> 
                 <% if(search_low>0) {%>
                     <div style="display: flex; background-color: #91c2e7; height: 10vw; width: 10vw; padding: 5px; border-radius: 10px;">
-                        <img src="images/back.png" style="margin: auto; height: 100%;"onclick="window.location=`/leaderboard?selection=users&rankings_from=<%= search_low-count %>&rankings_to=<%= search_high-count %>`">
+                        <img src="images/back.png" style="margin: auto; height: 100%;"onclick="window.location=`/leaderboard?selection=<%= option %>&rankings_from=<%= search_low-count %>&rankings_to=<%= search_high-count %>`">
                     </div>
                 <% } %>  
                 <% if(total_num>search_high) {%>
                     <div style="display: flex; background-color: #91c2e7; height: 10vw; width: 10vw; padding: 5px; border-radius: 10px;">
-                        <img src="images/back.png" style="margin: auto; height: 100%; transform: rotate(180deg);" onclick="window.location=`/leaderboard?selection=users&rankings_from=<%= search_low+count %>&rankings_to=<%= search_high+count %>`">
+                        <img src="images/back.png" style="margin: auto; height: 100%; transform: rotate(180deg);" onclick="window.location=`/leaderboard?selection=<%= option %>&rankings_from=<%= search_low+count %>&rankings_to=<%= search_high+count %>`">
                     </div>
                 <% } %>
             </div>

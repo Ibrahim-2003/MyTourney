@@ -44,6 +44,7 @@
     -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
         -> Need to add function to add earnings to player balances
         -> Need to add individual's balance to team balance once they add funds
+        -> Need to add withdraw minimum limit
         //NOTES
             -Two transactions:
                 1) Collect payments from players and use charge-transfer function of Stripe to keep my cut and transfer the host's cut

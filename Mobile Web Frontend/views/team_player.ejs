@@ -21,6 +21,37 @@
         </nav>
     </div>
     <br><br>
+    <div id="copied-msg">
+        <div id="copied-msg-textbox">
+            LINK COPIED
+        </div>
+    </div>
+    <div id="edit-team-cont">
+        <div id="x_btn_cont">
+            <img src="https://visualpharm.com/assets/860/Close%20Window-595b40b75ba036ed117d9309.svg" id="x_btn_img" onclick="hideForm()">
+        </div>
+        <form method="POST" action="/edit_team" enctype="multipart/form-data">
+            <div class="form-group">
+                <input name="teamname" type="text" class="form-control" id="exampleInputUsername1" placeholder="TEAM NAME">
+            </div>
+            <label for="teamlogo" style="color: #303549; font-weight: 500;">
+                TEAM LOGO
+            </label>
+            <div class="form-group">
+                <input type="file" name="teamlogo" style="width: 100%;
+                font-size: 18px;
+                padding: 15px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;">
+            </div>
+            <div class="form-group">
+                <input style="margin-top: 10px;" type="submit" id="submit-btn-reg" value="REGISTER">
+            </div>
+        </form>
+    </div>
     <div>
         <h1 style="font-family: Varsity; color: #91c2e7; padding: 15px; font-size: 36px; text-align: center; font-weight: 300;">
         <%= team[0].team_name.toUpperCase() %> 
@@ -65,16 +96,26 @@
                         CAPTAIN 🎖</br>
                     <% } %> 
                 </div>
+                <% if(member.user_id != team[0].users_user_id){ %> 
+                    <div class="rem_team_member_cont">
+                        <img src="images/trashcan.png" class="rem_team_member" onclick="removeMember('<%= member.user_id %>', '<%= team[0].teams_id %>')">
+                    </div>
+                <% } %> 
             </div>
         <% } %>
         <% if(user_id == team[0].users_user_id) {%>
             <div style="margin: auto; text-align: center; background-color: #91c2e7; border-radius: 15px; color: #303549; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;" onclick="copyLink('<%= team[0].teams_id %>', '<%= url %>')">
                 INVITE TEAM MEMBERS
             </div>
-        <% } %> 
+            <div style="margin: auto; text-align: center; background-color: #91c2e7; border-radius: 15px; color: #303549; padding-top: 15px; padding-bottom: 15px; margin-bottom: 15px;" onclick="editTeamForm()">
+                EDIT TEAM
+            </div>
+        <% } %>
+    </div>
 
     <script>
-        function copyLink(team_id, url) {
+        async function copyLink(team_id, url) {
+            var current_link = window.location.href;
             var inputc = document.body.appendChild(document.createElement("input"));
             inputc.value = `${url}/join_team?team_id=${team_id}`;
             inputc.focus();
@@ -86,9 +127,38 @@
                 })
             }else{
                 document.execCommand('copy');
+                var link = document.getElementById('copied-msg');
+                fadeIn(link);
+                setTimeout(function(){ fadeOut(link); }, 1000);
+                setTimeout(function(){ removeLink(link); }, 3000);
+
             }
             inputc.parentNode.removeChild(inputc);
         }
+
+        function fadeOut(link){
+            link.className = "fade-out"
+        }
+
+        function removeLink(link){
+            link.style.display = 'none'
+        }
+
+        function fadeIn(link){
+            link.style.display = 'table'
+            link.className = "fade-in"
+        }
+
+        function hideForm(){
+            var form = document.getElementById("edit-team-cont");
+            form.style.display = "none";
+        }
+
+        function editTeamForm(){
+            var form = document.getElementById("edit-team-cont");
+            form.style.display = "block";
+        }
     </script>
+    <script src="annihilator.js"></script>
     </body>
 </html>

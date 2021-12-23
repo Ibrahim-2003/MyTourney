@@ -23,6 +23,11 @@
         </nav>
     </div>
     <br><br>
+    <div id="copied-msg">
+        <div id="copied-msg-textbox">
+            LINK COPIED
+        </div>
+    </div>
     <section class="logo">
         <div class="container">
             <div style="background-color: #f45b6a;" id="leaderboard">
@@ -142,20 +147,39 @@
             }
             
         }
-        function copyLink() {
+        async function copyLink(team_id, url) {
+            var current_link = window.location.href;
             var inputc = document.body.appendChild(document.createElement("input"));
-            inputc.value = window.location.href;
+            inputc.value = `${url}/join_team?team_id=${team_id}`;
             inputc.focus();
             inputc.select();
             if(navigator.share){
                 navigator.share({
-                    title: "Let's play MyTourney!",
-                    url: `${window.location.href}`
+                    title: "Join my team on MyTourney!",
+                    url: `${url}/join_team?team_id=${team_id}`
                 })
             }else{
                 document.execCommand('copy');
+                var link = document.getElementById('copied-msg');
+                fadeIn(link);
+                setTimeout(function(){ fadeOut(link); }, 1000);
+                setTimeout(function(){ removeLink(link); }, 3000);
+
             }
             inputc.parentNode.removeChild(inputc);
+        }
+
+        function fadeOut(link){
+            link.className = "fade-out"
+        }
+
+        function removeLink(link){
+            link.style.display = 'none'
+        }
+
+        function fadeIn(link){
+            link.style.display = 'table'
+            link.className = "fade-in"
         }
     </script>
 </html>

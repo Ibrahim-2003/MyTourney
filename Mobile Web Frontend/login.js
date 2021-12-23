@@ -127,7 +127,10 @@ app.get("/home", checkAuthenticated, function(req, res){
     
     if(req.query.lat && req.query.lon){
         home_coords = [req.query.lat, req.query.lon];
+        req.cookies.coords = home_coords;
         // console.log('Dynamic Lat: ' + req.query.lat);
+    }else if(req.cookies.coords){
+        home_coords = req.cookies.coords
     }else{
         home_coords = [27.648909,-97.390611];
     }
@@ -145,6 +148,22 @@ app.get("/home", checkAuthenticated, function(req, res){
             }
         )}
     )}
+
+    checkVerification = function(user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE user_id=?",
+                user_id,
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error(`ERROR NO USER WITH THIS ID ${user_id}`));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
 
     getTourneys()
     .then(function(results){
@@ -1929,6 +1948,23 @@ app.get("/host_listing", function(req, res){
         
     }
 
+    updateStatus = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE tourneys SET status='in-progress' WHERE tourneys_id=?",
+                tourney_id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        resolve(false);
+                  }else if(rows != undefined){
+                        resolve(rows);
+                  }else{
+                      reject(new Error('Error blow up saveQuery'))
+                  }
+              }
+          )}
+        )}
+
     async function sequentialQueries () {
  
         try{
@@ -1963,50 +1999,69 @@ app.get("/host_listing", function(req, res){
                         query = `&gen=1&team_count=6&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&s1=${matchids[4]}-${matchids[5]}`+
                                 `&s2=0-0&f=0-0`;
                         await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 7:
                         query = `&gen=1&team_count=7&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
                                 `&s1=${matchids[6]}-0&s2=0-0&f=0-0`;
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 8:
                         query = `&gen=1&team_count=8&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}&g3=${matchids[4]}-${matchids[5]}`+
                                 `&g4=${matchids[6]}-${matchids[7]}&s1=0-0&s2=0-0&f=0-0`;
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 9:
                         query = `&gen=1&team_count=9&p1=${matchids[0]}-${matchids[1]}&g1=${matchids[2]}-${matchids[3]}&g2=${matchids[4]}-${matchids[5]}&g3=${matchids[6]}-${matchids[7]}`+
                                 `&g4=${matchids[8]}-0&s1=0-0&s2=0-0&f=0-0`;
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 10:
                         query = `&gen=1&team_count=10&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}&g1=${matchids[4]}-${matchids[5]}`+
                                 `&g2=${matchids[6]}-${matchids[7]}&g3=${matchids[8]}-0&g4=${matchids[9]}-0&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 11:
                         query = `&gen=1&team_count=11&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}`+
                                 `&p3=${matchids[4]}-${matchids[5]}&g1=${matchids[6]}-${matchids[7]}`+
                                 `&g2=${matchids[8]}-0&g3=${matchids[9]}-0&g4=${matchids[10]}&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 12:
                         query = `&gen=1&team_count=12&p1=${matchids[0]}-${matchids[1]}&p2=${matchids[2]}-${matchids[3]}`+
                                 `&p3=${matchids[4]}-${matchids[5]}&p4=${matchids[6]}-${matchids[7]}`+
                                 `&g1=${matchids[8]}-0&g2=${matchids[9]}-0&g3=${matchids[10]}&g4=${matchids[11]}-0&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 13:
                         query = `&gen=1&team_count=13&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
                                 `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
                                 `&g5=${matchids[8]}-${matchids[9]}&q1=${matchids[10]}-0&q2=${matchids[11]}-0&q3=${matchids[12]}-0`+
                                 `&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 14:
                         query = `&gen=1&team_count=14&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
                                 `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
                                 `&g5=${matchids[8]}-${matchids[9]}&g6=${matchids[10]}-${matchids[11]}`+
                                 `&q1=${matchids[12]}-0&q2=${matchids[13]}-0&q3=0-0&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 15:
                         query = `&gen=1&team_count=15&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
                                 `&g3=${matchids[4]}-${matchids[5]}&g4=${matchids[6]}-${matchids[7]}`+
                                 `&g5=${matchids[8]}-${matchids[9]}&g6=${matchids[10]}-${matchids[11]}`+
                                 `&g7=${matchids[12]}-${matchids[13]}&q1=${matchids[14]}-0&q2=0-0&q3=0-0&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     case 16:
                         query = `&gen=1&team_count=16&g1=${matchids[0]}-${matchids[1]}&g2=${matchids[2]}-${matchids[3]}`+
@@ -2014,6 +2069,8 @@ app.get("/host_listing", function(req, res){
                                 `&g5=${matchids[8]}-${matchids[9]}&g6=${matchids[10]}-${matchids[11]}`+
                                 `&g7=${matchids[12]}-${matchids[13]}&g8=${matchids[14]}-${matchids[15]}`+
                                 `&q1=0-0&q2=0-0&q3=0-0&q4=0-0&s1=0-0&s2=0-0&f=0-0`
+                        await saveQuery(parseInt(id), query);
+                        await updateStatus(id);
                         break;
                     default:
                         query = '&gen=0';
@@ -2043,6 +2100,164 @@ app.get("/host_listing", function(req, res){
     
 
 })
+
+app.post('/remove_tourney', encoder, function(req,res){
+    var tourney_id = req.query.tourney_id;
+    console.log(`REMOVE TOURNEY ${tourney_id}`);
+
+    getTourneyById = function(id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM tourneys WHERE tourneys_id=?",
+              id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined getTourneybyId"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getTeamsEnteredInTourney = function(tourney_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM teams_entered_in_tourney WHERE tourneys_tourneys_id = ?",
+                tourney_id,
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined getTeamsEnteredInTourney"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )}
+        )}
+
+    removeTransaction = function(tourney_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                'DELETE FROM transactions WHERE tourneys_tourneys_id=?',
+                tourney_id,
+                function(err, rows){
+                if(rows === undefined){
+                    reject(new Error("Error rows is undefined logPurchase"));
+                }else{
+                    resolve(rows);
+                }}
+                )}
+        )}
+
+    getTeamMembers = function(team_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE team_id=?",
+                team_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )}
+        )}
+
+    getTeamById = function(team_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM teams WHERE teams_id=?",
+              team_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined getTeambyId"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    refundTeam = function(price, team_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE teams SET team_balance = team_balance + ? WHERE teams_id = ?",
+                [price, team_id],
+                function(err,rows){
+                    if(rows===undefined){
+                        reject(new Error("Error rows undefined deductBalance"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )}
+        )}
+
+    refundUser = function(price, user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE users SET balance = balance + ? WHERE user_id = ?",
+                [price, user_id],
+                function(err,rows){
+                    if(rows===undefined){
+                        reject(new Error("Error rows undefined deductBalance"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )}
+        )}
+
+    eraseTourney = function(id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "DELETE FROM tourneys WHERE tourneys_id=?",
+                id, 
+                function(err, rows){                                                
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined getTourneybyId"));
+                  }else{
+                        resolve(rows);
+                  }
+            }
+          )}
+    )}
+
+    async function deleteTourney(tourney_id){
+        try {
+            var tourney = await getTourneyById(tourney_id);
+            if(tourney[0].status == 'recruiting'){
+                var teams_entered_in_tourney = await getTeamsEnteredInTourney(tourney_id);
+                var user_price = tourney[0].entry_fee;
+                var team_id;
+                for (team_entered of teams_entered_in_tourney){
+                    team_id = team_entered.teams_teams_id;
+                    var team = await getTeamById(team_id);
+                    var team_price = tourney[0].entry_fee * team[0].member_count;
+                    var team_members = await getTeamMembers(team_id);
+                    for (member of team_members){
+                        await refundUser(user_price, member.user_id);
+                    }
+                    await refundTeam(team_price, team_id);
+                }
+                await eraseTourney(tourney_id);
+            }else{
+                console.log('YOU CANNOT DELETE A TOURNEY WITH THIS STATUS: ' + tourney[0].status)
+            }
+            res.redirect('/host');
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    deleteTourney(tourney_id);
+})
+
+
+
+
 
 app.post('/finalize_match', encoder, function(req,res){
     var tourney_id = req.query.id;
@@ -3420,6 +3635,75 @@ app.get("/tourney_end",encoder,function(req, res){
     perform(winner, tourney_id);
 })
 
+app.post('/remove_team_member',encoder,function(req,res){
+    var user_id = req.query.user_id;
+    var team_id = req.query.team_id;
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE user_id=?",
+                user_id,
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined removeMemberCount"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    removeMemberCount = function(user_balance, team_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE teams SET member_count = member_count - ?, team_balance = team_balance - ? WHERE teams_id = ?",
+                [1, user_balance, team_id],
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined removeMemberCount"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    adjustUserDetails = function(user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE users SET team_id = 0 WHERE user_id = ?",
+                user_id,
+                function(error,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error rows undefined removeMemberCount"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function commence(user_id, team_id){
+        try {
+            var user = await getUserById(user_id);
+            var user_balance = user[0].balance;
+            console.log(team_id);
+            await adjustUserDetails(user_id);
+            console.log(await removeMemberCount(user_balance, team_id));
+            res.redirect('/team_player');
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    commence(user_id, team_id);
+
+})
+
 app.get('/winner', encoder, function(req,res){
     var tourney_id = req.query.id;
 
@@ -3843,25 +4127,45 @@ app.post("/login",encoder, function(req,res){
         })
     }
 
+    checkVerification = function(user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE user_id=?",
+                user_id,
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error(`ERROR NO USER WITH THIS ID ${user_id}`));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
 
     async function check(email){
         try {
             var chek = await checkPass(email);
-            if(chek != false){
-                if(await bcrypt.compare(req.body.password, chek[0].user_pass)){
-                    authcode = true;
-                    my_user_id = chek[0].user_id;
-                    res.clearCookie('id')
-                    res.cookie('id', my_user_id);
-                    console.log(req.cookies.id)
-                    res.redirect("/home");
-                }else{
-                    res.redirect("/login");
-                }
-                
-            }else{
-                res.redirect("/login");
+            var verification_check = await checkVerification(chek[0].user_id);
+            console.log(verification_check[0].verified)
+            if(verification_check[0].verified == 1){
+                if(chek != false){
+                    if(await bcrypt.compare(req.body.password, chek[0].user_pass)){
+                        authcode = true;
+                        my_user_id = chek[0].user_id;
+                        res.clearCookie('id');
+                        res.cookie('id', my_user_id);
+                        console.log(req.cookies.id)
+                        res.redirect("/home");
+                    }else{
+                        res.redirect("/login");
+                    }
+            }}else{
+                res.redirect('/unverified');
             }
+            
+                
         } catch (e) {
             console.error(e);
         }
@@ -4137,11 +4441,43 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
         })
     }
 
-    deductBalance = function(team_id, price){
+    deductTeamBalance = function(team_id, price){
         return new Promise(function(resolve, reject){
             connection.query(
                 "UPDATE teams SET team_balance = team_balance - ? WHERE teams_id = ?",
                 [price, team_id],
+                function(err,rows){
+                    if(rows===undefined){
+                        reject(new Error("Error rows undefined deductBalance"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    getTeamMembers = function(team_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE team_id=?",
+                team_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    deductUserBalance = function(price, user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "UPDATE users SET balance = balance - ? WHERE user_id = ?",
+                [price, user_id],
                 function(err,rows){
                     if(rows===undefined){
                         reject(new Error("Error rows undefined deductBalance"));
@@ -4160,6 +4496,13 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
             const host_results = await getUserById(tourney_results[0].hosts_users_user_id);
             const team_results = await getTeamOfUser(user_results[0].team_id);
             const tourney_logs = await getTourneyLogistics(tourney_id);
+            const team_members = await getTeamMembers(user_results[0].team_id);
+            var paying_user_count = 0;
+            for(member of team_members){
+                if(member.balance > tourney_results[0].entry_fee){
+                    paying_user_count = paying_user_count + 1;
+                }
+            }
             var tourney_log_team_id = null;
             if(tourney_logs.length > 0){
                 tourney_log_team_id = tourney_logs[0].teams_teams_id;
@@ -4195,14 +4538,24 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
                 join_error: 'YOU CANNOT JOIN WITHOUT A TEAM! PLEASE CREATE A TEAM OR JOIN A TEAM TO ENTER A TOURNAMENT!',
                 user: user_results,
                 team: null})
-            }else if(team_results[0].team_balance < tourney_results[0].entry_fee * tourney_results[0].team_sizes){
+            }else if(team_results[0].team_balance < tourney_results[0].entry_fee * team_results[0].member_count){
                 res.render('tourney_details.ejs',
                 {id: id,
                 tourney: tourney_results,
                 host: host_results,
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
-                join_error: 'INSUFFICIENT FUNDS! PLEASE ADD FUNDS AND TRY AGAIN!',
+                join_error: 'YOUR TEAM HAS INSUFFICIENT FUNDS! PLEASE ADD FUNDS AND TRY AGAIN!',
+                user: user_results,
+                team: team_results})
+            }else if(paying_user_count != team_members.length){
+                res.render('tourney_details.ejs',
+                {id: id,
+                tourney: tourney_results,
+                host: host_results,
+                venue_path: venue_path+'/',
+                profile_path: profile_path+'/',
+                join_error: 'NOT ALL PLAYERS HAVE INSUFFICIENT FUNDS! PLEASE ADD FUNDS TO RESPECTIVE ACCOUNTS AND TRY AGAIN!',
                 user: user_results,
                 team: team_results})
             }else if(tourney_results[0].current_participants == tourney_results[0].max_participants){
@@ -4242,11 +4595,15 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
                 var host_user_id = tourney_results[0].hosts_users_user_id;
                 var tourney_id = tourney_results[0].tourneys_id;
                 var host_id = tourney_results[0].hosts_hosts_id;
-                var price = tourney_results[0].entry_fee * tourney_results[0].team_sizes;
-                var purchase = await makepurchase(price);
+                var team_price = tourney_results[0].entry_fee * team_results[0].member_count;
+                var user_price = tourney_results[0].entry_fee;
+                var purchase = await makepurchase(team_price);
                 console.log(purchase)
-                await logPurchase(price, tourney_id, host_id, host_user_id, user_id, team_id);
-                await deductBalance(team_results[0].teams_id, price);
+                await logPurchase(team_price, tourney_id, host_id, host_user_id, user_id, team_id);
+                for(member of team_members){
+                    await deductUserBalance(user_price, member.user_id);
+                }
+                await deductTeamBalance(team_results[0].teams_id, price);
                 // var tourney_qr_id = makeid(6);
                 // var tourney_qr = await bcrypt.hash(tourney_qr_id, 10);
                 await joinTourney(tourney_id, team_id, host_id, host_user_id, team_leader_user_id);
@@ -4282,8 +4639,43 @@ app.post("/join",encoder,checkAuthenticated, function(req, res){
 })
 
 //When login is success
-app.get("/home", checkAuthenticated, function(req, res){
-    res.render('home.ejs');
+app.get("/home_verify", checkAuthenticated, function(req, res){
+    var user_id = req.cookies.id;
+    checkVerification = function(user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE user_id=?",
+                user_id,
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error(`ERROR NO USER WITH THIS ID ${user_id}`));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function run(user_id){
+        try {
+            var user_check = await checkVerification(user_id);
+            console.log(user_check[0].verified)
+            if(user_check[0].verified == 0){
+                res.redirect('/unverified');
+            }else{
+                res.redirect('/home');
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    run(user_id);
+})
+
+app.get('/unverified', function(req,res){
+    res.render('unverified.ejs');
 })
 
 app.get('/verify', function(req,res){
@@ -4406,10 +4798,10 @@ app.post("/register", async function(req,res){
             
         })
 
-        checkCreatedUser = function(email, password){
+        checkCreatedUser = function(email){
             return new Promise(function(resolve, reject){
                 connection.query(
-                    "select * from users where user_email = ? and user_pass = ?",[email, password],
+                    "select * from users where user_email = ?",email,
                     function(err, rows){
                         if(rows === undefined){
                             reject(new Error("Error rows is undefined"));
@@ -4423,7 +4815,7 @@ app.post("/register", async function(req,res){
 
         async function runQuery(){
             try {
-                const results = await checkCreatedUser(email, password);
+                const results = await checkCreatedUser(email);
                 console.log(results);
                 if (results.length > 0){
                     console.log("USER REGISTERED");
@@ -4454,7 +4846,7 @@ app.post("/register", async function(req,res){
                                 </div>`
                     }
                     mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
-                    res.redirect("/home");
+                    res.redirect("/login");
                 }else {
                     registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
                     res.redirect("/register");

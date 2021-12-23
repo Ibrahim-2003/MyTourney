@@ -37,11 +37,10 @@
         -> Includes minimal version of bracketing feature
     -> Added status to tourneys (recruiting, in-progress, ended)
     -> Each team member receives equal compensation for the tourney
+    -> Team captain can remove team members
+    -> Hosts can delete Tourney if not in-progress
 
 # To do next:
-    -> Add deleting capabilities
-        -> Remove team members
-        -> Delete Tourney
     -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
         -> Need to add function to add earnings to player balances
         -> Need to add individual's balance to team balance once they add funds
@@ -51,6 +50,7 @@
                 2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
                 
     //Not essential for MVP
+    -> Add edit tourney feature
     **Note - Might want to add checkAuth to all the new app.gets
     -> Refactor bracketing screen to look like bracket instead of list
     -> Add redundant checks for the matches (check query string is in database before starting match to combat potential exploits)

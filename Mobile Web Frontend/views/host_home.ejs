@@ -18,7 +18,7 @@
                 <li><a style="color: #560000" href="profile_player">PROFILE</a></li>
                 <li><a style="color: #560000" href="balance">BALANCE</a></li>
                 <li><a style="color: #560000" href="friends">FRIENDS</a></li>
-                <li><a style="color: #560000" href="host_record">RECORD</a></li>
+                <li><a style="color: #560000" href="team_player">TEAM</a></li>
             </ul>
         </nav>
     </div>
@@ -50,8 +50,9 @@
     </section>
     <section id="listings">
         <% for (var tourney of tourneys){%> 
-            <div class="tourney-listing-host" onclick="window.location='/host_listing?tourney_id=<%= tourney.tourneys_id %>'">
-                <div id="venue-img-container" class="flex-child img">
+            <% if(tourney.status != "ended"){ %> 
+            <div class="tourney-listing-host" style="z-index: -1;">
+                <div id="venue-img-container" class="flex-child img" onclick="window.location='/host_listing?tourney_id=<%= tourney.tourneys_id %>'">
                     <img src=<%= tourney_path %><%= tourney.photo %> id="venue-img">
                 </div>
                 <% if(tourney.age_group == 'child') {var ages = '3-7'}%> 
@@ -60,7 +61,7 @@
                 <% if(tourney.age_group == 'adult') {var ages = '19+'}%>
                 <% duration = new Date(tourney.duration_time) %>
                 <% duration = duration.getMinutes() %>  
-                <div id="listview-info-host" class="flex-child info">
+                <div id="listview-info-host" class="flex-child info" onclick="window.location='/host_listing?tourney_id=<%= tourney.tourneys_id %>'">
                     <div style="text-align: center;">
                         <strong><%= tourney.name %></strong>
                     </div>
@@ -82,7 +83,15 @@
                         </tr>
                     </table>                    
                 </div>
+                <% if(tourney.status != "in-progress"){ %> 
+                <div class="rem_tourney_cont">
+                    <img src="images/trashcan.png" class="rem_tourney" onclick="removeTourney('<%= tourney.tourneys_id %>')">
+                </div>
+                <% }else{ %>
+                <% } %>  
             </div>
+            <% }else{ %>
+            <% } %>  
         <% } %> 
 
         <div class="tourney-listing-adding">
@@ -103,5 +112,6 @@
     <img src="images/Up Arrow.jpeg" style="height: 25px; padding-top: 5px;">
     </button>
     <script src="app.js"></script>
+    <script src="annihilator.js"></script>
     </body>
 </html>

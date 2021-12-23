@@ -96,7 +96,7 @@
                         CAPTAIN 🎖</br>
                     <% } %> 
                 </div>
-                <% if(member.user_id != team[0].users_user_id){ %> 
+                <% if(member.user_id != team[0].users_user_id && user_id == team[0].users_user_id){ %> 
                     <div class="rem_team_member_cont">
                         <img src="images/trashcan.png" class="rem_team_member" onclick="removeMember('<%= member.user_id %>', '<%= team[0].teams_id %>')">
                     </div>

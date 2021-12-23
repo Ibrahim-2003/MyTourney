@@ -4178,6 +4178,9 @@ app.post("/verified_login",encoder, function(req,res){
     var email = req.body.email;
     var password = req.body.password;
     var code = req.query.code;
+    if(!code){
+        code = req.body.code;
+    }
     
 
     getUserById = function(user_id, password){
@@ -4244,7 +4247,7 @@ app.post("/verified_login",encoder, function(req,res){
             }
         } catch (error) {
             console.error(error);
-            res.redirect(`/verify_login?code=${code}`)
+            res.redirect(`/verify_login`)
         }
     }
 

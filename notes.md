@@ -51,6 +51,7 @@
                 2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
                 
     //Not essential for MVP
+    -> Add PDF report upon completion of tourney
     -> Add edit tourney feature
     **Note - Might want to add checkAuth to all the new app.gets
     -> Refactor bracketing screen to look like bracket instead of list
@@ -96,7 +97,7 @@
             *Includes 30GB of Google Drive space
             *Up to 100 participants in a Google Video call
     -> Website and database will be hosted on Heroku
-        <$16/month Basic Plan>
+        <$50/month Standard Plan>
         -Database must migrate from MySQL to Postgres
         -SSL certificates provided
         -Maximum of 20 connections to database with 10 million row limit

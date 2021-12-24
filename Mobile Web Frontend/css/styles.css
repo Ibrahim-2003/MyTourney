@@ -1112,6 +1112,12 @@ select {
     color: #560000;
 }
 
+#matchmaking_cont_player{
+    margin: 15px;
+    font-family: NTF-Grand;
+    color: #104b5f;
+}
+
 .mking_team_caption{
     text-align: center;
     align-self: center;
@@ -1119,12 +1125,115 @@ select {
     font-size: 100%;
 }
 
+.mking_team_caption_player{
+    text-align: center;
+    align-self: center;
+    justify-content: center;
+    font-size: 100%;
+    color: #104b5f;
+}
+
+.mking_team_caption_winner{
+    text-align: center;
+    align-self: center;
+    justify-content: center;
+    font-size: 100%;
+    color: #104b5f;
+    margin-bottom: 10px
+}
+
+@keyframes bg {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 100vw 0;
+    }
+  }
+
+#winner_cont{
+    content: '';
+    padding: 7px;
+    margin: auto;
+    margin: 15px;
+    border-radius: 16px;
+    background: linear-gradient(45deg, #e8f74d, #ff6600d9, #00ff66, #13ff13, #ad27ad, #bd2681, #6512b9, #ff3300de, #5aabde);
+    background-size: 400%;
+    z-index: -1;
+    animation: glower 20s linear infinite;
+}
+
+#trophy-img-winner{
+    height: 5rem;
+    width: auto;
+    margin: 10px;
+}
+
+.sijo-winner{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    justify-content: space-evenly;
+    background-color: #91c2e7;
+    border-radius: 15px;
+    box-shadow: 
+        0 0 20px white;
+}
+
+#winner-txt{
+    text-align: center;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 1s ease-in-out infinite alternate;
+    font-family: Varsity;
+    color: white;
+    text-align: center;
+    align-self: center;
+    font-weight: 500;
+    font-size: 10vw;
+}
+
+@keyframes glow {
+    from {
+      text-shadow: 0 0 5px #fff, 0 0 10px #13ff13, 0 0 15px #e60073;
+    }
+    
+    to {
+      text-shadow: 0 0 5px #fff, 0 0 10px #ff4da6, 0 0 15px #13ff13;
+    }
+  }
+
+
+@keyframes glower {
+    0% {
+      background-position: 0 0;
+    }
+    
+    50% {
+      background-position: 400% 0;
+    }
+    
+    100% {
+      background-position: 0 0;
+    }
+  }
+
 .sijo{
     display: flex;
     justify-content: center;
     align-content: center;
     justify-content: space-evenly;
     background-color: #f45b6a;
+    border-radius: 15px;
+    margin: 15px;
+}
+
+.sijo-player{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    justify-content: space-evenly;
+    background-color: #91c2e7;
     border-radius: 15px;
     margin: 15px;
 }
@@ -1137,6 +1246,20 @@ select {
     text-align: center;
     color: #560000;
     background-color: #f45b6a;
+    border-radius: 15px;
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+}
+
+#home_team_player{
+    width: 90vw;
+    height: auto;
+    margin: auto;
+    padding: 10px 0 10px 0;
+    text-align: center;
+    color: #104b5f;
+    background-color: #91c2e7;
     border-radius: 15px;
     font-family: Varsity;
     font-weight: 500;
@@ -1168,6 +1291,21 @@ select {
     text-align: center;
     color: #560000;
     background-color: #f45b6a;
+    border-radius: 15px;
+    font-family: Varsity;
+    font-weight: 500;
+    font-size: 7vw;
+    align-self: center;
+}
+
+#vs-player{
+    color: #104b5f;
+}
+
+#home_team_score_player{
+    text-align: center;
+    color: #104b5f;
+    background-color: #91c2e7;
     border-radius: 15px;
     font-family: Varsity;
     font-weight: 500;

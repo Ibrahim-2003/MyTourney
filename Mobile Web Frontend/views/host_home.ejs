@@ -50,11 +50,24 @@
     </section>
     <section id="listings">
         <% for (var tourney of tourneys){%> 
-            <% if(tourney.status != "ended"){ %> 
+            <% if(tourney.status != "ended"){ %>
             <div class="tourney-listing-host" style="z-index: -1;">
+
+            <% if(tourney.status == "in-progress"){ %>
+                <div>
+                    <div style="text-align: center; color: #560000;">
+                        IN-PROGRESS
+                    </div>
+                    <div id="venue-img-container" class="flex-child img" onclick="window.location='/host_listing?tourney_id=<%= tourney.tourneys_id %>'">
+                        <img src=<%= tourney_path %><%= tourney.photo %> id="venue-img" style="margin: 5px;">
+                    </div>
+                </div>
+                
+            <% }else{ %>  
                 <div id="venue-img-container" class="flex-child img" onclick="window.location='/host_listing?tourney_id=<%= tourney.tourneys_id %>'">
                     <img src=<%= tourney_path %><%= tourney.photo %> id="venue-img">
                 </div>
+            <% } %> 
                 <% if(tourney.age_group == 'child') {var ages = '3-7'}%> 
                 <% if(tourney.age_group == 'youth') {var ages = '8-12'}%> 
                 <% if(tourney.age_group == 'highschool') {var ages = '13-18'}%> 
@@ -87,10 +100,8 @@
                 <div class="rem_tourney_cont">
                     <img src="images/trashcan.png" class="rem_tourney" onclick="removeTourney('<%= tourney.tourneys_id %>')">
                 </div>
-                <% }else{ %>
-                <% } %>  
+                <% } %>
             </div>
-            <% }else{ %>
             <% } %>  
         <% } %> 
 

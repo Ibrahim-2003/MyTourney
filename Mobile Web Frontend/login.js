@@ -2,6 +2,8 @@
 //     require('dotenv').config();
 // }
 
+//NOTE: NEED NODE VERSION 16 TO WORK (brew install node@16)
+
 const mysql = require("mysql");
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -19,8 +21,8 @@ const { start } = require("repl");
 const QRCode = require("qrcode");
 const e = require("express");
 
-const port = 4500;
-const url = '168.5.173.166:'+port;
+const port = 459;
+const url = 'localhost:'+port;
 
 const mail = email_js.email;
 
@@ -991,7 +993,8 @@ app.get('/manage', encoder, function(req, res){
 
 app.get('/summary', encoder, function(req, res){
     var tourney_id = req.query.id;
-    var host_user_id = req.cookies.id;
+    var host_user_id = req.query.host_id;
+    var winner = req.query.winner;
     var teams;
 
     getTeamInfo = function(sql_search){
@@ -1058,6 +1061,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = await getTeamInfo(generateSQLSearch(s1));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1071,7 +1075,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1089,6 +1094,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1103,7 +1109,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1123,6 +1130,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1138,7 +1146,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1160,6 +1169,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         p1: p1_rows,
@@ -1176,7 +1186,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1200,6 +1211,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         p1: p1_rows,
@@ -1217,7 +1229,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1243,6 +1256,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         p1: p1_rows,
@@ -1261,7 +1275,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1289,6 +1304,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         p1: p1_rows,
@@ -1308,7 +1324,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1338,6 +1355,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1358,7 +1376,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1390,6 +1409,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1411,7 +1431,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1445,6 +1466,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1467,7 +1489,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1503,6 +1526,7 @@ app.get('/summary', encoder, function(req, res){
                     var s1_rows = addTBD(await getTeamInfo(generateSQLSearch(s1)));
                     var s2_rows = addTBD(await getTeamInfo(generateSQLSearch(s2)));
                     var f_rows = addTBD(await getTeamInfo(generateSQLSearch(f)));
+                    var winning_team = await getTeamInfo(`WHERE teams_id = ${winner}`);
 
                     matches = {
                         g1: g1_rows,
@@ -1526,7 +1550,8 @@ app.get('/summary', encoder, function(req, res){
                         host: host_user_id,
                         team_count: team_count,
                         matches: matches,
-                        team_path: team_path
+                        team_path: team_path,
+                        winner: winning_team[0]
                         // NOTE: FOR MATCHES, CALL THE TEAM LIKE matches[0].team_name and matches[1].team_name
                     })
                     break;
@@ -1535,7 +1560,8 @@ app.get('/summary', encoder, function(req, res){
                         tourney: tourney_id,
                         host: host_user_id,
                         team_count: 0,
-                        matches: 0
+                        matches: 0,
+                        winning_team: 0
                     })
                     break;
             }
@@ -1544,7 +1570,8 @@ app.get('/summary', encoder, function(req, res){
                 tourney: tourney_id,
                 host: host_user_id,
                 team_count: 0,
-                matches: 0
+                matches: 0,
+                winning_team: 0
             })
         }
     }
@@ -3554,7 +3581,7 @@ app.get("/tourney_end",encoder,function(req, res){
           )}
         )}
 
-    async function perform(winner, tourney_id){
+    async function perform(winner, tourney_id, url){
         try {
             var team = await getTeamById(winner);
             var users = await getTeamMembers(winner);
@@ -3568,7 +3595,7 @@ app.get("/tourney_end",encoder,function(req, res){
                 await updateLossTeamStats(team.teams_teams_id);
             }
             var weasel = await checkMatchmaking(tourney_id);
-            weasel = `/summary?id=${tourney_id}${weasel[0].tourney_query}`
+            weasel = `/summary?id=${tourney_id}${weasel[0].tourney_query}&host_id=${req.cookies.id}&winner=${winner}`
 
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
             for(user of users){
@@ -3581,6 +3608,7 @@ app.get("/tourney_end",encoder,function(req, res){
                                     '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}`)+
                                     `💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
                                     '🔥 I hope you had fun!\n'+
+                                    `👀 You can view the Tourney summary at ${url}${weasel}` +
                                     '🔥 You can withdraw your winnings once your account has reached $100.00 in earnings.',
                         html: `<h1 style="text-align: center;">
                                 Congratulations, you won!
@@ -3590,6 +3618,7 @@ app.get("/tourney_end",encoder,function(req, res){
                                     <li>✔ You can view your trophy at <a href="http://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
                                     <li>💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
                                     <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
+                                    <li>👀 You can view the Tourney summary at <a href="http://${url}${weasel}"></a></li>
                                     <li>🔥 You can withdraw your individual winnings once your user balance has reached $100.00 in earnings.</li>
                                     </ul>
                                 </div>`
@@ -3605,7 +3634,7 @@ app.get("/tourney_end",encoder,function(req, res){
                         message: "You'll Get Them Next Time!\n"+
                                     '✔ You can review the tourney summary at this '+' link:'.link(`${weasel}`)+
                                     `💸 Your team ${team.team_name} has lost!\n`+
-                                    '🔥 Although, your team did not win, I hope you had fun!\n'+
+                                    '🔥 Although your team did not win, I hope you had fun!\n'+
                                     '🔥 You can still play again to try to win another Tourney!',
                         html: `<h1 style="text-align: center;">
                                 You'll Get Them Next Time!
@@ -3614,7 +3643,7 @@ app.get("/tourney_end",encoder,function(req, res){
                                     <ul style="list-style: none; margin: auto;">
                                     <li>✔ You can review the tourney summary at this <a href="http://${weasel}">link</a></li>
                                     <li>💸 Your team ${team.team_name} has lost!</li>
-                                    <li>🔥 Although, your team did not win, I hope you had fun!</li>
+                                    <li>🔥 Although your team did not win, I hope you had fun!</li>
                                     <li>🔥 You can still play again to try to win another Tourney!</li>
                                     </ul>
                                 </div>`
@@ -3632,7 +3661,7 @@ app.get("/tourney_end",encoder,function(req, res){
         }
     }
     
-    perform(winner, tourney_id);
+    perform(winner, tourney_id, url);
 })
 
 app.post('/remove_team_member',encoder,function(req,res){

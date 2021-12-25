@@ -96,16 +96,19 @@
         -Professional Google Workspace email address $6/month
             *Includes 30GB of Google Drive space
             *Up to 100 participants in a Google Video call
-    -> Website and database will be hosted on Heroku
-        <$50/month Standard Plan>
-        -Database must migrate from MySQL to Postgres
-        -SSL certificates provided
-        -Maximum of 20 connections to database with 10 million row limit
-    -> CDN will be hosted with Amazon S3
+    -> Website and database will be hosted on DigitalOcean
+        <$15/month Business Plan>
+        -2GB RAM
+        -50GB Storage
+        -2TB Transfer
+        -1 vCPU
+    -> CDN will be hosted with DigitalOcean Spaces
         <$5/month Basic Plan>
-        -Bucketeer addon on Heroku will connect the S3 CDN to the web app
-        -Use a compression algorithm to reduce filesize of images
-        -Cheapest Bucketeer option includes 5GB storage
+        -Connect the Spaces CDN to the web app using aws-sdk
+        -250 GB of storage
+        -1TB of outbound transfer
+        -Unlimited uploads
+        -Unlimited spaces
     -> Email sending
         -Start with free SMTP email linked to professional Google Workspace email (https://www.courier.com/blog/how-to-send-emails-with-node-js)
             *Can upgrade to other standalone email service later as I have more money
@@ -121,7 +124,6 @@
         Google Ads deal = $150 credit for spending of $150
         $500 free advertising credit Google Ads
         Would like to learn more about best avenues -> Where are the people playing sports (Facebook, Insta, YouTube, etc.)
-    -> Expanding Heroku pricing plan
     -> Expanding email plan
 
 Ask people around who are interested in app -> T-shirt with logo

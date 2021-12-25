@@ -116,7 +116,7 @@ function distance(lat1, lon1, lat2, lon2){
 //Connect to database
 connection.connect(function(error){
     if (error) throw error
-    else console.log("Connected to database successfully")
+    else console.log(`Connected to database successfully. Open port ${port}`);
 });
 
 app.get("/register", checkNotAuthenticatedReg, function(req, res){

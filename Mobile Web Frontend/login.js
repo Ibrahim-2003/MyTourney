@@ -21,7 +21,7 @@ const { start } = require("repl");
 const QRCode = require("qrcode");
 const e = require("express");
 
-const port = 8080;
+const port = 80;
 const url = '0.0.0.0:'+port;
 
 const mail = email_js.email;
@@ -4954,4 +4954,4 @@ function checkNotAuthenticatedReg(req, res, next){
 //'168.5.180.127' || 'localhost'
 // Start mysql server windows: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
 // Start mysql server mac: sudo /usr/local/mysql/support-files/mysql.server start
-app.listen(8080, "0.0.0.0");
+app.listen(80, "0.0.0.0");

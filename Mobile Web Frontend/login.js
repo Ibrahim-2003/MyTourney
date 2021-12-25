@@ -22,7 +22,7 @@ const QRCode = require("qrcode");
 const e = require("express");
 
 const port = 80;
-const url = '0.0.0.0:'+port;
+const url = 'www.winmytourney.com';
 
 const mail = email_js.email;
 

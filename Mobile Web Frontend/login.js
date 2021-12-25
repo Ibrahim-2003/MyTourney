@@ -71,7 +71,7 @@ const connection = mysql.createConnection({
     host: "localhost",
     user: "root",
     //port: "3306",
-    password: "password",
+    password: "mytOUrnEysql2003$",
     database: "mytourney_db",
     timezone: 'utc'
 });

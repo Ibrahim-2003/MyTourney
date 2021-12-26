@@ -1634,7 +1634,7 @@ app.get('/match',encoder, function(req,res){
             teams = []
             teams.push(await getTeamById(team1));
             teams.push(await getTeamById(team2));
-            console.log(teams);
+            // console.log(teams);
             stored_query = await checkMatchmaking(tourney_id);
             get_expected_query = getQueryVariable(stored_query[0].tourney_query, match_type);
             if(get_expected_query != `${team1}-${team2}`){
@@ -3594,67 +3594,72 @@ app.get("/tourney_end",encoder,function(req, res){
 
             await updateWinTeamStats(winner);
             var teams_entered = await getTeamsEnteredInTourney(tourney_id, winner);
+            var loser_mail_list = []
             for(team of teams_entered){
                 await updateLossTeamStats(team.teams_teams_id);
+                var losers = await getTeamMembers(team.teams_teams_id);
+                for(loser of losers){
+                    console.log(`LOSER: ${loser.user_id}`);
+                    loser_mail_list.push(loser.user_email);
+                }
             }
-            var weasel = await checkMatchmaking(tourney_id);
-            weasel = `${url}/summary?id=${tourney_id}${weasel[0].tourney_query}&host_id=${req.cookies.id}&winner=${winner}`
+            var weaser = await checkMatchmaking(tourney_id);
+            var weasel = `${url}/summary?id=${tourney_id}${weaser[0].tourney_query}&host_id=${req.cookies.id}&winner=${winner}`;
+            loser_email_contents = {
+                recipient: loser_mail_list,
+                subject: `${tourney[0].name} Results`,
+                message: "You'll Get Them Next Time!\n"+
+                            '✔ You can review the tourney summary at this '+' link:'.link(`${weasel}`)+
+                            `💸 Your team has lost!\n`+
+                            '🔥 Although your team did not win, I hope you had fun!\n'+
+                            '🔥 You can still play again to try to win another Tourney!',
+                html: `<h1 style="text-align: center;">
+                        You'll Get Them Next Time!
+                        </h1><br>
+                        <div style="align-items: center; display: flex;">
+                            <ul style="list-style: none; margin: auto;">
+                            <li>✔ You can review the tourney summary at this <a href="https://${weasel}">link</a></li>
+                            <li>💸 Your team has lost!</li>
+                            <li>🔥 Although your team did not win, I hope you had fun!</li>
+                            <li>🔥 You can still play again to try to win another Tourney!</li>
+                            </ul>
+                        </div>`}
+                        mail(loser_email_contents.recipient, loser_email_contents.subject, loser_email_contents.message, loser_email_contents.html);
+            
+            
 
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
             for(user of users){
-                if(user.team_id == team.teams_id){
-                    var email = user.user_email;
-                    email_contents = {
-                        recipient: email,
-                        subject: `${tourney[0].name} Results`,
-                        message: 'Congratulations, you won!\n'+
-                                    '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}`)+
-                                    `💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
-                                    '🔥 I hope you had fun!\n'+
-                                    `👀 You can view the Tourney summary at ${url}${weasel}` +
-                                    '🔥 You can withdraw your winnings once your account has reached $100.00 in earnings.',
-                        html: `<h1 style="text-align: center;">
-                                Congratulations, you won!
-                                </h1><br>
-                                <div style="align-items: center; display: flex;">
-                                    <ul style="list-style: none; margin: auto;">
-                                    <li>✔ You can view your trophy at <a href="https://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
-                                    <li>💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
-                                    <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
-                                    <li>👀 You can view the Tourney summary at <a href="https://${weasel}"></a></li>
-                                    <li>🔥 You can withdraw your individual winnings once your user balance has reached $100.00 in earnings.</li>
-                                    </ul>
-                                </div>`
-                    }
-                    mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
-                    // console.log(email_contents);
-                }else{
-                    var email = user.user_email;
-                    console.log(email)
-                    email_contents = {
-                        recipient: email,
-                        subject: `${tourney[0].name} Results`,
-                        message: "You'll Get Them Next Time!\n"+
-                                    '✔ You can review the tourney summary at this '+' link:'.link(`${weasel}`)+
-                                    `💸 Your team has lost!\n`+
-                                    '🔥 Although your team did not win, I hope you had fun!\n'+
-                                    '🔥 You can still play again to try to win another Tourney!',
-                        html: `<h1 style="text-align: center;">
-                                You'll Get Them Next Time!
-                                </h1><br>
-                                <div style="align-items: center; display: flex;">
-                                    <ul style="list-style: none; margin: auto;">
-                                    <li>✔ You can review the tourney summary at this <a href="https://${weasel}">link</a></li>
-                                    <li>💸 Your team ${team.team_name} has lost!</li>
-                                    <li>🔥 Although your team did not win, I hope you had fun!</li>
-                                    <li>🔥 You can still play again to try to win another Tourney!</li>
-                                    </ul>
-                                </div>`
-                    }
-                    mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
-                    // console.log(email_contents);
-                }
+                console.log(`WINNERS: ${user.user_id}`);
             }
+            var winner_mail_list = []
+            for(user of users){
+                winner_mail_list.push(user.user_email);
+            }
+            email_contents = {
+                recipient: winner_mail_list,
+                subject: `${tourney[0].name} Results`,
+                message: 'Congratulations, you won!\n'+
+                            '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}`)+
+                            `💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
+                            '🔥 I hope you had fun!\n'+
+                            `👀 You can view the Tourney summary at this link: `.link(`${weasel}`) +
+                            '🔥 You can withdraw your winnings once your account has reached $100.00 in earnings.',
+                html: `<h1 style="text-align: center;">
+                        Congratulations, you won!
+                        </h1><br>
+                        <div style="align-items: center; display: flex;">
+                            <ul style="list-style: none; margin: auto;">
+                            <li>✔ You can view your trophy at <a href="https://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
+                            <li>💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
+                            <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
+                            <li>👀 You can view the Tourney summary at this <a href="https://${weasel}">link</a></li>
+                            <li>🔥 You can withdraw your individual winnings once your user balance has reached $100.00 in earnings.</li>
+                            </ul>
+                        </div>`
+            }
+            mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
+            // console.log(email_contents);
 
             await endTourneyStatus(tourney_id);
 
@@ -4854,10 +4859,10 @@ app.post("/register", async function(req,res){
                 console.log(results);
                 if (results.length > 0){
                     console.log("USER REGISTERED");
-                    authcode = true;
+                    // authcode = true;
                     my_user_id = results[0].user_id;
                     //Expires after 1800000 ms (30 minutes) from the time it is set.
-                    res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
+                    // res.cookie('id', my_user_id, {expire: 1800000 + Date.now()});
                     registration_error = ""
                     email_contents = {
                         recipient: email,
@@ -4881,7 +4886,7 @@ app.post("/register", async function(req,res){
                                 </div>`
                     }
                     mail(email_contents.recipient, email_contents.subject, email_contents.message, email_contents.html);
-                    res.redirect("/login");
+                    res.redirect("/verified_login");
                 }else {
                     registration_error = "A USER WITH THAT EMAIL ALREADY EXISTS"
                     res.redirect("/register");

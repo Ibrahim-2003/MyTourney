@@ -117,13 +117,13 @@
         async function copyLink(team_id, url) {
             var current_link = window.location.href;
             var inputc = document.body.appendChild(document.createElement("input"));
-            inputc.value = `${url}/join_team?team_id=${team_id}`;
+            inputc.value = `/join_team?team_id=${team_id}`;
             inputc.focus();
             inputc.select();
             if(navigator.share){
                 navigator.share({
                     title: "Join my team on MyTourney!",
-                    url: `${url}/join_team?team_id=${team_id}`
+                    url: `/join_team?team_id=${team_id}`
                 })
             }else{
                 document.execCommand('copy');

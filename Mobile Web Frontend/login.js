@@ -3640,7 +3640,7 @@ app.get("/tourney_end",encoder,function(req, res){
                 recipient: winner_mail_list,
                 subject: `${tourney[0].name} Results`,
                 message: 'Congratulations, you won!\n'+
-                            '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}`)+
+                            '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}&winner=${winner}`)+
                             `💸 Your team has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
                             '🔥 I hope you had fun!\n'+
                             `👀 You can view the Tourney summary at this link: `.link(`${weasel}`) +
@@ -3650,7 +3650,7 @@ app.get("/tourney_end",encoder,function(req, res){
                         </h1><br>
                         <div style="align-items: center; display: flex;">
                             <ul style="list-style: none; margin: auto;">
-                            <li>✔ You can view your trophy at <a href="https://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
+                            <li>✔ You can view your trophy at <a href="https://${url}/winner?id=${tourney_id}&earnings_team=${earnings}&winner=${winner}">link</a></li>
                             <li>💸 Your team has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
                             <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
                             <li>👀 You can view the Tourney summary at this <a href="https://${weasel}">link</a></li>
@@ -3743,6 +3743,7 @@ app.post('/remove_team_member',encoder,function(req,res){
 
 app.get('/winner', encoder, function(req,res){
     var tourney_id = req.query.id;
+    var winner = req.query.winner;
 
     checkMatchmaking = function(tourney_id){
         return new Promise(function(resolve, reject){
@@ -3761,12 +3762,29 @@ app.get('/winner', encoder, function(req,res){
           )}
         )}
 
+        getTourneyById = function(id){
+            return new Promise(function(resolve, reject){
+              connection.query(
+                  "SELECT * FROM tourneys WHERE tourneys_id=?",
+                  id, 
+                  function(err, rows){                                                
+                      if(rows === undefined){
+                          reject(new Error("Error rows is undefined getTourneybyId"));
+                    }else{
+                          resolve(rows);
+                    }
+                }
+            )}
+        )}
 
-    async function blast(tourney_id){
+
+    async function blast(tourney_id, winner){
         try {
             var query = await checkMatchmaking(tourney_id);
             var link = query[0].tourney_query;
-            var suffix = `/summary?id=${tourney_id}`
+            var host_id = await getTourneyById(tourney_id);
+            host_id = host_id[0].hosts_users_user_id;
+            var suffix = `/summary?id=${tourney_id}&winner=${winner}&host_id=${host_id}`
             link = suffix+link
             console.log(link)
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
@@ -3780,7 +3798,7 @@ app.get('/winner', encoder, function(req,res){
         }
     }
 
-    blast(tourney_id);
+    blast(tourney_id, winner);
 })
 
 app.get("/add_tourney", checkAuthenticated, function(req, res){

@@ -3598,7 +3598,7 @@ app.get("/tourney_end",encoder,function(req, res){
                 await updateLossTeamStats(team.teams_teams_id);
             }
             var weasel = await checkMatchmaking(tourney_id);
-            weasel = `/summary?id=${tourney_id}${weasel[0].tourney_query}&host_id=${req.cookies.id}&winner=${winner}`
+            weasel = `${url}/summary?id=${tourney_id}${weasel[0].tourney_query}&host_id=${req.cookies.id}&winner=${winner}`
 
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
             for(user of users){
@@ -3618,10 +3618,10 @@ app.get("/tourney_end",encoder,function(req, res){
                                 </h1><br>
                                 <div style="align-items: center; display: flex;">
                                     <ul style="list-style: none; margin: auto;">
-                                    <li>✔ You can view your trophy at <a href="http://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
+                                    <li>✔ You can view your trophy at <a href="https://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
                                     <li>💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
                                     <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
-                                    <li>👀 You can view the Tourney summary at <a href="http://${url}${weasel}"></a></li>
+                                    <li>👀 You can view the Tourney summary at <a href="https://${weasel}"></a></li>
                                     <li>🔥 You can withdraw your individual winnings once your user balance has reached $100.00 in earnings.</li>
                                     </ul>
                                 </div>`
@@ -3636,7 +3636,7 @@ app.get("/tourney_end",encoder,function(req, res){
                         subject: `${tourney[0].name} Results`,
                         message: "You'll Get Them Next Time!\n"+
                                     '✔ You can review the tourney summary at this '+' link:'.link(`${weasel}`)+
-                                    `💸 Your team ${team.team_name} has lost!\n`+
+                                    `💸 Your team has lost!\n`+
                                     '🔥 Although your team did not win, I hope you had fun!\n'+
                                     '🔥 You can still play again to try to win another Tourney!',
                         html: `<h1 style="text-align: center;">
@@ -3644,7 +3644,7 @@ app.get("/tourney_end",encoder,function(req, res){
                                 </h1><br>
                                 <div style="align-items: center; display: flex;">
                                     <ul style="list-style: none; margin: auto;">
-                                    <li>✔ You can review the tourney summary at this <a href="http://${weasel}">link</a></li>
+                                    <li>✔ You can review the tourney summary at this <a href="https://${weasel}">link</a></li>
                                     <li>💸 Your team ${team.team_name} has lost!</li>
                                     <li>🔥 Although your team did not win, I hope you had fun!</li>
                                     <li>🔥 You can still play again to try to win another Tourney!</li>
@@ -3762,7 +3762,7 @@ app.get('/winner', encoder, function(req,res){
             var query = await checkMatchmaking(tourney_id);
             var link = query[0].tourney_query;
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
-            var earnings = formatter.format(req.query.earnings);
+            var earnings = formatter.format(req.query.earnings_team);
             res.render('winner.ejs',{
                 earnings: earnings,
                 link: link

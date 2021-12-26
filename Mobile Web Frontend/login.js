@@ -3641,7 +3641,7 @@ app.get("/tourney_end",encoder,function(req, res){
                 subject: `${tourney[0].name} Results`,
                 message: 'Congratulations, you won!\n'+
                             '✔ You can view your trophy at this '+' link:'.link(`${url}/winner?id=${tourney_id}&earnings_team=${earnings}`)+
-                            `💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
+                            `💸 Your team has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)\n`+
                             '🔥 I hope you had fun!\n'+
                             `👀 You can view the Tourney summary at this link: `.link(`${weasel}`) +
                             '🔥 You can withdraw your winnings once your account has reached $100.00 in earnings.',
@@ -3651,7 +3651,7 @@ app.get("/tourney_end",encoder,function(req, res){
                         <div style="align-items: center; display: flex;">
                             <ul style="list-style: none; margin: auto;">
                             <li>✔ You can view your trophy at <a href="https://${url}/winner?id=${tourney_id}&earnings_team=${earnings}">link</a></li>
-                            <li>💸 Your team ${team.team_name} has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
+                            <li>💸 Your team has won ${formatter.format(earnings)} (${formatter.format(individual_earnings)} per player)</li>
                             <li>🔥 I hope you had fun! Come and play in another Tourney sometime soon!</li>
                             <li>👀 You can view the Tourney summary at this <a href="https://${weasel}">link</a></li>
                             <li>🔥 You can withdraw your individual winnings once your user balance has reached $100.00 in earnings.</li>

@@ -145,7 +145,7 @@
                 </form>
                 <!-- <a href="/join?id=" style="font-family: Varsity; color: #104b5f;font-weight: 500;border: 0;" id="logout">JOIN</a> -->
             </div>
-            <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;" onclick="copyLink()">
+            <div style="background-color: #f45b6a; border-radius: 5px; width: 15vw; height: 15vw; padding: 5px; display: flex;" onclick="copyLink('<%= tourney[0].tourneys_id %>', '<%= url %>')">
                 <img src="images/share.png" style="width: 10vw; height: 10vw; margin: auto;">
             </div>
         </div>
@@ -165,16 +165,16 @@
             }
             
         }
-        async function copyLink(team_id, url) {
+        async function copyLink(tourney_id, url) {
             var current_link = window.location.href;
             var inputc = document.body.appendChild(document.createElement("input"));
-            inputc.value = `${url}/join_team?team_id=${team_id}`;
+            inputc.value = `${url}/listing?tourney_id=${tourney_id}`;
             inputc.focus();
             inputc.select();
             if(navigator.share){
                 navigator.share({
-                    title: "Join my team on MyTourney!",
-                    url: `${url}/join_team?team_id=${team_id}`
+                    title: "Join this Tourney on MyTourney!",
+                    url: `${url}/listing?tourney_id=${tourney_id}`
                 })
             }else{
                 document.execCommand('copy');

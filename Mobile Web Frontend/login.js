@@ -1816,7 +1816,8 @@ app.get("/listing", function(req, res){
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
                 join_error: null,
-                team: team_result})
+                team: team_result,
+                url: url})
         }else{
                 // console.log(tourney_result)
             // console.log(host_result)
@@ -1833,7 +1834,8 @@ app.get("/listing", function(req, res){
                 venue_path: venue_path+'/',
                 profile_path: profile_path+'/',
                 join_error: null,
-                team: null})
+                team: null,
+                url: url})
         }
          
         } catch(error){
@@ -2116,7 +2118,8 @@ app.get("/host_listing", function(req, res){
                 team_path: team_path+'/',
                 teams: teams,
                 matchedteams: matchedteams,
-                managelink: query})
+                managelink: query,
+                url: url})
          
         } catch(error){
         console.log(error)

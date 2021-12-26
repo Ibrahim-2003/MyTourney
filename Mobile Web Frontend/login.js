@@ -3768,6 +3768,7 @@ app.get('/winner', encoder, function(req,res){
             var link = query[0].tourney_query;
             var suffix = `summary?id=${tourney_id}`
             link = suffix+link
+            console.log(link)
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
             var earnings = formatter.format(req.query.earnings_team);
             res.render('winner.ejs',{

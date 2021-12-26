@@ -43,7 +43,7 @@
                 <img src="images/home.png" id="home-btn-win" onclick="window.location = '/home'">
             </div>
             <div class="win-btn">
-                <img src="images/share2.png" id="home-btn-win" onclick="copyLink()">
+                <img src="images/share2.png" id="home-btn-win" onclick="copyLink('<%= earnings %>')">
             </div>
             <div class="win-btn">
                 <img src="images/summary.png" id="home-btn-win" onclick="window.location ='<%= link %>'">
@@ -51,14 +51,14 @@
         </div>
 
         <script>
-            function copyLink() {
+            function copyLink(earnings) {
                 var inputc = document.body.appendChild(document.createElement("input"));
                 inputc.value = window.location.href;
                 inputc.focus();
                 inputc.select();
                 if(navigator.share){
                     navigator.share({
-                        title: "Let's play MyTourney!",
+                        title: `We won $${earnings} MyTourney!`,
                         url: `${window.location.href}`
                     })
                 }else{

@@ -150,13 +150,13 @@
         async function copyLink(tourney_id, url) {
             var current_link = window.location.href;
             var inputc = document.body.appendChild(document.createElement("input"));
-            inputc.value = `${url}/listing?tourney_id=${tourney_id}`;
+            inputc.value = `/listing?tourney_id=${tourney_id}`;
             inputc.focus();
             inputc.select();
             if(navigator.share){
                 navigator.share({
                     title: "Join my Tourney on MyTourney!",
-                    url: `${url}/listing?tourney_id=${tourney_id}`
+                    url: `/listing?tourney_id=${tourney_id}`
                 })
             }else{
                 document.execCommand('copy');

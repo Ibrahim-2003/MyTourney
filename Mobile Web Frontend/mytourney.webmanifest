@@ -4,8 +4,8 @@
     "display": "fullscreen",
     "icons": [
       {
-        "src": "images/MyTourney Logo.png",
-        "sizes": "2100x1500",
+        "src": "images/icon.png",
+        "sizes": "512x512",
         "type": "images/png"
       }
     ],

@@ -7,6 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
+    <link rel="manifest" href="mytourney.webmanifest">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Login - MyTourney</title>
 </head>
     <body>
@@ -14,8 +17,13 @@
             MYTOURNEY
         </div>
         <div id="container">
-            <div>
-                <img src="images/MyTourney Logo.png" id="login-img">
+            <div style="text-align: center; font-size: 14px; color: #91c2e7; font-weight: 500;">
+                <div id="install-btn">
+                    CLICK TO INSTALL APP
+                </div>
+                <div>
+                    <img src="images/MyTourney Logo.png" id="login-img">
+                </div>
             </div>
         </div>
         <div id="login-form-container">
@@ -39,6 +47,7 @@
             Forgot password?&emsp;
             <button style="font-family: Varsity; color: #91c2e7;font-weight: 500; background-color: #104b5f;border: 0;" id="forgotPass">FORGOT</button>
         </div>
-        <script src="forgot.js"></script>
+        <script src="forgot.js"></script>    
+    <script src="webapp.js"></script>
     </body>
 </html>

@@ -1,5 +1,7 @@
 {
- "name": "MyTourney",
+"background_color": "#104b5f",
+"description": "Create a team. Win tourneys. Earn money.",
+"display": "fullscreen",
  "icons": [
   {
    "src": "\/android-icon-36x36.png",
@@ -37,5 +39,8 @@
    "type": "image\/png",
    "density": "4.0"
   }
- ]
+ ],
+"name": "MyTourney - The Beautiful Game",
+"short_name": "MyTourney",
+"start_url": "www.winmytourney.com"
 }

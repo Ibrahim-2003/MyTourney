@@ -2404,6 +2404,23 @@ app.post('/finalize_match', encoder, function(req,res){
         })
     }
 
+    updateWinningUserPoints = function(user_id, points, goals_for, goals_against){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE users SET games_played = games_played + 1, games_won = games_won + 1, points = points + ?, goals_for = goals_for + ?,"+
+                "goals_against = goals_against + ? WHERE user_id = ?",
+                [points, goals_for, goals_against, user_id],
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error, rows undefined for updateWinningUserPoints"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
     updateLosingTeamPoints = function(team_id, team_points, goals_for, goals_against){
         return new Promise(function(resolve, reject){
             connection.query(
@@ -2412,6 +2429,39 @@ app.post('/finalize_match', encoder, function(req,res){
                 function(error,rows){
                     if(rows == undefined){
                         reject(new Error("Error rows undefined updateTeamStats"))
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    updateLosingUserPoints = function(user_id, points, goals_for, goals_against){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE users SET games_played = games_played + 1, games_lost = games_lost + 1, points = points + ?, goals_for = goals_for + ?,"+
+                "goals_against = goals_against + ? WHERE user_id = ?",
+                [points, goals_for, goals_against, user_id],
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error, rows undefined for updateWinningUserPoints"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    getTeamMembers = function(team_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "SELECT * FROM users WHERE team_id=?",
+                team_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined"));
                     }else{
                         resolve(rows);
                     }
@@ -2441,7 +2491,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2450,7 +2508,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2458,7 +2524,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2467,13 +2541,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2489,7 +2579,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2497,7 +2595,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2506,7 +2612,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2514,7 +2628,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2523,13 +2645,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2544,7 +2682,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2553,7 +2699,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2561,7 +2715,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -2570,7 +2732,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2578,7 +2748,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2587,13 +2765,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2609,7 +2803,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g1':
@@ -2617,7 +2819,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2626,7 +2836,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2634,7 +2852,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -2643,7 +2869,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2651,7 +2885,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2660,13 +2902,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2682,7 +2940,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'p2':
@@ -2691,7 +2957,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g1':
@@ -2699,7 +2973,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2708,7 +2990,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2716,7 +3006,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -2725,7 +3023,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2733,7 +3039,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2742,13 +3056,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2764,7 +3094,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'p2':
@@ -2773,7 +3111,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'p3':
@@ -2782,7 +3128,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g1':
@@ -2790,7 +3144,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2799,7 +3161,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2807,7 +3177,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -2816,7 +3194,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2824,7 +3210,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2833,13 +3227,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2855,7 +3265,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'p2':
@@ -2864,7 +3282,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'p3':
@@ -2873,7 +3299,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                         case 'p4':
                             var opponent = getQueryVariable(orc,'g4').split('-')[0];
@@ -2881,14 +3315,30 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                         case 'g1':
                             var new_query = updateQueryStringParameter(orc,'s1', `${winner}-0`);
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2897,7 +3347,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2905,7 +3363,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -2914,7 +3380,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -2922,7 +3396,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -2931,13 +3413,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -2953,7 +3451,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -2962,7 +3468,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -2971,7 +3485,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -2979,7 +3501,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g5':
@@ -2988,7 +3518,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q1':
@@ -2996,7 +3534,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q2':
@@ -3005,7 +3551,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q3':
@@ -3013,7 +3567,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q4':
@@ -3022,7 +3584,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -3030,7 +3600,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -3039,13 +3617,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -3061,7 +3655,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -3070,7 +3672,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -3078,7 +3688,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -3087,7 +3705,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g5':
@@ -3095,7 +3721,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g6':
@@ -3104,7 +3738,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q1':
@@ -3112,7 +3754,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q2':
@@ -3121,7 +3771,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q3':
@@ -3129,7 +3787,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q4':
@@ -3138,7 +3804,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -3146,7 +3820,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -3155,13 +3837,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -3177,7 +3875,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -3185,7 +3891,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -3194,7 +3908,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -3202,7 +3924,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g5':
@@ -3211,7 +3941,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g6':
@@ -3219,7 +3957,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g7':
@@ -3228,7 +3974,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q1':
@@ -3236,7 +3990,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q2':
@@ -3245,7 +4007,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q3':
@@ -3253,7 +4023,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q4':
@@ -3262,7 +4040,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -3270,7 +4056,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -3279,13 +4073,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:
@@ -3300,7 +4110,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g2':
@@ -3309,7 +4127,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g3':
@@ -3317,7 +4143,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g4':
@@ -3326,7 +4160,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g5':
@@ -3334,7 +4176,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g6':
@@ -3343,7 +4193,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g7':
@@ -3351,7 +4209,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'g8':
@@ -3360,7 +4226,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q1':
@@ -3368,7 +4242,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q2':
@@ -3377,7 +4259,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q3':
@@ -3385,7 +4275,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'q4':
@@ -3394,7 +4292,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's1':
@@ -3402,7 +4308,15 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 's2':
@@ -3411,13 +4325,29 @@ app.post('/finalize_match', encoder, function(req,res){
                             console.log(`${new_query}`);
                             await saveQuery(tourney_id, new_query);
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(`${manage_link}${new_query}`);
                             break;
                         case 'f':
                             var new_query = `/tourney_end?id=${tourney_id}&winner=${winner}`;
                             await updateLosingTeamPoints(loser, loser_points, loser_goals, winner_goals);
+                            var losing_users = await getTeamMembers(loser);
+                            for(user of losing_users){
+                                await updateLosingUserPoints(user.user_id, loser_points, loser_goals, winner_goals);
+                            }
                             await updateWinningTeamPoints(winner, winner_points, winner_goals, loser_goals);
+                            var winning_users = await getTeamMembers(winner);
+                            for(user of winning_users){
+                                await updateWinningUserPoints(user.user_id, winner_points, winner_goals, loser_goals);
+                            }
                             res.redirect(new_query);
                             break;
                         default:

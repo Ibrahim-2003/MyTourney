@@ -52,8 +52,8 @@
         <script src="addtohomescreen.js"></script>
         <script>
             if(
-                (("standalone" in window.navigator) && !window.navigator.standalone) ||
-                (!window.matchMedia('(display-mode: standalone)').matches)
+                (("fullscreen" in window.navigator) && !window.navigator.fullscreen) ||
+                (!window.matchMedia('(display-mode: fullscreen)').matches)
             ){
                 addToHomescreen();
             }

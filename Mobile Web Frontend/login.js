@@ -4027,7 +4027,37 @@ function SortTourneysByDistance(results){
     }
 }
 
+app.post("/edit_team", upload_team.single('teamlogo'), encoder, function(req,res){
+    const team_logo = req.file != null ? req.file.filename : null;
+    var user_id = req.cookies.id;
+    const team_name = req.body.teamname;
 
+    editTeam = function(team_logo, team_name, user_id){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE teams SET team_logo = ?, team_name = ? WHERE users_user_id = ?",
+                [team_logo, team_name, user_id],
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined linkTeamId"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function blastOff(team_logo, team_name, user_id){
+        try {
+            await editTeam(team_logo, team_name, user_id);
+            res.redirect('/team_player');
+        } catch (e) {
+            console.error(e);
+            res.redirect('/team_player');
+        }
+    }
+})
 
 app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, function(req,res){
     const file_name = req.file != null ? req.file.filename : null;

@@ -89,6 +89,7 @@ header {
 } 
 
 .navbar {
+    z-index: 10;
     background: #c9d6e0;
     padding: 8px;
     position: fixed;
@@ -869,6 +870,7 @@ select {
 } 
 
 .navbar-host {
+    z-index: 10;
     background: #ffd2d2;
     padding: 8px;
     position: fixed;

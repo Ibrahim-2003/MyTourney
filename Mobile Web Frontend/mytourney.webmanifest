@@ -1,0 +1,16 @@
+{
+    "background_color": "#104b5f",
+    "description": "Create a team. Win tourneys. Earn money.",
+    "display": "fullscreen",
+    "icons": [
+      {
+        "src": "images/MyTourney Logo.png",
+        "sizes": "2100x1500",
+        "type": "images/png"
+      }
+    ],
+    "name": "MyTourney - The Beautiful Game",
+    "short_name": "MyTourney",
+    "start_url": "www.winmytourney.com"
+  }
+  

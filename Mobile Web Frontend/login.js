@@ -164,7 +164,7 @@ app.post('/signup', function(req,res){
 })
 
 app.get('/signedup', function(req,res){
-    res.render('singedup.ejs');
+    res.render('signedup.ejs');
 })
 
 app.get("/register", checkNotAuthenticatedReg, function(req, res){

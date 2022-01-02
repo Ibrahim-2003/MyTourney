@@ -10,12 +10,23 @@
     <title>MyTourney</title>
 </head>
     <body>
-        <header style="font-size: 5vw; font-weight: 500; color: #91c2e7;">MYTOURNEY</header>
-        <div style="width: 100%; display: flex; align-items: center; justify-content: center;">
-            <img src="images/icon.png" style="height: 20vw; width: 20vw;">
-        </div>
-        <div style="font-family: NTF-Grand; color: #91c2e7; text-align: center; font-size: 2vw;">
-            Thank you, your email has been registered!
+        <div style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;">
+            <div>
+                <header style="font-size: 36px; font-weight: 500; color: #91c2e7;">MYTOURNEY</header>
+                <div style="width: 100%; display: flex; align-items: center; justify-content: center;">
+                    <img src="images/icon.png" style="height: 30vw; width: 30vw;">
+                </div>
+                <div style="font-family: NTF-Grand; color: #91c2e7; text-align: center; font-size: 18px; margin-top: 25px;">
+                    Sign up to receive an email once a tourney opens near you!
+                </div>
+                <form method="POST" action="/signup">
+                    <div class="form-group" style="margin: 20px; display: flex; justify-content: center;">
+                        <input name="email" type="email" autocomplete="email" class="form-control" id="exampleInputEmail1" placeholder="EMAIL"
+                        style="width: 40vw;">
+                        <input type="submit" id="submit-btn" value="SIGNUP" style="width: fit-content; margin-left: 10px; border-radius: 5px;">
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
 </html>

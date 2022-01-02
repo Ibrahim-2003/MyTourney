@@ -11,6 +11,6 @@
     ],
     "name": "MyTourney - The Beautiful Game",
     "short_name": "MyTourney",
-    "start_url": "www.winmytourney.com"
+    "start_url": "/login"
   }
   

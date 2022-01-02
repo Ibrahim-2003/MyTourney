@@ -4707,6 +4707,21 @@ app.get('/winner', encoder, function(req,res){
             )}
         )}
 
+        getTeamById = function(team_id){
+            return new Promise(function(resolve, reject){
+              connection.query(
+                  "SELECT * FROM teams WHERE teams_id=?",
+                  team_id, 
+                  function(err, rows){                                                
+                      if(rows === undefined){
+                          reject(new Error("Error rows is undefined"));
+                    }else{
+                          resolve(rows);
+                    }
+                }
+            )}
+        )}
+
 
     async function blast(tourney_id, winner){
         try {
@@ -4719,9 +4734,12 @@ app.get('/winner', encoder, function(req,res){
             console.log(link)
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
             var earnings = formatter.format(req.query.earnings_team);
+            var team = await getTeamById(winner);
+            var team_name = team[0].team_name.toUpperCase();
             res.render('winner.ejs',{
                 earnings: earnings,
-                link: link
+                link: link,
+                team: team_name
             })
         } catch (e) {
             console.error(e);

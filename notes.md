@@ -1,3 +1,6 @@
+Github Token:
+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
+
 # Jobs completed:
     -> Setup the profile page, team page, and friends (work in progress) page
     -> Login completed, database setup and API setup done

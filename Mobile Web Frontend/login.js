@@ -1,6 +1,13 @@
 //بسم الله الرحمن الرحيم
 
 
+//CREATE TABLE `mytourney_db`.`mail_list` (
+    // `mail_id` INT NOT NULL AUTO_INCREMENT,
+    // `email` VARCHAR(255) NOT NULL,
+    // PRIMARY KEY (`mail_id`),
+    // UNIQUE INDEX `idmail_list_UNIQUE` (`mail_id` ASC) VISIBLE,
+    // UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE);
+
 // if(process.env.NODE_ENV !== 'production') {
 //     require('dotenv').config();
 // }
@@ -121,6 +128,44 @@ connection.connect(function(error){
     if (error) throw error
     else console.log(`Connected to database successfully. Open port ${port}`);
 });
+
+app.get('/signup', function(req,res){
+    res.render('preorder.ejs');
+})
+
+app.post('/signup', function(req,res){
+    var email = req.body.email;
+    signup = function(email){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "INSERT INTO mail_list SET email=?",
+                email,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject (new Error('ERROR rows undefined email'))
+                    }else{
+                        resolve(rows)
+                    }
+                })
+        })
+    }
+
+    async function shootIt(email){
+        try {
+            await signup(email);
+            res.redirect('/signedup');
+        } catch (e) {
+            console.error(e);
+            res.redirect('/signup');
+        }
+    }
+
+    shootIt(email);
+})
+
+app.get('/signedup', function(req,res){
+    res.render('singedup.ejs');
+})
 
 app.get("/register", checkNotAuthenticatedReg, function(req, res){
     res.render('register.ejs', {reg_error: registration_error});

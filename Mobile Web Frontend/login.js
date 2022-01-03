@@ -5104,6 +5104,7 @@ app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, functio
     async function runQuery(user_id){
         try {
             await editProfilePic(user_id);
+            console.log(req.file);
             var result = await upload(req.file);
             console.log(result)
             await unlinkFile(req.file.path);

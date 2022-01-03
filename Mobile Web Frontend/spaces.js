@@ -21,7 +21,7 @@ function upload(file){
     const uploadParams = {
         Bucket: spacesName,
         Body: filestream,
-        Key: file.filename,
+        Key: file.path,
         ACL: 'public-read'
     }
 

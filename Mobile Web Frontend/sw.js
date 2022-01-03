@@ -1,7 +1,6 @@
 self.addEventListener('install', (e) => {
     e.waitUntil(
       caches.open('fox-store').then((cache) => cache.addAll([
-        '/',
         '/views/add_tourney.ejs',
         '/views/balance.ejs',
         '/views/create_team.ejs',

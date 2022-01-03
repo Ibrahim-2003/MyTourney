@@ -1798,13 +1798,13 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         console.log(vals);
                         console.log("TOURNEY SUCCESSFULLY CREATED");
                         await upload(photo);
-                        await unlinkFile(photo.path);
+                        await unlinkFile(req.file.path);
                         res.redirect("/host");
                     })
                 }else{
                     console.log('ADDRESS INVALID')
                     add_tourney_error = "The address you entered is invalid, please try again with a different address."
-                    await unlinkFile(file_name.path);
+                    await unlinkFile(req.file.path);
                     res.redirect("/add_tourney")
                 }
                 
@@ -5068,7 +5068,7 @@ app.post("/edit_team", upload_team.single('teamlogo'), encoder, async function(r
         try {
             await editTeam(team_logo, team_name, user_id);
             await upload(team_logo);
-            await unlinkFile(team_logo.path);
+            await unlinkFile(req.file.path);
             res.redirect('/team_player');
         } catch (e) {
             console.error(e);
@@ -5103,7 +5103,7 @@ app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, functio
         try {
             await editProfilePic(user_id);
             await upload(file_name);
-            await unlinkFile(file_name.path);
+            await unlinkFile(req.file.path);
             res.redirect('/profile_player');
         } catch (e) {
             console.error(e);
@@ -5212,7 +5212,7 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
             console.log(`Team ID: ${team[0].teams_id}`)
             await(linkTeamId(team[0].teams_id, user_id));
             await upload(file_name);
-            await unlinkFile(file_name.path);
+            await unlinkFile(req.file.path);
             res.redirect('/team_player');
         } catch (error) {
             console.error(error);

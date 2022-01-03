@@ -1797,7 +1797,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         // console.log(query);
                         console.log(vals);
                         console.log("TOURNEY SUCCESSFULLY CREATED");
-                        await upload(photo);
+                        await upload(req.file);
                         await unlinkFile(req.file.path);
                         res.redirect("/host");
                     })
@@ -5067,7 +5067,7 @@ app.post("/edit_team", upload_team.single('teamlogo'), encoder, async function(r
     async function blastOff(team_logo, team_name, user_id){
         try {
             await editTeam(team_logo, team_name, user_id);
-            await upload(team_logo);
+            await upload(req.file);
             await unlinkFile(req.file.path);
             res.redirect('/team_player');
         } catch (e) {
@@ -5102,7 +5102,7 @@ app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, functio
     async function runQuery(user_id){
         try {
             await editProfilePic(user_id);
-            await upload(file_name);
+            await upload(req.file);
             await unlinkFile(req.file.path);
             res.redirect('/profile_player');
         } catch (e) {
@@ -5211,7 +5211,7 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
             const team = await getTeamOfUser(user_id);
             console.log(`Team ID: ${team[0].teams_id}`)
             await(linkTeamId(team[0].teams_id, user_id));
-            await upload(file_name);
+            await upload(req.file);
             await unlinkFile(req.file.path);
             res.redirect('/team_player');
         } catch (error) {

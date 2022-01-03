@@ -15,7 +15,7 @@ const s3 = new aws.S3({
 });
 
 //Upload to Spaces
-export function upload(file){
+function upload(file){
     const filestream = fs.createReadStream(file.path);
 
     const uploadParams = {
@@ -32,7 +32,7 @@ exports.upload = upload
 
 //Download from Spaces
 
-export function download(file){
+function download(file){
     const downloadParams = {
         Key: file,
         Bucket: spacesName

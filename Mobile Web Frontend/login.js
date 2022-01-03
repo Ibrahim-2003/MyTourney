@@ -1769,7 +1769,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                 url: url,
                 headers: {'User-Agent': 'ibrahim'},
                 json: true
-            }, (err, response, body) => {
+            }, async (err, response, body) => {
                 // console.log(response);
                 
                 if(body[0].lat){

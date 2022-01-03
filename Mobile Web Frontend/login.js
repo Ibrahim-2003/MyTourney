@@ -1790,7 +1790,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         start_time: start_time
                     }
     
-                    connection.query('INSERT INTO tourneys SET ?',vals, function (error, results, fields){
+                    connection.query('INSERT INTO tourneys SET ?',vals, async function (error, results, fields){
                         // console.log(query);
                         console.log(vals);
                         console.log("TOURNEY SUCCESSFULLY CREATED");

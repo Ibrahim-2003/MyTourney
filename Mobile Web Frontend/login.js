@@ -137,7 +137,7 @@ connection.connect(function(error){
 
 app.get(`/${profile_path}/:key`, function(req,res){
     const filename = req.params.key;
-    const key = `/${profile_path}/${filename}`;
+    const key = `${profile_path}/${filename}`;
     console.log(key);
     const readStream = download(key);
     readStream.pipe(res);

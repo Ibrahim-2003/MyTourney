@@ -44,9 +44,11 @@ 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
     -> Each team member receives equal compensation for the tourney
     -> Team captain can remove team members
     -> Hosts can delete Tourney if not in-progress
+    -> Integrated DigitalOcean Spaces CDN to speed up load times
 
 # To do next:
-    -> Add payment system (Stripe, Apple Pay, Samsung Pay, Google Pay)
+    -> Add payment system (Stripe, Paypal)
+        --Need to register sole proprietorship with IRS and attain EIN
         -> Need to add function to add earnings to player balances
         -> Need to add individual's balance to team balance once they add funds
         -> Need to add withdraw minimum limit

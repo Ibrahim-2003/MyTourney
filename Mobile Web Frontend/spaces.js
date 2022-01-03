@@ -25,6 +25,8 @@ function upload(file){
         ACL: 'public-read'
     }
 
+    console.log(uploadParams);
+
     return s3.upload(uploadParams).promise()
 }
 
@@ -37,6 +39,8 @@ function download(file){
         Key: file,
         Bucket: spacesName
     }
+
+    console.log(downloadParams);
 
     return s3.getObject(downloadParams).createReadStream()
 }

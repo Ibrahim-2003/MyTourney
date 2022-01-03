@@ -1,17 +1,17 @@
 {
-"background_color": "#104b5f",
-"theme_color": "#104b5f",
-"description": "Create a team. Win tourneys. Earn money.",
-"display": "fullscreen",
-"icons": [
-    {
-      "src": "images/icon.png",
-      "sizes": "512x512",
-      "type": "images/png",
-      "purpose": "any"
-    }
-  ],
-"name": "MyTourney - The Beautiful Game",
-"short_name": "MyTourney",
-"start_url": "/login"
+  "background_color": "#104b5f",
+  "theme_color": "#104b5f",
+  "description": "Create a team. Win tourneys. Earn money.",
+  "display": "fullscreen",
+  "icons": [
+      {
+        "src": "images/icon.png",
+        "sizes": "512x512",
+        "type": "images/png",
+        "purpose": "any"
+      }
+    ],
+  "name": "MyTourney - The Beautiful Game",
+  "short_name": "MyTourney",
+  "start_url": "/login"
 }

@@ -1,5 +1,6 @@
 {
     "background_color": "#104b5f",
+    "theme_color": "#104b5f",
     "description": "Create a team. Win tourneys. Earn money.",
     "display": "fullscreen",
     "icons": [

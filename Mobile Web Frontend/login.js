@@ -145,13 +145,13 @@ app.get(`/${profile_path}/:key`, function(req,res){
 
 app.get(`/${team_path}/:key`, function(req,res){
     const filename = req.params.key;
-    const readStream = download(`/${team_path}/${filename}`);
+    const readStream = download(`${team_path}/${filename}`);
     readStream.pipe(res);
 })
 
 app.get(`/${venue_path}/:key`, function(req,res){
     const filename = req.params.key;
-    const readStream = download(`/${venue_path}/${filename}`);
+    const readStream = download(`${venue_path}/${filename}`);
     readStream.pipe(res);
 })
 

@@ -30,7 +30,7 @@ function upload(file){
     return s3.upload(uploadParams).promise()
 }
 
-exports.upload = upload
+exports.upload = upload;
 
 //Download from Spaces
 
@@ -45,4 +45,17 @@ function download(file){
     return s3.getObject(downloadParams).createReadStream()
 }
 
-exports.download = download
+exports.download = download;
+
+//Delete from Spaces
+
+function deleteFile(file){
+    const deleteParams = {
+        Key: file,
+        Bucket: spacesName
+    }
+
+    return s3.deleteObject(deleteParams).promise()
+}
+
+exports.deleteFile = deleteFile;

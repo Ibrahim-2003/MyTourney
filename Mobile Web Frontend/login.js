@@ -31,7 +31,7 @@ const { join, resolve } = require("path");
 const { start } = require("repl");
 const QRCode = require("qrcode");
 const e = require("express");
-const { upload,download } = require('./spaces.js');
+const { upload,download, deleteFile } = require('./spaces.js');
 
 const port = 5000;
 const url = 'www.winmytourney.com';
@@ -2342,6 +2342,7 @@ app.post('/remove_tourney', encoder, function(req,res){
                     }
                     await refundTeam(team_price, team_id);
                 }
+                await deleteFile(`${venue_path}/${tourney[0].photo}`);
                 await eraseTourney(tourney_id);
             }else{
                 console.log('YOU CANNOT DELETE A TOURNEY WITH THIS STATUS: ' + tourney[0].status)
@@ -5067,8 +5068,27 @@ app.post("/edit_team", upload_team.single('teamlogo'), encoder, async function(r
         })
     }
 
+    getTeamOfUser = function(user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM teams WHERE users_user_id = ?",
+                user_id,
+                function(err, rows){
+                    if(rows === undefined){
+                        reject(new Error("Error rows is undefined getTeamofUser"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+    
+
     async function blastOff(team_logo, team_name, user_id){
         try {
+            var team = await getTeamOfUser(user_id);
+            await deleteFile(`${team_path}/${team[0].team_logo}`);
             await editTeam(team_logo, team_name, user_id);
             var result = await upload(req.file);
             console.log(result);
@@ -5103,8 +5123,25 @@ app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, functio
         })
     }
 
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
     async function runQuery(user_id){
         try {
+            var user = await getUserById(user_id);
+            await deleteFile(`${profile_path}/${user[0].photo}`);
             await editProfilePic(user_id);
             console.log(req.file);
             var result = await upload(req.file);

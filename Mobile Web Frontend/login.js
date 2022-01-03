@@ -24,6 +24,7 @@ const methodOverride = require("method-override");
 const multer = require('multer');
 const request = require('request');
 const fs = require('fs');
+const util = require('util');
 const path = require('path');
 const email_js = require('./email.js');
 const { join, resolve } = require("path");
@@ -63,6 +64,8 @@ const upload_team = multer({
         callback(null, imageMimeTypes.includes(file.mimetype))
     }
 })
+
+const unlinkFile = util.promisify(fs.unlink);
 
 //Location API: https://nominatim.org/release-docs/latest/api/Search/
 
@@ -1795,12 +1798,13 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         console.log(vals);
                         console.log("TOURNEY SUCCESSFULLY CREATED");
                         await upload(photo);
+                        await unlinkFile(photo.path);
                         res.redirect("/host");
                     })
                 }else{
                     console.log('ADDRESS INVALID')
                     add_tourney_error = "The address you entered is invalid, please try again with a different address."
-                    RemoveVenue(file_name);
+                    await unlinkFile(file_name.path);
                     res.redirect("/add_tourney")
                 }
                 
@@ -1812,12 +1816,6 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
             })
 
 })
-
-function RemoveVenue(venue){
-    fs.unlink(path.join(venue_path, venue), err => {
-        if (err) console.error(err)
-    })
-}
 
 app.get("/listing", function(req, res){
     // console.log(req.query)
@@ -5070,6 +5068,7 @@ app.post("/edit_team", upload_team.single('teamlogo'), encoder, async function(r
         try {
             await editTeam(team_logo, team_name, user_id);
             await upload(team_logo);
+            await unlinkFile(team_logo.path);
             res.redirect('/team_player');
         } catch (e) {
             console.error(e);
@@ -5104,6 +5103,7 @@ app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, functio
         try {
             await editProfilePic(user_id);
             await upload(file_name);
+            await unlinkFile(file_name.path);
             res.redirect('/profile_player');
         } catch (e) {
             console.error(e);
@@ -5212,6 +5212,7 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
             console.log(`Team ID: ${team[0].teams_id}`)
             await(linkTeamId(team[0].teams_id, user_id));
             await upload(file_name);
+            await unlinkFile(file_name.path);
             res.redirect('/team_player');
         } catch (error) {
             console.error(error);

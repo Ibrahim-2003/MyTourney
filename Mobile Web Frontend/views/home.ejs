@@ -66,7 +66,7 @@
         <% for(var tourney of tourneys) {%>
             <div class="tourney-listing" onclick="window.location='/listing?tourney_id=<%= tourney[0].tourneys_id %>'">
                 <div id="venue-img-container" class="flex-child img">
-                    <img src=<%= tourney_path %><%= tourney[0].photo %> id="venue-img">
+                    <img src="<%= tourney_path %><%= tourney[0].photo %>" id="venue-img">
                 </div>
                 <% if(tourney[0].age_group == 'child') {var ages = '3-7'}%> 
                 <% if(tourney[0].age_group == 'youth') {var ages = '8-12'}%> 

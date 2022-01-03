@@ -30,6 +30,7 @@ const { join, resolve } = require("path");
 const { start } = require("repl");
 const QRCode = require("qrcode");
 const e = require("express");
+const { upload,download } = require('./spaces.js');
 
 const port = 5000;
 const url = 'www.winmytourney.com';
@@ -75,7 +76,7 @@ app.set('view-engine', 'ejs');
 app.use(express.static(__dirname));
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -128,6 +129,26 @@ connection.connect(function(error){
     if (error) throw error
     else console.log(`Connected to database successfully. Open port ${port}`);
 });
+
+//Retreive images from CDN
+
+app.get(`/${profile_path}/:key`, function(req,res){
+    const filename = req.params.key;
+    const readStream = download(filename);
+    readStream.pipe(res);
+})
+
+app.get(`/${team_path}/:key`, function(req,res){
+    const filename = req.params.key;
+    const readStream = download(filename);
+    readStream.pipe(res);
+})
+
+app.get(`/${venue_path}/:key`, function(req,res){
+    const filename = req.params.key;
+    const readStream = download(filename);
+    readStream.pipe(res);
+})
 
 app.get('/signup', function(req,res){
     res.render('preorder.ejs');
@@ -1773,6 +1794,7 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         // console.log(query);
                         console.log(vals);
                         console.log("TOURNEY SUCCESSFULLY CREATED");
+                        await upload(photo);
                         res.redirect("/host");
                     })
                 }else{
@@ -5023,7 +5045,7 @@ function SortTourneysByDistance(results){
     }
 }
 
-app.post("/edit_team", upload_team.single('teamlogo'), encoder, function(req,res){
+app.post("/edit_team", upload_team.single('teamlogo'), encoder, async function(req,res){
     const team_logo = req.file != null ? req.file.filename : null;
     var user_id = req.cookies.id;
     const team_name = req.body.teamname;
@@ -5047,12 +5069,15 @@ app.post("/edit_team", upload_team.single('teamlogo'), encoder, function(req,res
     async function blastOff(team_logo, team_name, user_id){
         try {
             await editTeam(team_logo, team_name, user_id);
+            await upload(team_logo);
             res.redirect('/team_player');
         } catch (e) {
             console.error(e);
             res.redirect('/team_player');
         }
     }
+
+    blastOff(team_logo, team_name, user_id);
 })
 
 app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, function(req,res){
@@ -5078,6 +5103,7 @@ app.post("/edit_profile_pic", upload_profile.single('profpic'), encoder, functio
     async function runQuery(user_id){
         try {
             await editProfilePic(user_id);
+            await upload(file_name);
             res.redirect('/profile_player');
         } catch (e) {
             console.error(e);
@@ -5185,6 +5211,7 @@ app.post("/create_team",upload_team.single('teamlogo'), encoder, function(req, r
             const team = await getTeamOfUser(user_id);
             console.log(`Team ID: ${team[0].teams_id}`)
             await(linkTeamId(team[0].teams_id, user_id));
+            await upload(file_name);
             res.redirect('/team_player');
         } catch (error) {
             console.error(error);

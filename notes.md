@@ -50,7 +50,7 @@ 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
     -> Add subdomain routing:
         if on the app (app.winmytourney.com), display the app
         if on main (www.winmytourney.com), display the website
-    -> Add an API router:
+    -> Add an API router with admin capabilities for me to see only:
         admin.winmytourney.com/api/${insert key here}
     -> Add payment system (Stripe, Paypal)
         --Need to register sole proprietorship with IRS and attain EIN

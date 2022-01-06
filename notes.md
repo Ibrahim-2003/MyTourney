@@ -93,7 +93,7 @@ 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
     -> Work on making the site responsive on desktop and tablets
     -> Work on making terms and conditions agreement
     -> Work on making waiver removing liability for injuries incurred at tourneys
-    -> Refactor CSS to be organized
+    -> Refactor CSS to be organized (possibly switch over to tailwinds)
 
 ## Creating Forms
     **COMPLETED**

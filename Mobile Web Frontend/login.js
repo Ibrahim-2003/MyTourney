@@ -140,6 +140,19 @@ connection.connect(function(error){
     else console.log(`Connected to database successfully. Open port ${port}`);
 });
 
+//Attach domain for Apple Pay with Stripe
+const domain = await stripe.applePayDomains.create({
+    domain_name: 'winmytourney.com',
+});
+
+app.get('/.well-known/apple-developer-merchantid-domain-association', (err)=>{
+    res.sendFile('apple-developer-merchantid-domain-association', {root: 'Business Documents/'}, (err) => {
+        res.end();
+    
+        if (err) throw(err);
+      });
+})
+
 //Charge Users with Stripe
 
 app.post('/create-checkout-session', async (req, res) => {

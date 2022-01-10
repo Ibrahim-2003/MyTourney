@@ -149,7 +149,7 @@ async() => {
 
 
 app.get('/.well-known/apple-developer-merchantid-domain-association', (res)=>{
-    res.sendFile('apple-developer-merchantid-domain-association', {root: 'Business Documents/'}, (err) => {
+    res.sendfile('apple-developer-merchantid-domain-association', {root: 'Business Documents/'}, (err) => {
         res.end();
     
         if (err) throw(err);

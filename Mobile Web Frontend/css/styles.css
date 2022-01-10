@@ -1652,6 +1652,32 @@ select {
     vertical-align: middle;
 }
 
+.add_fund_opt{
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+    aspect-ratio: 1;
+    background-color: #91c2e7;
+    color: #104b5f;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10vw;
+    font-weight: 500;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+/* Color Scheme:
+    light blue = #91c2e7
+    dark blue = #104b5f
+    dark purple navy text = #303549
+    light red = #f45b6a
+    maroon / deep red = #6c2737
+    blue grey = #c9d6e0
+    cream white = #e4fde1
+*/
+
 /* Small Phone Design */
 
 @media only screen and (min-width: 338px) {

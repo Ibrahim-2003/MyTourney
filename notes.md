@@ -45,6 +45,7 @@ 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
     -> Team captain can remove team members
     -> Hosts can delete Tourney if not in-progress
     -> Integrated DigitalOcean Spaces CDN to speed up load times
+    -> Integrated Stripe Payments API to collect payments from players
 
 # To do next:
     -> Add subdomain routing:
@@ -52,15 +53,16 @@ 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
         if on main (www.winmytourney.com), display the website
     -> Add an API router with admin capabilities for me to see only:
         admin.winmytourney.com/api/${insert key here}
+    -> Add match history page instead of friends
     -> Add payment system (Stripe, Paypal)
         --Need to register sole proprietorship with IRS and attain EIN
-        -> Need to add function to add earnings to player balances
-        -> Need to add individual's balance to team balance once they add funds
-        -> Need to add withdraw minimum limit
         //NOTES
-            -Two transactions:
-                1) Collect payments from players and use charge-transfer function of Stripe to keep my cut and transfer the host's cut
-                2) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
+            -Three transactions:
+                1) Collect payments from players ✅
+                2) The host gets paid after the conclusion of a tourney with Paypal API
+                3) A player can cash out their earnings once they have made $100 using the mass payouts function of Paypal API
+                    -> Need to add function to add earnings to player balances
+                    -> Need to add withdraw minimum limit
                 
     //Not essential for MVP
     -> Add PDF report upon completion of tourney

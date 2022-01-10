@@ -1,12 +1,16 @@
 //بسم الله الرحمن الرحيم
 
 
-//CREATE TABLE `mytourney_db`.`mail_list` (
-    // `mail_id` INT NOT NULL AUTO_INCREMENT,
-    // `email` VARCHAR(255) NOT NULL,
-    // PRIMARY KEY (`mail_id`),
-    // UNIQUE INDEX `idmail_list_UNIQUE` (`mail_id` ASC) VISIBLE,
-    // UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE);
+// CREATE TABLE `mytourney_db`.`fund_record` (
+//     `fund_id` INT NOT NULL AUTO_INCREMENT,
+//     `code` VARCHAR(255) NOT NULL,
+//     `amount` FLOAT NOT NULL,
+//     `time` DATETIME NOT NULL,
+//     `user_id` INT NOT NULL,
+//     `redeemed` BINARY NOT NULL,
+//     PRIMARY KEY (`fund_id`),
+//     UNIQUE INDEX `idnew_table_UNIQUE` (`fund_id` ASC) VISIBLE,
+//     UNIQUE INDEX `code_UNIQUE` (`code` ASC) VISIBLE);
 
 // if(process.env.NODE_ENV !== 'production') {
 //     require('dotenv').config();
@@ -32,7 +36,9 @@ const { start } = require("repl");
 const QRCode = require("qrcode");
 const e = require("express");
 const { upload,download, deleteFile } = require('./spaces.js');
+const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 
+//Port should be 5000 on production
 const port = 5000;
 const url = 'www.winmytourney.com';
 
@@ -86,6 +92,7 @@ const connection = mysql.createConnection({
     user: "root",
     //port: "3306",
     password: "mytOUrnEysql2003$",
+    // password: "password",
     database: "mytourney_db",
     timezone: 'utc'
 });
@@ -132,6 +139,145 @@ connection.connect(function(error){
     if (error) throw error
     else console.log(`Connected to database successfully. Open port ${port}`);
 });
+
+//Charge Users with Stripe
+
+app.post('/create-checkout-session', async (req, res) => {
+    const funds = parseFloat(req.query.amt)
+    const amt = funds * 100;
+    const user_id = req.cookies.id;
+
+    createTransaction = function(user_id, amt, code){
+        return new Promise(function(resolve,reject){
+            vals = {
+                user_id: user_id,
+                amount: amt,
+                time: new Date(),
+                code: code,
+                redeemed: 0
+            }
+            connection.query(
+                "INSERT INTO fund_record SET ?",
+                vals,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error, cannot create transaction mysql" + err));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    const code = makeid(10);
+    const verification_code = await bcrypt.hash(code, 10);
+    await createTransaction(user_id, funds, verification_code);
+
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'MyTourney Funds',
+            },
+            unit_amount: amt,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `http://localhost:4000/success_stripe/${code}`,
+      cancel_url: `http://localhost:4000/cancel_stripe`,
+    });
+  
+    res.redirect(303, session.url);
+});
+
+app.get('/add_funds', function(req,res){
+    res.render('add_funds.ejs');
+})
+
+app.get('/success_stripe/:key', async function(req,res){
+    const code = req.params.key;
+    const user_id = req.cookies.id;
+
+    getFundDetails = function(user_id){
+        return new Promise(function(resolve, reject){
+            connection.query(
+                "SELECT * FROM fund_record WHERE user_id=? ORDER BY time DESC LIMIT 1",
+                user_id,
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error, cannot retrieve fund details"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    updateTeamBalance = function(funds, team_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "UPDATE teams SET team_balance = team_balance + ? WHERE teams_id=?",
+              [funds, team_id], 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+    
+    updateUserBalance = function(funds, user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "UPDATE users SET balance = balance + ? WHERE user_id=?",
+              [funds, user_id], 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    getUserById = function(user_id){
+        return new Promise(function(resolve, reject){
+          connection.query(
+              "SELECT * FROM users WHERE user_id=?",
+              user_id, 
+              function(err, rows){                                                
+                  if(rows === undefined){
+                      reject(new Error("Error rows is undefined"));
+                }else{
+                      resolve(rows);
+                }
+            }
+        )}
+    )}
+
+    const fund_details = await getFundDetails(user_id);
+    if(await bcrypt.compare(code, fund_details[0].code)){
+        const user = await getUserById(user_id);
+        await updateTeamBalance(fund_details[0].amount, user[0].team_id);
+        await updateUserBalance(fund_details[0].amount, user_id);
+        res.render('successful_payment.ejs');
+    }else{
+        res.redirect('/cancel_payment');
+    }
+})
+
+app.get('/cancel_stripe', async function(req,res){
+    res.render('cancel_payment.ejs');
+})
 
 //Retreive images from CDN
 
@@ -4444,6 +4590,22 @@ app.get("/tourney_end",encoder,function(req, res){
     var winner = req.query.winner;
     var tourney_id = req.query.id;
 
+    updateWinnerUser = function(user_id, balance){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "UPDATE users SET balance = balance + ?, earnings = earnings + ? WHERE user_id = ?",
+                [balance, balance, user_id],
+                function(err,rows){
+                    if(rows === undefined){
+                        reject(new Error("Error cannot update winner user "+err));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
     getTeamById = function(team_id){
         return new Promise(function(resolve, reject){
           connection.query(
@@ -4505,11 +4667,11 @@ app.get("/tourney_end",encoder,function(req, res){
         )}
     )}
 
-    updateWinTeamStats = function(team_id){
+    updateWinTeamStats = function(earnings, team_id){
         return new Promise(function(resolve, reject){
             connection.query(
-                "UPDATE teams SET tourneys_won = tourneys_won + 1, tourneys_played = tourneys_played + 1, team_points = team_points + 1 WHERE teams_id=?",
-                team_id,
+                "UPDATE teams SET tourneys_won = tourneys_won + 1, tourneys_played = tourneys_played + 1, team_points = team_points + 1, team_balance = team_balance + ? WHERE teams_id=?",
+                [earnings,team_id],
                 function(error,rows){
                     if(rows == undefined){
                         reject(new Error("Error rows undefined updateTeamStats"))
@@ -4594,7 +4756,7 @@ app.get("/tourney_end",encoder,function(req, res){
             var earnings = (tourney[0].team_sizes * tourney[0].entry_fee * tourney[0].current_participants)*0.55;
             var individual_earnings = tourney[0].entry_fee * tourney[0].current_participants*0.55
 
-            await updateWinTeamStats(winner);
+            await updateWinTeamStats(earnings, winner);
             var teams_entered = await getTeamsEnteredInTourney(tourney_id, winner);
             var loser_mail_list = []
             for(team of teams_entered){
@@ -4633,8 +4795,10 @@ app.get("/tourney_end",encoder,function(req, res){
             var formatter = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',});
             for(user of users){
                 console.log(`WINNERS: ${user.user_id}`);
+                var tetdtf = await updateWinnerUser(user.user_id, individual_earnings);
             }
             var winner_mail_list = []
+            console.log(`Winners earnings: ${individual_earnings}`);
             for(user of users){
                 winner_mail_list.push(user.user_email);
             }
@@ -6081,4 +6245,4 @@ function checkNotAuthenticatedReg(req, res, next){
 //'168.5.180.127' || 'localhost'
 // Start mysql server windows: "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqld" --console
 // Start mysql server mac: sudo /usr/local/mysql/support-files/mysql.server start
-app.listen(5000, "0.0.0.0");
+app.listen(port, "0.0.0.0");

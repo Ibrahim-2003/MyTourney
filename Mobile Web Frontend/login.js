@@ -141,9 +141,12 @@ connection.connect(function(error){
 });
 
 //Attach domain for Apple Pay with Stripe
-const domain = await stripe.applePayDomains.create({
-    domain_name: 'winmytourney.com',
-});
+async() => {
+    const domain = await stripe.applePayDomains.create({
+        domain_name: 'winmytourney.com',
+    });
+}
+
 
 app.get('/.well-known/apple-developer-merchantid-domain-association', (err)=>{
     res.sendFile('apple-developer-merchantid-domain-association', {root: 'Business Documents/'}, (err) => {

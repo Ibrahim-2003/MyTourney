@@ -143,7 +143,7 @@ connection.connect(function(error){
 //Attach domain for Apple Pay with Stripe
 
 app.get('/.well-known/apple-developer-merchantid-domain-association', (req, res)=>{
-    res.sendFile('apple-developer-merchantid-domain-association', {root: 'Business Documents/'}, (err) => {
+    res.sendFile('drivers_license.pdf', {root: 'Business Documents/'}, (err) => {
         res.end();
     
         if (err) throw(err);

@@ -188,8 +188,8 @@ app.post('/create-checkout-session', async (req, res) => {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost:4000/success_stripe/${code}`,
-      cancel_url: `http://localhost:4000/cancel_stripe`,
+      success_url: `https://winmytourney.com/success_stripe/${code}`,
+      cancel_url: `https://winmytourney.com/cancel_stripe`,
     });
   
     res.redirect(303, session.url);

@@ -497,12 +497,12 @@ app.get("/host", checkAuthenticated, function(req, res){
 
     async function runQuery(user_id){
         try {
-            var check = await checkHost;
+            var check = await checkHost(user_id);
             if(check == false){
                 res.redirect('/host_signup');
             }else{
                 var tourneys = await getHostedTourneys(user_id);
-                // console.log(tourneys[0])
+                console.log(tourneys[0]);
                 res.render('host_home.ejs', {
                     tourneys: tourneys,
                     tourney_path: venue_path+'/'

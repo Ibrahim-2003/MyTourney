@@ -502,7 +502,9 @@ app.get("/host", checkAuthenticated, function(req, res){
                 res.redirect('/host_signup');
             }else{
                 var tourneys = await getHostedTourneys(user_id);
-                // console.log(tourneys[0])
+                for (tour of tourneys){
+                    console.log(tour);
+                }
                 res.render('host_home.ejs', {
                     tourneys: tourneys,
                     tourney_path: venue_path+'/'

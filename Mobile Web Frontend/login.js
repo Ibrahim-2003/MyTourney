@@ -1984,7 +1984,8 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         hosts_hosts_id: host_id,
                         hosts_users_user_id: cookie_user_id,
                         current_participants: 0,
-                        start_time: start_time
+                        start_time: start_time,
+                        status: 'recruiting'
                     }
 
                     results = await postTourney(vals);

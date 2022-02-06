@@ -497,12 +497,12 @@ app.get("/host", checkAuthenticated, function(req, res){
 
     async function runQuery(user_id){
         try {
-            var check = await checkHost(user_id);
+            var check = await checkHost;
             if(check == false){
                 res.redirect('/host_signup');
             }else{
                 var tourneys = await getHostedTourneys(user_id);
-                console.log(tourneys);
+                // console.log(tourneys[0])
                 res.render('host_home.ejs', {
                     tourneys: tourneys,
                     tourney_path: venue_path+'/'
@@ -1892,11 +1892,41 @@ app.get('/match',encoder, function(req,res){
 app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, res){
     const file_name = req.file != null ? req.file.filename : null;
     var cookie_user_id = req.cookies.id;
-    console.log("COOKIE USER ID: " + cookie_user_id);
-    connection.query("select * from tourney_hosts where users_user_id=?",req.cookies.id, function(error, results, fields){
-        var cookie_user_id = req.cookies.id;
-        console.log("COOKIE USER ID: " + cookie_user_id);
-        // console.log("QUERY RESULTS: " + results[0])
+
+    getHostInfo = function(user_id){
+        return new Promise(function(resolve, reject){
+            conncection.query(
+                "SELECT * FROM tourney_hosts WHERE users_user_id=?",
+                user_id,
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error retrieving host info for listing post!"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    postTourney = function(vals){
+        return new Promise(function(resolve,reject){
+            connection.query(
+                "INSERT INTO tourneys SET ?",
+                vals,
+                function(err,rows){
+                    if(rows == undefined){
+                        reject(new Error("Error posting the tourney!"));
+                    }else{
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    }
+
+    async function runQs(user_id){
+        results = await getHostInfo(user_id);
         if (results.length > 0){
             console.log("HOST ID: " + results[0].hosts_id)
             var host_id = results[0].hosts_id;
@@ -1954,29 +1984,107 @@ app.post("/post_listing", upload_venue.single('venue'), encoder, function(req, r
                         current_participants: 0,
                         start_time: start_time
                     }
-    
-                    connection.query('INSERT INTO tourneys SET ?',vals, async function (error, results, fields){
-                        // console.log(query);
-                        console.log(vals);
-                        console.log("TOURNEY SUCCESSFULLY CREATED");
-                        var result = await upload(req.file);
-                        console.log(result);
-                        await unlinkFile(req.file.path);
-                        res.redirect("/host");
-                    })
+
+                    results = await postTourney(vals);
+                    console.log("TOURNEY SUCCESSFULLY CREATED");
+                    var result = await upload(req.file);
+                    console.log(result);
+                    await unlinkFile(req.file.path);
+                    res.redirect("/host");
                 }else{
                     console.log('ADDRESS INVALID')
                     add_tourney_error = "The address you entered is invalid, please try again with a different address."
                     await unlinkFile(req.file.path);
                     res.redirect("/add_tourney")
                 }
-                
             })
-
-        }else{
-            console.log("No host with this user id!")
         }
-            })
+    }
+
+    // connection.query("select * from tourney_hosts where users_user_id=?",req.cookies.id, function(error, results, fields){
+    //     var cookie_user_id = req.cookies.id;
+    //     console.log("COOKIE USER ID: " + cookie_user_id);
+    //     // console.log("QUERY RESULTS: " + results[0])
+    //     if (results.length > 0){
+    //         console.log("HOST ID: " + results[0].hosts_id)
+    //         var host_id = results[0].hosts_id;
+    //         var team_sizes = req.body.team_size;
+    //         var gender = req.body.gender;
+    //         var age_group = req.body.age_group;
+    //         var name = req.body.tourney_name;
+    //         var zip = req.body.zip;
+    //         var city = req.body.city;
+    //         var street = req.body.street;
+    //         var state = req.body.state;
+    //         var max_participants = req.body.max_participants;
+    //         var entry_fee = req.body.entry_fee;
+    //         var photo = file_name;
+    //         var date = new Date(req.body.start_time);
+    //         var start_time = date;
+    //         console.log(start_time)
+
+    //         // Convert duration from minutes to milliseconds
+    //         var ms = req.body.duration * 60000
+    //         var duration_time = ms;
+
+    //         //Duration in ms
+    //         // var duration_time = 600000;
+
+    //         api_req = "https://nominatim.openstreetmap.org/?addressdetails=1&q=" + street + "%2C+" + zip + "%2C+" + state + "&format=json"
+                    
+    //         let url = api_req.replace(/ /g, "+");
+    //         // console.log(url)
+
+    //         request({
+    //             url: url,
+    //             headers: {'User-Agent': 'ibrahim'},
+    //             json: true
+    //         }, async (err, response, body) => {
+    //             // console.log(response);
+                
+    //             if(body[0].lat){
+    //                 // console.log('REQUESTS: ' + body[0])
+    //                 add_tourney_error = ""
+    //                 var vals = {
+    //                     team_sizes: team_sizes,
+    //                     gender: gender,
+    //                     age_group: age_group,
+    //                     name: name,
+    //                     city: city,
+    //                     lat_coord: body[0].lat,
+    //                     lon_coord: body[0].lon,
+    //                     duration_time: duration_time,
+    //                     max_participants: max_participants,
+    //                     entry_fee: entry_fee,
+    //                     photo: photo,
+    //                     hosts_hosts_id: host_id,
+    //                     hosts_users_user_id: cookie_user_id,
+    //                     current_participants: 0,
+    //                     start_time: start_time
+    //                 }
+    
+    //                 connection.query('INSERT INTO tourneys SET ?',vals, async function (error, results, fields){
+    //                     // console.log(query);
+    //                     console.log(vals);
+    //                     console.log("TOURNEY SUCCESSFULLY CREATED");
+    //                     var result = await upload(req.file);
+    //                     console.log(result);
+    //                     await unlinkFile(req.file.path);
+    //                     res.redirect("/host");
+    //                 })
+    //             }else{
+    //                 console.log('ADDRESS INVALID')
+    //                 add_tourney_error = "The address you entered is invalid, please try again with a different address."
+    //                 await unlinkFile(req.file.path);
+    //                 res.redirect("/add_tourney")
+    //             }
+                
+        //     })
+
+        // }else{
+        //     console.log("No host with this user id!")
+        // }
+        //     })
 
 })
 
